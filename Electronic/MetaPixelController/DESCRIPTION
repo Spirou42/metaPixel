@@ -1,0 +1,16 @@
+<language de>
+UI Interface Platine für diverse Zwecke.
+Besteht aus:
+4(8) x 7Segment Anzeige (MAX7219)
+1(2) x Drehencoder mit Taster (7414,7474)
+
+</language de>
+<language en>
+<h1>Teensy2 based MetaPixel controler</h1>
+
+<h2>Features:</h2>
+<ul>
+<li>Teensy 2.0 socket</li>
+<li>Opto isolated, full featured DMX interface</li>
+<li>UI-board conector</li>
+</ul></language en>
