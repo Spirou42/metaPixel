@@ -25,27 +25,32 @@ void commandProcessor(char* line_buffer){
 		command -=0x20;
 	}
 	// read till first number;
-	while( (*currentChar != 0x00) && (*currentChar <='0' || *currentChar >='9')  ){
+	while( (*currentChar != 0x00) && (*currentChar <'0' || *currentChar >'9')  ){
 		currentChar ++;
 	}
 	//read number
-	while(*currentChar>='0' && *currentChar<='9'){
+	while( (*currentChar>='0') && (*currentChar<='9')){
 		value = 10*value +(*currentChar-'0');
 		currentChar ++;
 	}
 	Serial << command << ":"<<value<<endl;
 	int parameterSlot = getParameterFor(command);
+	Serial << "Slot: "<<parameterSlot<<endl;
 	if(parameterSlot==-1)
 		return;
 
-	int16_t *parameterP;
-	parameterP =pixelParameters[parameterSlot].value;
+	volatile int16_t *parameterP;
+	parameterP =pixelParameters[parameterSlot].tempValue;
+	Serial << "parameter:"<<_HEX((unsigned int)parameterP)<<endl;
 	if(value <pixelParameters[parameterSlot].min){
+		Serial << "smaller than min"<<endl;
 		value = pixelParameters[parameterSlot].min;
 	} 
 	if(value>pixelParameters[parameterSlot].max){
+		Serial << "bigger than max"<<endl;
 		value = pixelParameters[parameterSlot].max;
 	}
+	Serial << "Value: " << value<<endl;
 	*parameterP = value;
 	
 }

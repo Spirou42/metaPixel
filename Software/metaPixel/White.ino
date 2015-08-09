@@ -6,14 +6,14 @@ int white(unsigned long now,void* userdata)
 {
 //	static int offset = 2;
 	if(effectStarted){
-		display.fill(CRGB::White);
+		display.fill(CRGB::Orange);
 		display.flush();
 		effectStarted = false;
 		nextBrightness = 128;
 		return 1;
 	}
 	if(DMX.newFrame()){
-		CRGB color = CRGB::White;
+		CRGB color = CRGB::Orange;
 		const volatile uint8_t* buffer = DMX.getBuffer();
 		DMXChannels_t *DMXBlock = (DMXChannels_t*)(buffer + DMXBase);
 		color.r = DMXBlock->red;
