@@ -35,7 +35,7 @@ int plasma2(unsigned long now, void* userdata)
 
 			colorIndex /=div;
 
-			CRGB color = ColorFromPalette(colorPalettes[currentPalette],(colorIndex+paletteShift)%256);
+			CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],(colorIndex+paletteShift)%256);
 			display.setPixel(x,y,color);
 		}
 	}

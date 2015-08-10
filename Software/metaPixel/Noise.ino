@@ -2,26 +2,31 @@
 
 #define NOISE_DIMENSION ((DISPLAY_WIDTH>DISPLAY_HEIGHT) ? DISPLAY_WIDTH : DISPLAY_HEIGHT)
 
-static uint16_t noiseX;
-static uint16_t noiseY;
-static uint16_t noiseZ;
+static int16_t noiseX;
+static int16_t noiseY;
+static int16_t noiseZ;
 
-uint16_t noiseSpeed = 8; 
-uint16_t noiseScale = 50;
+Parameter<int16_t> noiseSpeedN(8);
+
+Parameter<int16_t> noiseScaleN(50);
+
+Parameter<int16_t>noiseHueSpeedN(1);
+
+
 uint8_t noiseD[NOISE_DIMENSION][NOISE_DIMENSION];
 uint8_t noiseP[NOISE_DIMENSION][NOISE_DIMENSION];
 
 void fillnoise8() {
 	for(int i = 0; i < NOISE_DIMENSION; i++) {
-		int ioffset = noiseScale * i;
+		int ioffset = noiseScaleN.currentValue() * i;
 		for(int j = 0; j < NOISE_DIMENSION; j++) {
-			int joffset = noiseScale * j;
+			int joffset = noiseScaleN.currentValue() * j;
 			noiseD[i][j] = inoise8(noiseX + ioffset,noiseY + joffset,noiseZ);
 			noiseP[i][j] = inoise8(noiseY+joffset,noiseX+ioffset,noiseZ);
 			
 		}
 	}
-	noiseZ += noiseSpeed;
+	noiseZ += noiseSpeedN.currentValue();
 }
 
 int noise(unsigned long now, void* userdata)
@@ -32,6 +37,13 @@ int noise(unsigned long now, void* userdata)
 		noiseX = random16();
 		noiseY = random16();
 		noiseZ = random16();
+	}else{
+		bool t = noiseSpeedN.syncValue();
+		t = t || noiseScaleN.syncValue();
+		t = t || noiseHueSpeedN.syncValue();
+		if(t){
+			dumpParameters();
+		}
 	}
 	fillnoise8();
 
@@ -40,7 +52,7 @@ int noise(unsigned long now, void* userdata)
 			// We use the value at the (i,j) coordinate in the noise
 			// array for our brightness, and the flipped value from (j,i)
 			// for our pixel's hue.
-			CRGB color = ColorFromPalette(colorPalettes[currentPalette],noiseD[i][j]);
+			CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],noiseD[i][j]);
 			CHSV hcolor = rgb2hsv(color);
 			hcolor.v = noiseP[i][j];
 			
@@ -55,7 +67,7 @@ int noise(unsigned long now, void* userdata)
 			// leds[XY(i,j)] = CHSV(ihue + (noise[j][i]>>2),255,noise[i][j]);
 		}
 	}
-		ihue+=1;
+	ihue+=noiseHueSpeedN.currentValue();
 	display.flush();
 	return 0;
 }

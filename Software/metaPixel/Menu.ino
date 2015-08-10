@@ -1,18 +1,11 @@
 /*
 * this is a simple menu using the current LC / Encoder code 
 */
+#include "Noise.h"
+
 int16_t currentSelectedMenu=0;
 volatile int16_t nextSelectedMenu = currentSelectedMenu;
 char valuePrefix = ' ';
-
-parameter_t pixelParameters[] = {
-	{'P',0,(int16_t)(maxPrograms-1),1,&currentProgram,&nextProgram},
-	{'D',1,800,1,&currentDelay,&nextDelay},
-	{'C',0,(int16_t)(numberOfPalettes-1),1,&currentPalette,&nextPalette},
-	{'B',0,255,1,&currentBrightness,&nextBrightness},
-	{'U',0,2,1,&currentResolution,&nextResolution}
-};
-uint8_t numPixelParams = sizeof(pixelParameters)/sizeof(parameter_t);
 
 void genericChangeHandler(int16_t newValue)
 {
@@ -49,8 +42,8 @@ void displayMenu()
 		menuStart = 0;
 	}
 	
-	for(uint8_t menuIndex=menuStart;menuIndex<numPixelParams;menuIndex++){
-		lc.setChar(0,lcdPos--,pixelParameters[menuIndex].code, currentSelectedMenu == menuIndex);
+	for(uint8_t menuIndex=menuStart;menuIndex<parameterArraySize;menuIndex++){
+		lc.setChar(0,lcdPos--,parameterArray[menuIndex].code, currentSelectedMenu == menuIndex);
 	}
 }
 
@@ -63,7 +56,7 @@ void selectMenuState()
 	currentState = stateMenu;
 	nextSelectedMenu=currentSelectedMenu = 0;
 	encoderMinValue = 0;
-	encoderMaxValue = numPixelParams -1;
+	encoderMaxValue = parameterArraySize -1;
 	encoderPos = &nextSelectedMenu;
 	*encoderPos = currentSelectedMenu;
 	encoderStep = 1;
@@ -92,20 +85,20 @@ void clickHandler(uint8_t clicks, boolean wasLongClick)
 		break;
 		case stateMenu:
 		if(clicks == 1){
-			if( (currentSelectedMenu >=0) && (currentSelectedMenu<numPixelParams)){
+			if( (currentSelectedMenu >=0) && (currentSelectedMenu<parameterArraySize)){
 				#if DEBUG_MENU
-				Serial << "Menu entry "<<currentSelectedMenu<<" "<<pixelParameters[currentSelectedMenu].code<<" selected";
+				Serial << "Menu entry "<<currentSelectedMenu<<" "<<parameterArray[currentSelectedMenu].code<<" selected";
 				#endif
 				// we got a selected menu entry
 				currentState = stateValueChange;
-				encoderMaxValue = pixelParameters[currentSelectedMenu].max;
-				encoderMinValue = pixelParameters[currentSelectedMenu].min;
-				encoderStep = pixelParameters[currentSelectedMenu].step;
-				encoderPos = pixelParameters[currentSelectedMenu].tempValue;
-				*encoderPos = *pixelParameters[currentSelectedMenu].value;
+				encoderMaxValue = parameterArray[currentSelectedMenu].maxValue;
+				encoderMinValue = parameterArray[currentSelectedMenu].minValue;
+				encoderStep = 1;//parameterArray[currentSelectedMenu].step;
+				encoderPos = &parameterArray[currentSelectedMenu].value._tempValue;
+				*encoderPos = parameterArray[currentSelectedMenu].value._value;
 				encoderValueChangeCallback = genericChangeHandler;
-				valuePrefix = pixelParameters[currentSelectedMenu].code;
-				genericChangeHandler(*pixelParameters[currentSelectedMenu].value);
+				valuePrefix = parameterArray[currentSelectedMenu].code;
+				genericChangeHandler(parameterArray[currentSelectedMenu].value._value);
 			}else{
 				#if DEBUG_MENU
 				Serial << "Illegal menu index: "<<currentSelectedMenu<<endl;

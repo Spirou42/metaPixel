@@ -1,6 +1,8 @@
 /*
 * mDisplay - a rectangular grid of mPixel modules
 */
+#ifndef __MDISPLAY_H__
+#define __MDISPLAY_H__
 
 #include "mPixel.h"
 
@@ -60,3 +62,4 @@ private:
 };
 
 CHSV rgb2hsv(const CRGB& rgb);
+#endif

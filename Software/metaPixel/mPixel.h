@@ -4,6 +4,8 @@
 
 *
 */
+#ifndef __MPIXEL_H__
+#define __MPIXEL_H__
 
 #include <FastLED.h>
 
@@ -40,3 +42,5 @@ public:
 
 	uint16_t XY( uint8_t x, uint8_t y);
 };
+
+#endif

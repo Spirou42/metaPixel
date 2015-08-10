@@ -1,4 +1,7 @@
 
+#ifndef __PLASMATYPES_H__
+#define __PLASMATYPES_H__
+
 typedef struct { 
 	const char* id;
 	queuedFunction function;
@@ -19,5 +22,5 @@ typedef struct {
 	int16_t wBase,hBase;
 	uint8_t frameSteps;
 }PlasmaData_t;
-
+#endif
 

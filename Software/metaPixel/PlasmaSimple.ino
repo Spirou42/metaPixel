@@ -15,7 +15,7 @@ void DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t xHueDelta8,PlasmaDa
 		for( byte x = 0; x < w; x++) {
 			pixelHue += xHueDelta8;
 //      uint16_t pixelInBuffer = display.XY(x,y);
-			CRGB color = ColorFromPalette(colorPalettes[currentPalette],pixelHue);
+			CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],pixelHue);
 			display.setPixel(MPPixel(x,y),color);
 
 
@@ -33,11 +33,13 @@ void DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t xHueDelta8,PlasmaDa
 int plasmaSimple(unsigned long now, void* userdata)
 {
 	static uint32_t frame = 0;
-//    static long lastCall = 0;
+
 		#if DEBUG_EFFECTS
-//    Serial << now-lastCall<<endl;
+	    static long lastCall = 0;
+			 Serial << now-lastCall<<endl;
+			 lastCall = now;
 		#endif
-//    lastCall = now;
+
 	PlasmaData_t *data = (PlasmaData_t*) userdata;
 	uint8_t w = display.displayWidth() * data->scale;
 	uint8_t h = display.displayHeight() * data->scale;

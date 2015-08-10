@@ -1,5 +1,7 @@
 /* header file for the encoder class 
 not realy a class yet but it will be one :) */
+#ifndef __ENCODER_H__
+#define __ENCODER_H__
 
 #include <LedControl.h>
 
@@ -17,5 +19,5 @@ extern encoderValueChangeFpt encoderValueChangeCallback;
 extern encoderClickFpt       encoderClickCallback;
 extern LedControl lc;
 void printNumber(int v);
-
+#endif
 

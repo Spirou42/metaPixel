@@ -56,7 +56,7 @@ int fire(unsigned long now, void* userdata)
 
 //    fill_solid(led_backbuffer,NUM_LEDS,CRGB::Black);
 		effectStarted = false;
-		nextPalette = 7;
+		Palette.initTo(7);
 //		lastNow = now;
 	}
 
@@ -128,9 +128,9 @@ int fire(unsigned long now, void* userdata)
 		// 	k=0;
 		// }
 #if USE_DOUBLE_BUFFER
-		led_backbuffer[j] = ColorFromPalette(colorPalettes[currentPalette],k);
+		led_backbuffer[j] = ColorFromPalette(colorPalettes[Palette.currentValue()],k);
 #else
-		leds[j] = ColorFromPalette(colorPalettes[currentPalette],k);
+		leds[j] = ColorFromPalette(colorPalettes[Palette.currentValue()],k);
 #endif
 	}
 #if !USE_DOUBLE_BUFFER
