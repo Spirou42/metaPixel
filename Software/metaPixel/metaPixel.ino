@@ -52,7 +52,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 1
+#define START_PROG 2
 
 typedef struct {
 	uint8_t red;
@@ -87,14 +87,14 @@ static MPPixel currentPixel(0,0);
 
 #define DMX_REDE 30
 struct RDMINIT rdmData {
-  (char*)"TeensyDMX v0.1",
-  (char*)"Teensyduino",
-  1,  // Device ID
-  (char*)"DMX Node",
-  1,  // The DMX footprint
-  0,  // The DMX startAddress - only used for RDM
-  0,  // Additional commands length for RDM
-  0   // Definition of additional commands
+	(char*)"TeensyDMX v0.1",
+	(char*)"Teensyduino",
+	1,  // Device ID
+	(char*)"DMX Node",
+	1,  // The DMX footprint
+	0,  // The DMX startAddress - only used for RDM
+	0,  // Additional commands length for RDM
+	0   // Definition of additional commands
 };
 TeensyDmx DMX(Serial3, &rdmData, 30);
 
@@ -131,10 +131,10 @@ CRGBPalette16 colorPalettes[]={
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
 #if USE_PLASMA
-	PlasmaData_t normalPla = {false,false,1,400,400,15};
-	PlasmaData_t mirrowPla = {true,false,1,200,200,15};
-	PlasmaData_t scalePla 	= {false,false,1,100,100,15};
-	PlasmaData_t biggerPla = {false,false,1,600,600,15};
+PlasmaData_t normalPla = {false,false,1,400,400,15};
+PlasmaData_t mirrowPla = {true,false,1,200,200,15};
+PlasmaData_t scalePla 	= {false,false,1,100,100,15};
+PlasmaData_t biggerPla = {false,false,1,600,600,15};
 #endif
 
 effectProgram_t effectPrograms[]  ={
@@ -201,10 +201,10 @@ int backbufferBlender(unsigned long now, void* userdata)
 	Serial <<".";
 #endif
 	if(frac < 4){
-		#if DEBUG_EFFECTS
+#if DEBUG_EFFECTS
 		Serial << "Frac cliped to 4, was "<<frac<<endl;
 
-		#endif
+#endif
 		frac = 4;
 	}
 	for(uint16_t i=0;i<NUM_LEDS;i++){
@@ -235,7 +235,7 @@ void dumpParameters()
 
 void setup() 
 {
-  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
+	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
 	FastLED.setBrightness( BRIGHTNESS );
 	FastLED.show();
 	Serial.begin(115200);
@@ -248,7 +248,7 @@ void setup()
 	
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
 	
-//	Serial << "LedBuffer: "<<(unsigned long)leds<<" Backbuffer: "<<(unsigned long) led_backbuffer<<endl;
+	//	Serial << "LedBuffer: "<<(unsigned long)leds<<" Backbuffer: "<<(unsigned long) led_backbuffer<<endl;
 
 	EffectProgram.initTo(START_PROG);
 	int16_t cP = EffectProgram.currentValue();
@@ -270,7 +270,7 @@ void setup()
 	lc.clearDisplay(0);
 	randomSeed(millis());
 	delay(1000);
-  Serial<<"metaPixel initialized"<<endl;
+	Serial<<"metaPixel initialized"<<endl;
 	Serial<<"Parameters: "<<parameterArraySize<<endl;
 #if USE_SERIAL_COMMANDS
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
@@ -282,7 +282,7 @@ void setup()
 void loop()
 {
 	bool parameterChanged = false;
-//	random16_add_entropy( random());
+	//	random16_add_entropy( random());
 	if(EffectProgram.hasChanged()){          // switch program 
 		int16_t nextP = EffectProgram.nextValue();
 		int16_t currentP = EffectProgram.currentValue();
@@ -295,28 +295,28 @@ void loop()
 		taskQueue.scheduleRemoveFunction(effectPrograms[currentP].id);
 		taskQueue.scheduleFunction(effectPrograms[nextP].function,effectPrograms[nextP].userData,effectPrograms[nextP].id,Delay.nextValue(),Delay.nextValue());
 		EffectProgram.syncValue();
-		#if DEBUG_LOOP
+#if DEBUG_LOOP
 		Serial << " PQueue" << taskQueue._itemsInQueue<<endl;
-		#endif
+#endif
 		parameterChanged = true;
 	}
 	// switch delay
 	if(Delay.hasChanged()){
-		#if DEBUG_LOOP
+#if DEBUG_LOOP
 		Serial<<"Delay from:"<<Delay.currentValue()<<" To:"<<Delay.nextValue()<<" ";
-		#endif
+#endif
 		taskQueue.scheduleChangeFunction(effectPrograms[EffectProgram.currentValue()].id,Delay.nextValue(),Delay.nextValue());
 		Delay.syncValue();
-		#if DEBUG_LOOP
+#if DEBUG_LOOP
 		Serial << "DQueue" << taskQueue._itemsInQueue<<endl;
-		#endif
+#endif
 		parameterChanged = true;
 	}
 	// switch brightness
 	if(Brightness.hasChanged()){
-		#if DEBUG_LOOP
-		    Serial <<"B:"<<currentBrightness<<endl;
-		#endif
+#if DEBUG_LOOP
+		Serial <<"B:"<<currentBrightness<<endl;
+#endif
 		FastLED.setBrightness(Brightness.nextValue());
 		Brightness.syncValue();
 		parameterChanged=true;
@@ -331,12 +331,20 @@ void loop()
 		currentResolution = nextResolution;
 		display.setResolution( (displayResolution)currentResolution);
 #if USE_DOUBLE_BUFFER
-//		display.clearAll();
+		//		display.clearAll();
 #endif
+	}
+	{
+		bool t = noiseSpeedN.syncValue();
+		t = t || noiseScaleN.syncValue();
+		t = t || noiseHueSpeedN.syncValue();
+		if(t){
+			dumpParameters();
+		}
 	}
 	taskQueue.Run(millis());
 	if(parameterChanged){
-			dumpParameters();
+		dumpParameters();
 	}
 	delay(2);
 }

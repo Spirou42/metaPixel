@@ -2,7 +2,7 @@
 /************************
 PLASMA
 ************************/
-#define PSCALE (6.8f)
+#define PSCALE (2.0)
 
 int plasma2(unsigned long now, void* userdata)
 
@@ -26,12 +26,12 @@ int plasma2(unsigned long now, void* userdata)
 			MPPixel current = MPPixel(x+xOffset,y+yOffset);
 			int div = 0;
 			int colorIndex=0;
-			colorIndex += int(128.0 + (128.0 * sin( (current.x) / (PSCALE*1) )));div++;				// vertical stripes
+						colorIndex += int(128.0 + (128.0 * sin( (float)(current.x) / (PSCALE*1) )));div++;				// vertical stripes
 
-			colorIndex += int(128.0 + (128.0 * sin( (current.y) / (PSCALE*1)  )));div++;				// vertical stripes
+//			colorIndex += int(128.0 + (128.0 * sin( (current.y) / (PSCALE*1)  )));div++;				// vertical stripes
 
-			colorIndex += int(128.0 + (128.0 * sin((current.x + current.y) / (PSCALE*1) )));div++;
-			colorIndex += int(128.0 + (128.0 * sin(center.distanceTo(current) / (PSCALE*1) )));div++;			// circle
+									colorIndex += int(128.0 + (128.0 * sin((current.x + current.y) / (PSCALE*1) )));div++;
+						colorIndex += int(128.0 + (128.0 * sin(center.distanceTo(current) / (PSCALE*1) )));div++;			// circle
 
 			colorIndex /=div;
 
@@ -41,7 +41,7 @@ int plasma2(unsigned long now, void* userdata)
 	}
 //	Serial<<"Center: ("<<center.x<<", "<<center.y<<")"<<endl;
 	display.setPixel(center,CRGB::White);
-	 paletteShift+=1;
+	 paletteShift+=noiseHueSpeedN.currentValue();
 	  paletteShift%=256;
 	k+=M_PI/360.0;
 	return 0;

@@ -37,13 +37,6 @@ int noise(unsigned long now, void* userdata)
 		noiseX = random16();
 		noiseY = random16();
 		noiseZ = random16();
-	}else{
-		bool t = noiseSpeedN.syncValue();
-		t = t || noiseScaleN.syncValue();
-		t = t || noiseHueSpeedN.syncValue();
-		if(t){
-			dumpParameters();
-		}
 	}
 	fillnoise8();
 
@@ -52,7 +45,7 @@ int noise(unsigned long now, void* userdata)
 			// We use the value at the (i,j) coordinate in the noise
 			// array for our brightness, and the flipped value from (j,i)
 			// for our pixel's hue.
-			CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],noiseD[i][j]);
+			CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],noiseD[i][j]+ihue);
 			CHSV hcolor = rgb2hsv(color);
 			hcolor.v = noiseP[i][j];
 			
@@ -60,7 +53,7 @@ int noise(unsigned long now, void* userdata)
 						//hcolor = CHSV(noiseD[j][i],255,noiseD[i][j]);
 
 						//color = ColorFromPalette(colorPalettes[currentPalette],noiseD[j][i]);
-			display.setPixel(i,j,hcolor);
+			display.setPixel(i,j,color);
 
 
 			// You can also explore other ways to constrain the hue used, like below
