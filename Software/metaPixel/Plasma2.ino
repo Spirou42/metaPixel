@@ -2,7 +2,7 @@
 /************************
 PLASMA
 ************************/
-#define PSCALE (2.0)
+#define PSCALE (noiseScaleN.currentValue())
 
 int plasma2(unsigned long now, void* userdata)
 
