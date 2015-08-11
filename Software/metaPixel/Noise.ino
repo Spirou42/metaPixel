@@ -6,9 +6,6 @@ static int16_t noiseX;
 static int16_t noiseY;
 static int16_t noiseZ;
 
-Parameter<int16_t> noiseSpeedN(8);
-Parameter<int16_t> noiseScaleN(50);
-Parameter<int16_t> noiseHueSpeedN(1);
 
 
 uint8_t noiseD[NOISE_DIMENSION][NOISE_DIMENSION];
@@ -35,6 +32,9 @@ int noise(unsigned long now, void* userdata)
 		noiseX = random16();
 		noiseY = random16();
 		noiseZ = random16();
+		noiseSpeedN.initTo(2);
+		noiseScaleN.initTo(50);
+		noiseHueSpeedN.initTo(0);
 	}
 	fillnoise8();
 

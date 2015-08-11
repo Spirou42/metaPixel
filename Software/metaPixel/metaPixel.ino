@@ -52,7 +52,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 2
+#define START_PROG 1
 
 typedef struct {
 	uint8_t red;
@@ -107,10 +107,15 @@ ballState_t currentState;
 **
 **********************************************************/
 
-Parameter<int16_t> Delay(10);
+Parameter<int16_t>Delay(10);
 Parameter<int16_t>EffectProgram(0);
 Parameter<int16_t>Palette(0);
 Parameter<int16_t>Brightness(BRIGHTNESS);
+Parameter<int16_t>BlendParam(5000);
+
+Parameter<int16_t>noiseSpeedN(8);
+Parameter<int16_t>noiseScaleN(50);
+Parameter<int16_t>noiseHueSpeedN(1);
 
 Parameter<int16_t>plasmaCircleRadiusN(display.displayWidth());
 Parameter<int16_t>plasmaEffectMaskN(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
@@ -166,11 +171,12 @@ newParameter_t parameterArray[] = {
 	newParameter_t('D',(int16_t)1,(int16_t)800,Delay),
 	newParameter_t('C',(int16_t)0,(int16_t)(numberOfPalettes-1),Palette),
 	newParameter_t('B',(int16_t)0,(int16_t)255,Brightness),
-	newParameter_t('U',(int16_t)0,(int16_t)1000,noiseSpeedN),
-	newParameter_t('R',(int16_t)0,(int16_t)255,noiseScaleN),
-	newParameter_t('I',(int16_t)0,(int16_t)100,noiseHueSpeedN),
-	newParameter_t('O',(int16_t)0,(int16_t)100,plasmaCircleRadiusN),
-	newParameter_t('M',(int16_t)0,(int16_t)15,plasmaEffectMaskN)
+	newParameter_t('U',(int16_t)0,(int16_t)10000,noiseSpeedN),
+	newParameter_t('R',(int16_t)0,(int16_t)10000,noiseScaleN),
+	newParameter_t('I',(int16_t)0,(int16_t)10000,noiseHueSpeedN),
+	newParameter_t('O',(int16_t)0,(int16_t)10000,plasmaCircleRadiusN),
+	newParameter_t('M',(int16_t)0,(int16_t)15,plasmaEffectMaskN),
+	newParameter_t('Z',(int16_t)0,(int16_t)20000,BlendParam)
 };
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(newParameter_t);
 
@@ -200,7 +206,13 @@ int blinker(unsigned long now, void* userData)
 #if USE_DOUBLE_BUFFER
 int backbufferBlender(unsigned long now, void* userdata)
 {
-	uint8_t frac = 5000/Delay.currentValue(); 
+	uint8_t frac = BlendParam.currentValue()/Delay.currentValue(); 
+	static uint8_t lastFrac =0;
+	if(frac != lastFrac){
+		Serial << "frac"<<frac<<endl;		
+		lastFrac = frac;
+	}
+
 #if DEBUG_EFFECTS
 	Serial <<".";
 #endif
@@ -286,7 +298,7 @@ void setup()
 void loop()
 {
 	bool parameterChanged = false;
-	random16_add_entropy( random());
+//	random16_add_entropy( random());
 
 	//
   // switch program Slot 0
@@ -355,6 +367,7 @@ void loop()
 		t = t || noiseHueSpeedN.syncValue();
 		t = t || plasmaCircleRadiusN.syncValue();
 		t = t || plasmaEffectMaskN.syncValue();
+		t = t || BlendParam.syncValue();
 		if(t){
 			dumpParameters();
 		}
