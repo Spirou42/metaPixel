@@ -109,9 +109,11 @@ ballState_t currentState;
 
 Parameter<int16_t> Delay(10);
 Parameter<int16_t>EffectProgram(0);
-
 Parameter<int16_t>Palette(0);
 Parameter<int16_t>Brightness(BRIGHTNESS);
+
+Parameter<int16_t>plasmaCircleRadiusN(display.displayWidth());
+Parameter<int16_t>plasmaEffectMaskN(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
 int16_t currentResolution ;
 volatile int16_t nextResolution;
 
@@ -166,7 +168,9 @@ newParameter_t parameterArray[] = {
 	newParameter_t('B',(int16_t)0,(int16_t)255,Brightness),
 	newParameter_t('U',(int16_t)0,(int16_t)1000,noiseSpeedN),
 	newParameter_t('R',(int16_t)0,(int16_t)255,noiseScaleN),
-	newParameter_t('I',(int16_t)0,(int16_t)100,noiseHueSpeedN)
+	newParameter_t('I',(int16_t)0,(int16_t)100,noiseHueSpeedN),
+	newParameter_t('O',(int16_t)0,(int16_t)100,plasmaCircleRadiusN),
+	newParameter_t('M',(int16_t)0,(int16_t)15,plasmaEffectMaskN)
 };
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(newParameter_t);
 
@@ -196,7 +200,7 @@ int blinker(unsigned long now, void* userData)
 #if USE_DOUBLE_BUFFER
 int backbufferBlender(unsigned long now, void* userdata)
 {
-	uint8_t frac = 4000/Delay.currentValue(); 
+	uint8_t frac = 5000/Delay.currentValue(); 
 #if DEBUG_EFFECTS
 	Serial <<".";
 #endif
@@ -282,8 +286,12 @@ void setup()
 void loop()
 {
 	bool parameterChanged = false;
-	//	random16_add_entropy( random());
-	if(EffectProgram.hasChanged()){          // switch program 
+	random16_add_entropy( random());
+
+	//
+  // switch program Slot 0
+	//
+	if(EffectProgram.hasChanged()){ 
 		int16_t nextP = EffectProgram.nextValue();
 		int16_t currentP = EffectProgram.currentValue();
 #if DEBUG_LOOP
@@ -300,7 +308,10 @@ void loop()
 #endif
 		parameterChanged = true;
 	}
-	// switch delay
+	
+	//
+	// switch delay (Slot 1)
+	//
 	if(Delay.hasChanged()){
 #if DEBUG_LOOP
 		Serial<<"Delay from:"<<Delay.currentValue()<<" To:"<<Delay.nextValue()<<" ";
@@ -312,7 +323,17 @@ void loop()
 #endif
 		parameterChanged = true;
 	}
-	// switch brightness
+	//
+	// switch palette Slot(2)
+	//
+	if(Palette.hasChanged()){
+		parameterChanged = true;
+		Palette.syncValue();
+	}
+
+	//
+	// switch brightness Slot(3)
+	//
 	if(Brightness.hasChanged()){
 #if DEBUG_LOOP
 		Serial <<"B:"<<currentBrightness<<endl;
@@ -320,12 +341,6 @@ void loop()
 		FastLED.setBrightness(Brightness.nextValue());
 		Brightness.syncValue();
 		parameterChanged=true;
-	}
-	// switch palette
-	if(Palette.hasChanged()){
-		parameterChanged = true;
-		Palette.syncValue();
-
 	}
 	if(currentResolution != nextResolution){
 		currentResolution = nextResolution;
@@ -338,6 +353,8 @@ void loop()
 		bool t = noiseSpeedN.syncValue();
 		t = t || noiseScaleN.syncValue();
 		t = t || noiseHueSpeedN.syncValue();
+		t = t || plasmaCircleRadiusN.syncValue();
+		t = t || plasmaEffectMaskN.syncValue();
 		if(t){
 			dumpParameters();
 		}

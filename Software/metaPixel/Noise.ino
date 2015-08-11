@@ -7,10 +7,8 @@ static int16_t noiseY;
 static int16_t noiseZ;
 
 Parameter<int16_t> noiseSpeedN(8);
-
 Parameter<int16_t> noiseScaleN(50);
-
-Parameter<int16_t>noiseHueSpeedN(1);
+Parameter<int16_t> noiseHueSpeedN(1);
 
 
 uint8_t noiseD[NOISE_DIMENSION][NOISE_DIMENSION];

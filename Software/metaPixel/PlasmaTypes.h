@@ -2,6 +2,14 @@
 #ifndef __PLASMATYPES_H__
 #define __PLASMATYPES_H__
 
+typedef enum {
+	NoEffect = 0,
+	HorizontalEffect = 1,
+	VerticalEffect = 2,
+	DiagonalEffect = 4,
+	CircleEffect = 8,
+	
+}plasmaEffectMask_t;
 typedef struct { 
 	const char* id;
 	queuedFunction function;
