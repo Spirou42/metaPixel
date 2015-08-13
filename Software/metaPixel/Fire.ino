@@ -71,7 +71,7 @@ int fire(unsigned long now, void* userdata)
 	for(uint8_t y=0;y<DISPLAY_HEIGHT;y++){
 		for(uint8_t x=0;x<DISPLAY_WIDTH;x++){
 			uint16_t offset = display.XY(x,y);
-			uint8_t coolBase = ((DISPLAY_HEIGHT+y)*noiseSpeedN.currentValue())/10;
+//			uint8_t coolBase = ((DISPLAY_HEIGHT+y)*noiseSpeedN.currentValue())/10;
 			uint8_t cooling = random8(0, (noiseSpeedN.currentValue()));// / display.displayHeight()) + 2);
 #if DEBUG_EFFECTS
 			Serial <<"Cooling ("<<x<<", "<<y<<") "<<cooling<<endl;

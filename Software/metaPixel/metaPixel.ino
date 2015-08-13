@@ -40,7 +40,7 @@
 #define DEBUG_EFFECTS (0 & DEBUG)
 #define DEBUG_ENCODER (0 & DEBUG)
 #define DEBUG_MENU    (0 & DEBUG)
-#define DEBUG_COMMAND	(0 & DEBUG)
+#define DEBUG_COMMAND	(1 & DEBUG)
 #define DEBUG_LOOP		(0 & DEBUG)
 
 
@@ -167,16 +167,20 @@ effectProgram_t effectPrograms[]  ={
 uint8_t maxPrograms = sizeof(effectPrograms) / sizeof(effectProgram_t);
 
 newParameter_t parameterArray[] = {
+	// global scope parameters.
+	// these parameters for Program, framerate etc.
 	newParameter_t('P',(int16_t)0,(int16_t)(maxPrograms-1),EffectProgram),
 	newParameter_t('D',(int16_t)1,(int16_t)800,Delay),
 	newParameter_t('C',(int16_t)0,(int16_t)(numberOfPalettes-1),Palette),
 	newParameter_t('B',(int16_t)0,(int16_t)255,Brightness),
+	newParameter_t('Z',(int16_t)0,(int16_t)20000,BlendParam),
+
+	// local parameters. These parameters have a different meening for each and every Effect program. 	
 	newParameter_t('U',(int16_t)0,(int16_t)10000,noiseSpeedN),
 	newParameter_t('R',(int16_t)0,(int16_t)10000,noiseScaleN),
 	newParameter_t('I',(int16_t)0,(int16_t)10000,noiseHueSpeedN),
 	newParameter_t('O',(int16_t)0,(int16_t)10000,plasmaCircleRadiusN),
-	newParameter_t('M',(int16_t)0,(int16_t)15,plasmaEffectMaskN),
-	newParameter_t('Z',(int16_t)0,(int16_t)20000,BlendParam)
+	newParameter_t('M',(int16_t)0,(int16_t)15		,plasmaEffectMaskN),
 };
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(newParameter_t);
 
@@ -379,39 +383,7 @@ void loop()
 	delay(2);
 }
 
-/****************************
-Serial Interface
-****************************/
-#define SERIAL_BUFFER_LENGTH 20
-char serial_buffer[SERIAL_BUFFER_LENGTH];
-uint8_t currentChar=0;
 
-int serialReader(unsigned long now, void* userData)
-{
-	bool endLine=false;
-	while(Serial.available()){
-		char c = Serial.read();
-		if(c==0x0d){
-			c = 0x00;
-			endLine = true;
-		}
-		serial_buffer[currentChar++]=c;
-		if(currentChar >(SERIAL_BUFFER_LENGTH-1)){
-			currentChar =0;
-		}
-		if(endLine){
-#if DEBUG_COMMAND
-			Serial << "Command:"<<serial_buffer <<endl;
-#endif
-			commandProcessor(serial_buffer);
-			Serial << endl;
-			memset(serial_buffer,0x00,SERIAL_BUFFER_LENGTH);
-			currentChar = 0;
-		}
-		
-	}
-	return 0;
-}
 
 
 

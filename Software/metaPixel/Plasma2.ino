@@ -63,6 +63,12 @@ int plasma2(unsigned long now, void* userdata)
 	paletteShift+=noiseHueSpeedN.currentValue();
 	paletteShift%=256;
 	k+=(M_PI/360.0)*noiseSpeedN.currentValue()/10.0;
+	if(k<0){
+		k=360;
+	}
+	if(k>360){
+		k=0;
+	}
 	return 0;
 
 }
