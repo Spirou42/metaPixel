@@ -345,13 +345,14 @@ UsedLibrary="/Applications/EAGLE-7.2.0/lbr/xilinx-xc9.lbr"
 UsedLibrary="/Applications/EAGLE-7.2.0/lbr/xilinx-xcv.lbr"
 UsedLibrary="/Applications/EAGLE-7.2.0/lbr/zetex.lbr"
 UsedLibrary="/Applications/EAGLE-7.2.0/lbr/zilog.lbr"
+UsedLibrary="/Users/spirou/Desktop/Eagle-DMX/EagleLibs/Teensy3.0.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="119 505 718 904"
+Loc="1382 406 2294 818"
 State=2
 Number=0
 
 [Desktop]
-Screen="3600 1369"
+Screen="2560 1440"
 Window="Win_1"

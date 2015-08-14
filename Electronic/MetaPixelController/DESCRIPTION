@@ -6,11 +6,13 @@ Besteht aus:
 
 </language de>
 <language en>
-<h1>Teensy2 based MetaPixel controler</h1>
+<h1>Teensy3.1 based metaPixel controler</h1>
 
 <h2>Features:</h2>
 <ul>
-<li>Teensy 2.0 socket</li>
+<li>Teensy 3.1 socket</li>
 <li>Opto isolated, full featured DMX interface</li>
 <li>UI-board conector</li>
+<li>Teensy-Audio aware</li>
+<li>
 </ul></language en>
