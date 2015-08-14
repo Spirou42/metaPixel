@@ -1,47 +1,12 @@
+#define FASTLED_INTERNAL
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
-#include <rdm.h>
 #include <TeensyDmx.h>
-#include "Parameter.h"
-
-#include "PlasmaTypes.h"
-#include "Noise.h"
-#include "Menu.h"
-#include "Encoder.h"
-#include "mDisplay.h"
-
-
-#define USE_SERIAL_COMMANDS 1
-#define USE_DOUBLE_BUFFER 1
-#define COLOR_ORDER     GRB
-#define CHIPSET         WS2812
-
-#define DMXBase	17
-#define DMXSpan 7
-
-#define BRIGHTNESS      160
-//#define COLOR_CORRECTION 0xe0ffe0
-//#define COLOR_CORRECTION 0xffffff
-#define COLOR_CORRECTION 0xffeeff
-
-#define ENC_PULSE_PIN             6
-#define ENC_STEP_PIN              5
-#define ENC_DIR_PIN               4
-#define LC_DATA_PIN               3
-#define LC_CLK_PIN                2
-#define LC_CS_PIN                 1
-#define LED_PIN                   0
-#define LED_BLINK_PIN            13
-
-/* DEBUG CONFIGURATION */
-#define DEBUG (1)
-#define DEBUG_BLINK   (1 & DEBUG)
-#define DEBUG_EFFECTS (0 & DEBUG)
-#define DEBUG_ENCODER (0 & DEBUG)
-#define DEBUG_MENU    (0 & DEBUG)
-#define DEBUG_COMMAND	(1 & DEBUG)
-#define DEBUG_LOOP		(0 & DEBUG)
+#include <rdm.h>
+#include <Arduino.h>
+#include "EffectWhite.h"
+#include "metaPixel.h"
 
 
 /* program defined */
@@ -54,24 +19,12 @@
 
 #define START_PROG 1
 
-typedef struct {
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-	uint8_t macro;
-	uint8_t strobe;
-	uint8_t mode;
-	uint8_t master;
-}DMXChannels_t;
-
-
 /**********************************************************
 **
 ** Globals
 **
 **********************************************************/
 
-#define NUM_LEDS (DISPLAY_WIDTH * DISPLAY_HEIGHT)
 
 
 CRGB  leds[NUM_LEDS];
@@ -81,7 +34,6 @@ mDisplay display= mDisplay(leds,led_backbuffer,MODULES_WIDTH,MODULES_HEIGHT);
 #else
 mDisplay display= mDisplay(leds,NULL,MODULES_WIDTH,MODULES_HEIGHT);
 #endif
-static MPPixel currentPixel(0,0);
 
 /** DMX **/
 
@@ -97,9 +49,7 @@ struct RDMINIT rdmData {
 	0   // Definition of additional commands
 };
 TeensyDmx DMX(Serial3, &rdmData, 30);
-
-
-Queue taskQueue; 
+Queue taskQueue;
 ballState_t currentState;
 /**********************************************************
 **
@@ -113,12 +63,15 @@ Parameter<int16_t>Palette(0);
 Parameter<int16_t>Brightness(BRIGHTNESS);
 Parameter<int16_t>BlendParam(5000);
 
-Parameter<int16_t>noiseSpeedN(8);
-Parameter<int16_t>noiseScaleN(50);
-Parameter<int16_t>noiseHueSpeedN(1);
+Parameter<int16_t>genericSpeed1(8);
+Parameter<int16_t>genericSpeed2(1);
+Parameter<int16_t>genericScale1(50);
+Parameter<int16_t>genericScale2(50);
+Parameter<int16_t>genericParam1(display.displayWidth());
+Parameter<int16_t>genericParam2(display.displayWidth());
+Parameter<int16_t>genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
+Parameter<int16_t>genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
 
-Parameter<int16_t>plasmaCircleRadiusN(display.displayWidth());
-Parameter<int16_t>plasmaEffectMaskN(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
 int16_t currentResolution ;
 volatile int16_t nextResolution;
 
@@ -161,28 +114,50 @@ effectProgram_t effectPrograms[]  ={
 	{"PLSG",plasmaSimple,300,(void*)&biggerPla},
 #endif
 #if USE_FIRE
-	{"FIRE",fire,90,NULL}
+	{"FIRE",fire,60,NULL}
 #endif
 };
+
+
 uint8_t maxPrograms = sizeof(effectPrograms) / sizeof(effectProgram_t);
+
+
 
 newParameter_t parameterArray[] = {
 	// global scope parameters.
 	// these parameters for Program, framerate etc.
-	newParameter_t('P',(int16_t)0,(int16_t)(maxPrograms-1),EffectProgram),
-	newParameter_t('D',(int16_t)1,(int16_t)800,Delay),
-	newParameter_t('C',(int16_t)0,(int16_t)(numberOfPalettes-1),Palette),
-	newParameter_t('B',(int16_t)0,(int16_t)255,Brightness),
-	newParameter_t('Z',(int16_t)0,(int16_t)20000,BlendParam),
+/* 00 */ 	newParameter_t('P',(int16_t)0,(int16_t)0,EffectProgram),
+/* 01 */	newParameter_t('D',(int16_t)1,(int16_t)5000,Delay),
+/* 02 */	newParameter_t('C',(int16_t)0,(int16_t)0,Palette),
+/* 03 */	newParameter_t('B',(int16_t)0,(int16_t)255,Brightness),
+/* 04 */	newParameter_t('Z',(int16_t)0,(int16_t)32000,BlendParam),
 
-	// local parameters. These parameters have a different meening for each and every Effect program. 	
-	newParameter_t('U',(int16_t)0,(int16_t)10000,noiseSpeedN),
-	newParameter_t('R',(int16_t)0,(int16_t)10000,noiseScaleN),
-	newParameter_t('I',(int16_t)0,(int16_t)10000,noiseHueSpeedN),
-	newParameter_t('O',(int16_t)0,(int16_t)10000,plasmaCircleRadiusN),
-	newParameter_t('M',(int16_t)0,(int16_t)15		,plasmaEffectMaskN),
+	// local parameters. These parameters have a different meening for each  Effect program.
+/* 05 */	newParameter_t('U',(int16_t)0,(int16_t)0,genericSpeed1),
+/* 06 */  newParameter_t('V',(int16_t)0,(int16_t)0,genericSpeed2),
+/* 07 */	newParameter_t('R',(int16_t)0,(int16_t)0,genericScale1),
+/* 08 */	newParameter_t('I',(int16_t)0,(int16_t)0,genericScale2),
+/* 09 */	newParameter_t('O',(int16_t)0,(int16_t)0,genericParam1),
+/* 10 */ 	newParameter_t('H',(int16_t)0,(int16_t)0,genericParam2),
+/* 11 */	newParameter_t('M',(int16_t)0,(int16_t)255,genericEffectMask1),
+/* 12 */	newParameter_t('N',(int16_t)0,(int16_t)255,genericEffectMask2),
 };
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(newParameter_t);
+
+EffectWhite whiteEffect = EffectWhite(&(parameterArray[9]));
+EffectFire  fireEffect = EffectFire(&parameterArray[9],&parameterArray[10]  );
+//EffectWhite dummy = EffectWhite();
+//effectProgramN_t h = {dummy,1000,NULL};
+effectProgramN_t effectProgramsN[] = {
+	 	{&whiteEffect,1000,NULL},
+		{&fireEffect,1000,NULL},
+		{&whiteEffect,1000,NULL}
+};
+
+uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
+
+
+
 
 /**********************************************************
 **
@@ -190,53 +165,12 @@ int16_t parameterArraySize = sizeof(parameterArray)/sizeof(newParameter_t);
 **
 **********************************************************/
 
-
 #if DEBUG_BLINK
 int blinker(unsigned long now, void* userData)
 {
 	static boolean state = HIGH;
 	digitalWrite(LED_BLINK_PIN,state);
 	state = !state;
-	return 0;
-}
-#endif
-
-
-/**********************************************************
-**
-** backbuffer
-**
-**********************************************************/
-#if USE_DOUBLE_BUFFER
-int backbufferBlender(unsigned long now, void* userdata)
-{
-	uint8_t frac = BlendParam.currentValue()/Delay.currentValue(); 
-	static uint8_t lastFrac =0;
-	if(frac != lastFrac){
-		Serial << "frac"<<frac<<endl;		
-		lastFrac = frac;
-	}
-
-#if DEBUG_EFFECTS
-	Serial <<".";
-#endif
-	if(frac < 4){
-#if DEBUG_EFFECTS
-		Serial << "Frac cliped to 4, was "<<frac<<endl;
-
-#endif
-		frac = 4;
-	}
-	for(uint16_t i=0;i<NUM_LEDS;i++){
-		leds[i]=nblend(leds[i],led_backbuffer[i],frac);
-	}
-	if( millis() < 5000 ) {
-		FastLED.setBrightness( scale8( Brightness.currentValue(), (millis() * 256) / 5000));
-	} else {
-		FastLED.setBrightness(Brightness.currentValue());
-	}
-
-	FastLED.show(); 
 	return 0;
 }
 #endif
@@ -248,26 +182,28 @@ int backbufferBlender(unsigned long now, void* userdata)
 void dumpParameters()
 {
 	for(int i=0;i<parameterArraySize;i++){
-		Serial << parameterArray[i].code<<" "<<parameterArray[i].value<<endl;
+		Serial << parameterArray[i].code<<" "<<parameterArray[i].value<<" ("<<parameterArray[i].maxValue<<")"<<endl;
 	}
 }
 
-
-void setup() 
+void setup()
 {
 	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
 	FastLED.setBrightness( BRIGHTNESS );
 	FastLED.show();
 	Serial.begin(115200);
 
+	// tweak global parameter max for Programs and pallettes
+	parameterArray[0].maxValue = maxPrograms-1;
+	parameterArray[2].maxValue = numberOfPalettes-1;
 
 	pinMode(LED_BLINK_PIN, INPUT);
 	currentState = stateNone;
 
 	initEncoderUI();
-	
+
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
-	
+
 	//	Serial << "LedBuffer: "<<(unsigned long)leds<<" Backbuffer: "<<(unsigned long) led_backbuffer<<endl;
 
 	EffectProgram.initTo(START_PROG);
@@ -279,8 +215,12 @@ void setup()
 #if USE_DOUBLE_BUFFER
 	taskQueue.scheduleFunction(backbufferBlender,NULL,"BBB ",0,66);
 #endif
-#if DEBUG_BLINK  
+#if DEBUG_BLINK
 	taskQueue.scheduleFunction(blinker,NULL,"BLNK",1000,1000);
+#endif
+
+#if USE_EFFECT_SCEDULER
+	taskQueue.scheduleFunction(effectRunner,NULL,"EFFC",0,Delay.currentValue());
 #endif
 
 	effectStarted = true;
@@ -295,8 +235,8 @@ void setup()
 #if USE_SERIAL_COMMANDS
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
 #endif
+
 	Serial <<" Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
-	dumpParameters();
 }
 
 void loop()
@@ -307,7 +247,7 @@ void loop()
 	//
   // switch program Slot 0
 	//
-	if(EffectProgram.hasChanged()){ 
+	if(EffectProgram.hasChanged()){
 		int16_t nextP = EffectProgram.nextValue();
 		int16_t currentP = EffectProgram.currentValue();
 #if DEBUG_LOOP
@@ -315,16 +255,16 @@ void loop()
 #endif
 
 		effectStarted = true;
-		Delay =effectPrograms[nextP].delay;
+		Delay.initTo(effectPrograms[nextP].delay);
 		taskQueue.scheduleRemoveFunction(effectPrograms[currentP].id);
-		taskQueue.scheduleFunction(effectPrograms[nextP].function,effectPrograms[nextP].userData,effectPrograms[nextP].id,Delay.nextValue(),Delay.nextValue());
+		taskQueue.scheduleFunction(effectPrograms[nextP].function,effectPrograms[nextP].userData,effectPrograms[nextP].id,Delay.currentValue(),Delay.currentValue());
 		EffectProgram.syncValue();
 #if DEBUG_LOOP
 		Serial << " PQueue" << taskQueue._itemsInQueue<<endl;
 #endif
 		parameterChanged = true;
 	}
-	
+
 	//
 	// switch delay (Slot 1)
 	//
@@ -333,6 +273,9 @@ void loop()
 		Serial<<"Delay from:"<<Delay.currentValue()<<" To:"<<Delay.nextValue()<<" ";
 #endif
 		taskQueue.scheduleChangeFunction(effectPrograms[EffectProgram.currentValue()].id,Delay.nextValue(),Delay.nextValue());
+#if USE_EFFECT_SCEDULER
+		taskQueue.scheduleChangeFunction("EFFC",Delay.nextValue(),Delay.nextValue());
+#endif
 		Delay.syncValue();
 #if DEBUG_LOOP
 		Serial << "DQueue" << taskQueue._itemsInQueue<<endl;
@@ -345,6 +288,9 @@ void loop()
 	if(Palette.hasChanged()){
 		parameterChanged = true;
 		Palette.syncValue();
+#if DEBUG_LOOP
+		Serial << "Palette changed to "<<Palette.currentValue()<<endl;
+#endif
 	}
 
 	//
@@ -352,7 +298,7 @@ void loop()
 	//
 	if(Brightness.hasChanged()){
 #if DEBUG_LOOP
-		Serial <<"B:"<<currentBrightness<<endl;
+		Serial <<"B:"<<Brightness.currentValue()<<endl;
 #endif
 		FastLED.setBrightness(Brightness.nextValue());
 		Brightness.syncValue();
@@ -366,27 +312,17 @@ void loop()
 #endif
 	}
 	{
-		bool t = noiseSpeedN.syncValue();
-		t = t || noiseScaleN.syncValue();
-		t = t || noiseHueSpeedN.syncValue();
-		t = t || plasmaCircleRadiusN.syncValue();
-		t = t || plasmaEffectMaskN.syncValue();
-		t = t || BlendParam.syncValue();
-		if(t){
+		bool t = false;
+		for(int i=4;i<parameterArraySize-1;++i){
+			t = t || parameterArray[i].value.syncValue();
+		}
+		if(t || parameterChanged){
+			Serial << "---"<<endl;
 			dumpParameters();
+			parameterChanged = false;
+			t= false;
 		}
 	}
 	taskQueue.Run(millis());
-	if(parameterChanged){
-		dumpParameters();
-	}
 	delay(2);
 }
-
-
-
-
-
-
-
-

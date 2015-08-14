@@ -2,7 +2,7 @@
 /************************
 PLASMA
 ************************/
-#define PSCALE (noiseScaleN.currentValue())
+#define PSCALE (genericScale1.currentValue())
 #define KSCALE (10.0)
 int plasma2(unsigned long now, void* userdata)
 
@@ -14,15 +14,15 @@ int plasma2(unsigned long now, void* userdata)
 	static int paletteShift = 0;
 
 	if(effectStarted){
-		noiseScaleN.initTo(3);
-		noiseSpeedN.initTo(1);
-		noiseHueSpeedN.initTo(0);
-		plasmaCircleRadiusN.initTo(display.displayWidth()/2);
+		genericScale1.initTo(3);
+		genericSpeed1.initTo(1);
+		genericSpeed2.initTo(0);
+		genericParam1.initTo(display.displayWidth()/2);
 		effectStarted=false;
 	}
 
-	int xOffset = int(0 + (plasmaCircleRadiusN.currentValue() * cos(k*KSCALE ))) ;
-	int yOffset = int(0 + (plasmaCircleRadiusN.currentValue() *-sin(k*KSCALE )));
+	int xOffset = int(0 + (genericParam1.currentValue() * cos(k*KSCALE ))) ;
+	int yOffset = int(0 + (genericParam1.currentValue() *-sin(k*KSCALE )));
 //	Serial <<"k:"<<k<<" Xo: "<<xOffset<<" ";
 	center.x+=xOffset;
 	center.y+=yOffset;
@@ -34,22 +34,22 @@ int plasma2(unsigned long now, void* userdata)
 			int div = 0;
 			int colorIndex=0;
 			// Vertical Stripes
-			if(plasmaEffectMaskN.currentValue() & VerticalEffect){
+			if(genericEffectMask1.currentValue() & VerticalEffect){
 				colorIndex += int(128.0 + (128.0 * sin( (float)(current.x+xOffset) / (PSCALE*1) )));div++;
 			}	
 
 			// Horzontal Stripes
-			if(plasmaEffectMaskN.currentValue() & HorizontalEffect){
+			if(genericEffectMask1.currentValue() & HorizontalEffect){
 				colorIndex += int(128.0 + (128.0 * sin( (current.y+yOffset) / (PSCALE*1)  )));div++;
 			}
 
 			// Diagonal Stripes
-			if(plasmaEffectMaskN.currentValue() & DiagonalEffect){
+			if(genericEffectMask1.currentValue() & DiagonalEffect){
 				colorIndex += int(128.0 + (128.0 * sin((current.x+yOffset + current.y+xOffset) / (PSCALE*1) )));div++;
 			}
 
 			// Circle
-			if(plasmaEffectMaskN.currentValue() & CircleEffect){
+			if(genericEffectMask1.currentValue() & CircleEffect){
 				colorIndex += int(128.0 + (128.0 * sin(center.distanceTo(current) / (PSCALE*1) )));div++;
 			}
 
@@ -60,9 +60,9 @@ int plasma2(unsigned long now, void* userdata)
 	}
 	//	Serial<<"Center: ("<<center.x<<", "<<center.y<<")"<<endl;
 		display.setPixel(center,CRGB::White);
-	paletteShift+=noiseHueSpeedN.currentValue();
+	paletteShift+=genericSpeed2.currentValue();
 	paletteShift%=256;
-	k+=(M_PI/360.0)*noiseSpeedN.currentValue()/10.0;
+	k+=(M_PI/360.0)*genericSpeed1.currentValue()/10.0;
 	if(k<0){
 		k=360;
 	}

@@ -29,7 +29,7 @@ int serialReader(unsigned long now, void* userData)
 			memset(serial_buffer,0x00,SERIAL_BUFFER_LENGTH);
 			currentChar = 0;
 		}
-		
+
 	}
 	return 0;
 }
@@ -85,13 +85,14 @@ void commandProcessor(char* line_buffer){
 #if DEBUG_COMMAND
 			Serial << "Clamp to "<<myValue<<endl;
 #endif
-		} 
+		}
 		if(myValue>parameterArray[parameterSlot].maxValue){
 			myValue = parameterArray[parameterSlot].maxValue;
 #if DEBUG_COMMAND
 			Serial << "Clamp to "<<myValue<<endl;
 #endif
 		}
-		parameterArray[parameterSlot].value = myValue;	
+		parameterArray[parameterSlot].value = myValue;
+		Serial <<"+++++"<<endl;
 	}while(*currentChar != 0);
 }

@@ -18,7 +18,7 @@ public:
 	{
 		_tempValue = newValue._value;
 	}
-	
+
 	T GetValue(){
 		return _value;
 	}
@@ -36,7 +36,7 @@ public:
 		this->_value = a;
 		this->_tempValue = a;
 	}
-	
+
 	T currentValue(){return _value;}
 	T nextValue(){return _tempValue;}
 
@@ -53,7 +53,7 @@ public:
 		return a;
 	}
 	friend Print &operator<<(Print &output, Parameter<T> d){
-		output<<"("<<d.currentValue()<<")";
+		output<<""<<d.currentValue()<<"";
 		return output;
 	}
 };
@@ -62,7 +62,7 @@ typedef struct {
 	char code;					// char, naming the parameter
 	int16_t min;				// min value of the parameter
 	int16_t max;				// max value of the parameter
-	int8_t  step;				// value change for 
+	int8_t  step;				// value change for
 	int16_t *value;
 	volatile int16_t *tempValue;
 } parameter_t;

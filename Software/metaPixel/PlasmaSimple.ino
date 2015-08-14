@@ -44,8 +44,8 @@ int plasmaSimple(unsigned long now, void* userdata)
 #endif
 
 	PlasmaData_t *data = (PlasmaData_t*) userdata;
-	uint8_t w = display.displayWidth() * noiseScaleN.currentValue();
-	uint8_t h = display.displayHeight() * noiseScaleN.currentValue();
+	uint8_t w = display.displayWidth() * genericScale1.currentValue();
+	uint8_t h = display.displayHeight() * genericScale1.currentValue();
 
 
 	int32_t yHueDelta32 = ((int32_t)cos16( frame * (27/1) ) * (data->wBase / w));
@@ -54,7 +54,7 @@ int plasmaSimple(unsigned long now, void* userdata)
 #if !USE_DOUBLE_BUFFER
 	FastLED.show();
 #endif
-	frame +=noiseHueSpeedN.currentValue();
+	frame +=genericSpeed2.currentValue();
 #if DEBUG_EFFECTS
 	Serial << "Took: "<<(millis()-lastCall)<<" millisec "<<frame<<endl;  
 #endif

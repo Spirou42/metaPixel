@@ -6,7 +6,6 @@
 
 #include "mPixel.h"
 
-
 #define MODULES_WIDTH   5												// number of modules in X
 #define MODULES_HEIGHT  4											// number of modules in Y
 #define MODULE_WIDTH    4												// width of module in pixels
@@ -30,7 +29,7 @@ protected:
 public:
 	mDisplay():moduleWidth(MODULE_WIDTH),moduleHeight(MODULE_HEIGHT),width(MODULES_WIDTH),height(MODULES_HEIGHT) {};
 	mDisplay(CRGB* buffer, CRGB* bbuff=NULL, uint8_t w=2,uint8_t h=2);/*:moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff);*/
-	
+
 	uint16_t XY(uint8_t x, uint8_t y){ return this->XY(MPPixel(x,y));};
 
 	uint16_t XYModule( uint8_t x, uint8_t y);
@@ -48,14 +47,14 @@ public:
 
 	void clearAll();
 	void fill(CRGB color);
-	
+
 	void flush();
 	void setBrightness(uint8_t b);
 	uint8_t brightness();
 	void setResolution(displayResolution res);
 	displayResolution resolution(){return reso;};
-	
-	// Bresenham line algorythm 
+
+	// Bresenham line algorythm
 	void line(MPPixel st, MPPixel en, CRGB color);
 private:
 	void _setPixel(MPPixel coord, CRGB color);

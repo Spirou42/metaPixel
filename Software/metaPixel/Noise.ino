@@ -13,15 +13,15 @@ uint8_t noiseP[NOISE_DIMENSION][NOISE_DIMENSION];
 
 void fillnoise8() {
 	for(int i = 0; i < NOISE_DIMENSION; i++) {
-		int ioffset = noiseScaleN.currentValue() * i;
+		int ioffset = genericScale1.currentValue() * i;
 		for(int j = 0; j < NOISE_DIMENSION; j++) {
-			int joffset = noiseScaleN.currentValue() * j;
+			int joffset = genericScale1.currentValue() * j;
 			noiseD[i][j] = inoise8(noiseX + ioffset,noiseY + joffset,noiseZ);
 			noiseP[i][j] = inoise8(noiseY+joffset,noiseX+ioffset,noiseZ);
 			
 		}
 	}
-	noiseZ += noiseSpeedN.currentValue();
+	noiseZ += genericSpeed1.currentValue();
 }
 
 int noise(unsigned long now, void* userdata)
@@ -32,9 +32,9 @@ int noise(unsigned long now, void* userdata)
 		noiseX = random16();
 		noiseY = random16();
 		noiseZ = random16();
-		noiseSpeedN.initTo(2);
-		noiseScaleN.initTo(50);
-		noiseHueSpeedN.initTo(0);
+		genericSpeed1.initTo(2);
+		genericScale1.initTo(50);
+		genericSpeed2.initTo(0);
 	}
 	fillnoise8();
 
@@ -58,7 +58,7 @@ int noise(unsigned long now, void* userdata)
 			// leds[XY(i,j)] = CHSV(ihue + (noise[j][i]>>2),255,noise[i][j]);
 		}
 	}
-	ihue+=noiseHueSpeedN.currentValue();
+	ihue+=genericSpeed2.currentValue();
 	display.flush();
 	return 0;
 }

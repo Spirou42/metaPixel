@@ -1,4 +1,5 @@
 #if USE_WHITE
+
 /*****************************************
 White
 ****************************************/
@@ -24,8 +25,11 @@ int white(unsigned long now,void* userdata)
 		Serial << "R("<<DMXBlock->red<<") G("<<DMXBlock->green<<") B("<<DMXBlock->blue<<")"<<endl;
 		Serial << "Macro("<<DMXBlock->macro<<") Strobe("<<DMXBlock->strobe<<") Mode("<<DMXBlock->mode<<") Master("<<DMXBlock->master<<")"<<endl;
 	}
-	
+
 	display.flush();
 	return 1;
 }
+
+
+
 #endif
