@@ -803,31 +803,12 @@ Low profile connectors, straight&lt;p&gt;
 <text x="-2.54" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="GND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
 </symbol>
-<symbol name="VCC">
-<wire x1="1.27" y1="-1.905" x2="0" y2="0" width="0.254" layer="94"/>
-<wire x1="0" y1="0" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
-<text x="-2.54" y="-2.54" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="VCC" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
 </symbols>
 <devicesets>
 <deviceset name="GND" prefix="GND">
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
 <gate name="1" symbol="GND" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="VCC" prefix="P+">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="VCC" symbol="VCC" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -852,8 +833,6 @@ Low profile connectors, straight&lt;p&gt;
 <part name="U$1" library="Teensy3.0" deviceset="TEENSY_3.0_BASIC" device=""/>
 <part name="SV1" library="con-harting-ml" deviceset="ML20" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
-<part name="P+1" library="supply1" deviceset="VCC" device=""/>
-<part name="P+2" library="supply1" deviceset="VCC" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -863,8 +842,6 @@ Low profile connectors, straight&lt;p&gt;
 <instance part="U$1" gate="G$1" x="38.1" y="43.18"/>
 <instance part="SV1" gate="1" x="142.24" y="45.72"/>
 <instance part="GND1" gate="1" x="144.78" y="17.78"/>
-<instance part="P+1" gate="VCC" x="185.42" y="35.56" rot="R270"/>
-<instance part="P+2" gate="VCC" x="68.58" y="58.42" rot="R270"/>
 </instances>
 <busses>
 </busses>
@@ -874,11 +851,6 @@ Low profile connectors, straight&lt;p&gt;
 <pinref part="U$1" gate="G$1" pin="14/A0"/>
 <wire x1="53.34" y1="22.86" x2="66.04" y2="22.86" width="0.1524" layer="91"/>
 <label x="55.88" y="22.86" size="1.4224" layer="95"/>
-</segment>
-<segment>
-<pinref part="SV1" gate="1" pin="10"/>
-<wire x1="134.62" y1="43.18" x2="119.38" y2="43.18" width="0.1524" layer="91"/>
-<label x="121.92" y="43.18" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="A_BCLK" class="0">
@@ -894,23 +866,12 @@ Low profile connectors, straight&lt;p&gt;
 <wire x1="22.86" y1="38.1" x2="10.16" y2="38.1" width="0.1524" layer="91"/>
 <label x="10.16" y="38.1" size="1.4224" layer="95"/>
 </segment>
-<segment>
-<pinref part="SV1" gate="1" pin="8"/>
-<wire x1="134.62" y1="40.64" x2="119.38" y2="40.64" width="0.1524" layer="91"/>
-<label x="121.92" y="40.64" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="MISO" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="12"/>
 <wire x1="22.86" y1="25.4" x2="10.16" y2="25.4" width="0.1524" layer="91"/>
 <label x="10.16" y="25.4" size="1.4224" layer="95"/>
-</segment>
-<segment>
-<pinref part="SV1" gate="1" pin="9"/>
-<wire x1="149.86" y1="43.18" x2="162.56" y2="43.18" width="0.1524" layer="91"/>
-<label x="149.86" y="43.18" size="1.778" layer="95"/>
-<label x="149.86" y="43.18" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="A_LRCLK" class="0">
@@ -989,41 +950,6 @@ Low profile connectors, straight&lt;p&gt;
 <wire x1="144.78" y1="25.4" x2="144.78" y2="20.32" width="0.1524" layer="91"/>
 <junction x="144.78" y="25.4"/>
 <pinref part="GND1" gate="1" pin="GND"/>
-</segment>
-</net>
-<net name="VCC" class="0">
-<segment>
-<pinref part="SV1" gate="1" pin="4"/>
-<pinref part="SV1" gate="1" pin="3"/>
-<wire x1="134.62" y1="35.56" x2="149.86" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="149.86" y1="35.56" x2="182.88" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="P+1" gate="VCC" pin="VCC"/>
-</segment>
-<segment>
-<pinref part="U$1" gate="G$1" pin="VIN"/>
-<wire x1="53.34" y1="58.42" x2="66.04" y2="58.42" width="0.1524" layer="91"/>
-<pinref part="P+2" gate="VCC" pin="VCC"/>
-</segment>
-</net>
-<net name="LCD_LED" class="0">
-<segment>
-<pinref part="SV1" gate="1" pin="5"/>
-<wire x1="149.86" y1="38.1" x2="162.56" y2="38.1" width="0.1524" layer="91"/>
-<label x="149.86" y="38.1" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="!LCD_CS" class="0">
-<segment>
-<pinref part="SV1" gate="1" pin="7"/>
-<wire x1="149.86" y1="40.64" x2="162.56" y2="40.64" width="0.1524" layer="91"/>
-<label x="149.86" y="40.64" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="!LCD_RST" class="0">
-<segment>
-<pinref part="SV1" gate="1" pin="6"/>
-<wire x1="134.62" y1="38.1" x2="119.38" y2="38.1" width="0.1524" layer="91"/>
-<label x="121.92" y="38.1" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
