@@ -26,10 +26,11 @@ void Effect::setMaxValueFor(newParameter_t *someValue,int16_t maxVal)
 int effectRunner(unsigned long now, void* userdata)
 {
 	static uint16_t lastP = 0;
-	uint16_t t = EffectProgram.currentValue()%3;
+	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
 	Effect *effect = effectProgramsN[t].program;
 	if(t != lastP){
 		lastP = t;
+		Serial << "Program: "<< effect->getName()<<endl;
 		effect->initializeEffect();
 	}
 	effect->runEffect(now);

@@ -1,5 +1,8 @@
+/**
+	*	Include file for the legacy UI-Hardware
+	*/
 
-//#include "Encoder.h"
+#if USE_LEGACY_MENU
 #include "Parameter.h"
 
 typedef enum {
@@ -9,3 +12,4 @@ typedef enum {
 	stateCancel
 }ballState_t;
 
+#endif

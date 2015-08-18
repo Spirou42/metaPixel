@@ -11,12 +11,21 @@
 #include <TeensyDmx.h>
 #include <rdm.h>
 
+/** Feature Switsches **/
+#define USE_TEENSY_AUDIO 1
+#define USE_LEGACY_MENU (!USE_TEENSY_AUDIO)
+#define USE_EFFECT_SCEDULER 1
+#define USE_OLD_EFFECTS !USE_EFFECT_SCEDULER
+#define USE_SERIAL_COMMANDS 1
+#define USE_DOUBLE_BUFFER 1
+
 
 /** Local Libraries **/
 #include "Types.h"
-#include "Noise.h"
+#if USE_LEGACY_MENU
 #include "Menu.h"
 #include "Encoder.h"
+#endif
 #include "mPixel.h"
 #include "mDisplay.h"
 #define NUM_LEDS (DISPLAY_WIDTH * DISPLAY_HEIGHT)
@@ -25,11 +34,12 @@
 #include "Parameter.h"
 #include "EffectWhite.h"
 #include "EffectFire.h"
+#include "EffectNoise.h"
+#include "EffectPlasma.h"
+#include "EffectPlasmaSimple.h"
+#include "EffectLine.h"
 
-/** Feature Switsches **/
-#define USE_EFFECT_SCEDULER 1
-#define USE_SERIAL_COMMANDS 1
-#define USE_DOUBLE_BUFFER 1
+
 
 /** Configuration  & global defaults**/
 #define COLOR_ORDER       GRB
@@ -42,18 +52,24 @@
 #define DMXSpan           7
 
 /** Hardware  **/
+#if USE_LEGACY_MENU
 #define ENC_PULSE_PIN             6
 #define ENC_STEP_PIN              5
 #define ENC_DIR_PIN               4
 #define LC_DATA_PIN               3
 #define LC_CLK_PIN                2
 #define LC_CS_PIN                 1
-#define LED_PIN                   0
+#endif
+
+#if !USE_TEENSY_AUDIO
 #define LED_BLINK_PIN            13
+#endif
+#define LED_PIN                   4
+
 
 /** DEBUG CONFIGURATION **/
 #define DEBUG (1)
-#define DEBUG_BLINK   (1 & DEBUG)
+#define DEBUG_BLINK   (1 & DEBUG & !USE_TEENSY_AUDIO)
 #define DEBUG_EFFECTS (0 & DEBUG)
 #define DEBUG_ENCODER (0 & DEBUG)
 #define DEBUG_MENU    (0 & DEBUG)
@@ -70,7 +86,7 @@ extern mDisplay display;          ///< global display class
 
 extern TeensyDmx DMX;             ///< DMX Interface
 extern Queue taskQueue;           ///< task queue scheduler
-
+extern CRGBPalette16 colorPalettes[];
 /** global effects parameter **/
 
 extern Parameter<int16_t>EffectProgram;     ///< current running effect program

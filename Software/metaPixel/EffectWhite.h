@@ -14,7 +14,7 @@ public:
 	EffectWhite():Effect("White"),colorIndexParam(NULL){};
 
 	EffectWhite(newParameter_t* colIdxPar):Effect("White"),colorIndexParam(colIdxPar){};
-	virtual void initializeEffect(){setMaxValueFor(colorIndexParam,255);};
+	virtual void initializeEffect();
 	virtual void runEffect(unsigned long now);
 
 };

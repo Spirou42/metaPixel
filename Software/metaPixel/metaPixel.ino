@@ -1,11 +1,11 @@
 #define FASTLED_INTERNAL
+#define FASTLED_ALLOW_INTERRUPTS 0
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
 #include <TeensyDmx.h>
 #include <rdm.h>
 #include <Arduino.h>
-#include "EffectWhite.h"
 #include "metaPixel.h"
 
 
@@ -50,7 +50,9 @@ struct RDMINIT rdmData {
 };
 TeensyDmx DMX(Serial3, &rdmData, 30);
 Queue taskQueue;
+#if USE_LEGACY_MENU
 ballState_t currentState;
+#endif
 /**********************************************************
 **
 ** Parameters
@@ -90,37 +92,6 @@ CRGBPalette16 colorPalettes[]={
 };
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
-#if USE_PLASMA
-PlasmaData_t normalPla = {false,false,1,400,400,15};
-PlasmaData_t mirrowPla = {true,false,1,200,200,15};
-PlasmaData_t scalePla 	= {false,false,1,100,100,15};
-PlasmaData_t biggerPla = {false,false,1,600,600,15};
-#endif
-
-effectProgram_t effectPrograms[]  ={
-#if USE_WHITE
-	{"WHIT",white,100,NULL},
-#endif
-#if USE_NOISE
-	{"NOIS",noise,150,NULL},
-#endif
-#if USE_LINES
-	{"LINE",line,100,NULL},
-#endif
-#if USE_PLASMA
-	{"PLSA",plasma2,600,(void*)&normalPla},
-	{"PLSM",plasmaSimple,300,(void*)&mirrowPla},
-	{"PLSS",plasmaSimple,250,(void*)&scalePla},
-	{"PLSG",plasmaSimple,300,(void*)&biggerPla},
-#endif
-#if USE_FIRE
-	{"FIRE",fire,60,NULL}
-#endif
-};
-
-
-uint8_t maxPrograms = sizeof(effectPrograms) / sizeof(effectProgram_t);
-
 
 
 newParameter_t parameterArray[] = {
@@ -142,16 +113,25 @@ newParameter_t parameterArray[] = {
 /* 11 */	newParameter_t('M',(int16_t)0,(int16_t)255,genericEffectMask1),
 /* 12 */	newParameter_t('N',(int16_t)0,(int16_t)255,genericEffectMask2),
 };
+typedef enum{param_P,param_D,param_C,param_B,param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
+
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(newParameter_t);
 
-EffectWhite whiteEffect = EffectWhite(&(parameterArray[9]));
-EffectFire  fireEffect = EffectFire(&parameterArray[9],&parameterArray[10]  );
+EffectWhite whiteEffect = EffectWhite(&(parameterArray[param_O]));
+EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[param_H]  );
+EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[param_U],&parameterArray[param_V]);
+EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
+EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
+EffectLine lineEffect = EffectLine();
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
 	 	{&whiteEffect,1000,NULL},
-		{&fireEffect,1000,NULL},
-		{&whiteEffect,1000,NULL}
+		{&noiseEffect,150,NULL},
+		{&plasmaEffect,150,NULL},
+		{&simplePlasma,150,NULL},
+		{&lineEffect,150,NULL},
+		{&fireEffect,60,NULL},
 };
 
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
@@ -165,7 +145,7 @@ uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 **
 **********************************************************/
 
-#if DEBUG_BLINK
+#if DEBUG_BLINK && !USE_TEENSY_AUDIO
 int blinker(unsigned long now, void* userData)
 {
 	static boolean state = HIGH;
@@ -194,13 +174,16 @@ void setup()
 	Serial.begin(115200);
 
 	// tweak global parameter max for Programs and pallettes
-	parameterArray[0].maxValue = maxPrograms-1;
+	parameterArray[0].maxValue = newMaxPrograms-1;
 	parameterArray[2].maxValue = numberOfPalettes-1;
 
+#if USE_DEBUG_BLINK
 	pinMode(LED_BLINK_PIN, INPUT);
+#endif
+#if USE_LEGACY_MENU
 	currentState = stateNone;
-
 	initEncoderUI();
+#endif
 
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
 
@@ -208,13 +191,14 @@ void setup()
 
 	EffectProgram.initTo(START_PROG);
 	int16_t cP = EffectProgram.currentValue();
-	Delay.initTo(effectPrograms[cP].delay);
+	Delay.initTo(effectProgramsN[cP].delay);
 	Brightness.initTo(BRIGHTNESS);
 	Palette.initTo(0);
-	taskQueue.scheduleFunction(effectPrograms[cP].function,effectPrograms[cP].userData,effectPrograms[cP].id,0,Delay.currentValue());
+
 #if USE_DOUBLE_BUFFER
 	taskQueue.scheduleFunction(backbufferBlender,NULL,"BBB ",0,66);
 #endif
+
 #if DEBUG_BLINK
 	taskQueue.scheduleFunction(blinker,NULL,"BLNK",1000,1000);
 #endif
@@ -224,18 +208,18 @@ void setup()
 #endif
 
 	effectStarted = true;
-
+#if USE_LEGACY_MENU
 	encoderClickCallback = clickHandler;
-
 	lc.clearDisplay(0);
+#endif
 	randomSeed(millis());
 	delay(1000);
 	Serial<<"metaPixel initialized"<<endl;
 	Serial<<"Parameters: "<<parameterArraySize<<endl;
+	Serial<<"Programms: "<<newMaxPrograms<<endl;
 #if USE_SERIAL_COMMANDS
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
 #endif
-
 	Serial <<" Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
 }
 
@@ -253,11 +237,8 @@ void loop()
 #if DEBUG_LOOP
 		Serial <<"CP: "<< currentP<<" NP:"<<nextP<<" ";
 #endif
-
 		effectStarted = true;
-		Delay.initTo(effectPrograms[nextP].delay);
-		taskQueue.scheduleRemoveFunction(effectPrograms[currentP].id);
-		taskQueue.scheduleFunction(effectPrograms[nextP].function,effectPrograms[nextP].userData,effectPrograms[nextP].id,Delay.currentValue(),Delay.currentValue());
+		Delay = effectProgramsN[nextP].delay;
 		EffectProgram.syncValue();
 #if DEBUG_LOOP
 		Serial << " PQueue" << taskQueue._itemsInQueue<<endl;
@@ -272,7 +253,6 @@ void loop()
 #if DEBUG_LOOP
 		Serial<<"Delay from:"<<Delay.currentValue()<<" To:"<<Delay.nextValue()<<" ";
 #endif
-		taskQueue.scheduleChangeFunction(effectPrograms[EffectProgram.currentValue()].id,Delay.nextValue(),Delay.nextValue());
 #if USE_EFFECT_SCEDULER
 		taskQueue.scheduleChangeFunction("EFFC",Delay.nextValue(),Delay.nextValue());
 #endif

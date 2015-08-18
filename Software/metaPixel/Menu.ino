@@ -1,7 +1,8 @@
 /*
-* this is a simple menu using the current LC / Encoder code 
+* this is a simple menu using the current LC / Encoder code
 */
-#include "Noise.h"
+
+#if USE_LEGACY_MENU
 
 int16_t currentSelectedMenu=0;
 volatile int16_t nextSelectedMenu = currentSelectedMenu;
@@ -41,7 +42,7 @@ void displayMenu()
 	if (menuStart<0){
 		menuStart = 0;
 	}
-	
+
 	for(uint8_t menuIndex=menuStart;menuIndex<parameterArraySize;menuIndex++){
 		lc.setChar(0,lcdPos--,parameterArray[menuIndex].code, currentSelectedMenu == menuIndex);
 	}
@@ -123,5 +124,4 @@ void clickHandler(uint8_t clicks, boolean wasLongClick)
 		break;
 	}
 }
-
-
+#endif

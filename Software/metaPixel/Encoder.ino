@@ -3,6 +3,7 @@ code for encoder and 7 Segment LED UI board
 LED Segment display uses MAX7219
 */
 
+#if USE_LEGACY_MENU
 
 #include <LedControl.h>
 #include <Streaming.h>
@@ -32,7 +33,7 @@ unsigned long pulseEndTime;
 LedControl lc = LedControl(LC_DATA_PIN,LC_CLK_PIN,LC_CS_PIN,1);
 boolean state = LOW;
 
-void initEncoderUI() { 
+void initEncoderUI() {
 #if DEBUG_ENCODER
 	Serial << "Init encoderUI"<<endl;
 #endif
@@ -42,16 +43,16 @@ void initEncoderUI() {
 	lc.clearDisplay(0);
 
 	//encoderPin Step
-	pinMode(ENC_STEP_PIN, INPUT); 
+	pinMode(ENC_STEP_PIN, INPUT);
 	digitalWrite(ENC_STEP_PIN,HIGH);
 
 	// encoderPin Direction
-	pinMode(ENC_DIR_PIN, INPUT); 
+	pinMode(ENC_DIR_PIN, INPUT);
 	digitalWrite(ENC_DIR_PIN,HIGH);
 
 	// encoderPin Pulse
 	pinMode(ENC_PULSE_PIN,INPUT);
-	digitalWrite(ENC_PULSE_PIN,HIGH);          
+	digitalWrite(ENC_PULSE_PIN,HIGH);
 
 	attachInterrupt(ENC_PULSE_PIN, doPulse,CHANGE);
 	attachInterrupt(ENC_STEP_PIN, doEncoder, FALLING);  // encoder pin on interrupt 0 - pin 3
@@ -60,11 +61,11 @@ void initEncoderUI() {
 	}
 	encoderValue = encoderMinValue;
 //  printNumber(encoderPos);
-#if DEBUG_ENCODER  
+#if DEBUG_ENCODER
 	Serial << "EncoderUI initialized"<<endl;                // a personal quirk
 #endif
 	writeMessage();
-} 
+}
 
 void writeMessage() {
 	unsigned long delaytime=250;
@@ -77,7 +78,7 @@ void writeMessage() {
 	lc.setChar(0,0,'1',false);
 	delay(delaytime);
 	lc.clearDisplay(0);
-} 
+}
 
 void doPulse()
 {
@@ -116,7 +117,7 @@ void doPulse()
 	delay(10);
 	attachInterrupt(ENC_PULSE_PIN, doPulse,CHANGE);
 	interrupts();
-} 
+}
 
 void doEncoder(){
 //	static unsigned long lastTick = 0;
@@ -133,12 +134,12 @@ void doEncoder(){
 	}
 	Serial << "TickTime: "<<tickTime<<"("<<tickMul<<")"<<endl;*/
 //	lastTick = millis();
-	
-	
+
+
 	if (digitalRead(ENC_DIR_PIN) == HIGH) {  // check channel B to see which way
 																						// encoder is turning
 		*encoderPos = *encoderPos - encoderStep*tickMul;         // CCW
-	} 
+	}
 	else {
 		*encoderPos = *encoderPos + encoderStep*tickMul;         // CW
 	}
@@ -163,9 +164,9 @@ void printNumber(int v) {
 	int ones;
 	int tens;
 	int hundreds;
-	boolean negative = false;	
+	boolean negative = false;
 
-	if( (v < -999) || (v > 999)) 
+	if( (v < -999) || (v > 999))
 		return;
 	if(v<0) {
 		negative=true;
@@ -175,9 +176,9 @@ void printNumber(int v) {
 	v=v/10;
 	tens=v%10;
 	v=v/10;
-	hundreds=v;			
+	hundreds=v;
 	if(negative) {
-			//print character '-' in the leftmost column	
+			//print character '-' in the leftmost column
 		lc.setChar(0,3,'-',false);
 	}
 	else {
@@ -189,3 +190,5 @@ void printNumber(int v) {
 	lc.setDigit(0,1,(byte)tens,false);
 	lc.setDigit(0,0,(byte)ones,false);
 }
+
+#endif
