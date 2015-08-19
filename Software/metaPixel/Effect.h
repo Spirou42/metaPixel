@@ -17,8 +17,9 @@ public:
 	Effect():name(""){};
 	Effect(const char *p):name(p){};
 
-	virtual void initializeEffect()=0; ///< book keeping on startup initialize max and minvalues
-	virtual void runEffect(unsigned long now){Serial <<"bb";};
+	virtual void startEffect(){}; ///< book keeping on startup initialize max and minvalues
+	virtual void frame(unsigned long now)=0;
+	virtual void stopEffect(){};
 	const char * getName(){return name;}
 	int16_t getValueFor(newParameter_t *someValue,int16_t defaultValue=0);
 	void setMaxValueFor(newParameter_t *someValue,int16_t maxVal );

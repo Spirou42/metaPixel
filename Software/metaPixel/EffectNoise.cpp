@@ -18,7 +18,7 @@ void EffectNoise::fillnoise8() {
 	noiseZ += noiseSpeed->value.currentValue();
 }
 
-void EffectNoise::initializeEffect()
+void EffectNoise::startEffect()
 {
   noiseX = random16();
   noiseY = random16();
@@ -33,7 +33,7 @@ void EffectNoise::initializeEffect()
   Palette=(0);
 }
 
-void EffectNoise::runEffect(unsigned long now)
+void EffectNoise::frame(unsigned long now)
 {
   fillnoise8();
   for(int i = 0; i < display.displayWidth(); i++) {

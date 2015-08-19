@@ -12,8 +12,8 @@ class EffectLine:public Effect
 {
 public:
   EffectLine():Effect("Line"){};
-  virtual void initializeEffect();
-  virtual void runEffect(unsigned long now);
+  virtual void startEffect();
+  virtual void frame(unsigned long now);
 protected:
 };
 

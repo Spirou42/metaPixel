@@ -20,7 +20,7 @@ public:
   newParameter_t *plasmaMask;
   EffectPlasma():Effect("Plasma"),plasmaScale(NULL),plasmaSpeed(NULL),hueSpeed(NULL),plasmaRadius(NULL),plasmaMask(NULL){};
   EffectPlasma(newParameter_t* pScale, newParameter_t* pSpeed, newParameter_t* pRadius, newParameter_t* hSpeed, newParameter_t *mask):Effect("Plasma"),plasmaScale(pScale),plasmaSpeed(pSpeed),hueSpeed(hSpeed),plasmaRadius(pRadius),plasmaMask(mask){};
-  virtual void initializeEffect();
-  virtual void runEffect(unsigned long now);
+  virtual void startEffect();
+  virtual void frame(unsigned long now);
 };
 #endif

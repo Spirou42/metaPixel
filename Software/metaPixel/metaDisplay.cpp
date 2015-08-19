@@ -160,6 +160,37 @@ void metaDisplay::setPixel(MPPixel coord, CRGB color)
 	_setPixel(coord,color);
 }
 
+CRGB metaDisplay::getPixel(MPPixel coord)
+{
+	uint16_t offset = XY(coord);
+	if(backbuffer){
+		return backbuffer[offset];
+	}else{
+		return ledBuffer[offset];
+	}
+}
+
+
+CRGB metaDisplay::getPixel(uint16_t x, uint16_t y){
+	MPPixel k(x,y);
+	return getPixel(k);
+}
+
+void metaDisplay::scrollDown(uint8_t lines, bool clear)
+{
+	for(uint16_t y = lines; y<displayHeight();y++){
+		for(uint16_t x = 0; x<displayWidth();++x){
+			setPixel(x,y-lines,getPixel(x,y));
+		}
+	}
+	if(clear){
+		for(uint16_t y=displayHeight()-lines;y<displayHeight();y++){
+			for(uint16_t x=0; x<displayWidth();x++){
+				setPixel(x,y,CRGB::Black);
+			}
+		}
+	}
+}
 void metaDisplay::clear()
 {
 	CRGB* p = (backbuffer)?backbuffer:ledBuffer;

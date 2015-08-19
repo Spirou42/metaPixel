@@ -7,7 +7,7 @@
 #include "Streaming.h"
 
 
-void EffectPlasmaSimple::initializeEffect()
+void EffectPlasmaSimple::startEffect()
 {
   Serial << "SimplePlasma Init Effect"<<endl;
   windowScale->value = 1;
@@ -21,7 +21,7 @@ void EffectPlasmaSimple::initializeEffect()
 	display.fill(CRGB::Black);
 }
 
-void EffectPlasmaSimple::runEffect(unsigned long now)
+void EffectPlasmaSimple::frame(unsigned long now)
 {
   static uint32_t frame = 0;
 

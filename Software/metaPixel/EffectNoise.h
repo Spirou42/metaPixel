@@ -21,8 +21,8 @@ public:
 
   EffectNoise():Effect("Noise"),noiseScale(NULL),noiseSpeed(NULL),hueSpeed(NULL){};
   EffectNoise(newParameter_t* nScale,newParameter_t* nSpeed, newParameter_t* hSpeed):Effect("noise"),noiseScale(nScale),noiseSpeed(nSpeed),hueSpeed(hSpeed){};
-  virtual void initializeEffect();
-	virtual void runEffect(unsigned long now);
+  virtual void startEffect();
+	virtual void frame(unsigned long now);
 protected:
   int16_t noiseX;
   int16_t noiseY;

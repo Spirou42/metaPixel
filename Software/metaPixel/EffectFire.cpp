@@ -1,7 +1,7 @@
 #include "EffectFire.h"
 #define COOLING 250
 #define SPARKLES 10
-void EffectFire::initializeEffect()
+void EffectFire::startEffect()
 {
   setMaxValueFor(bottomHeating,255);
   setMaxValueFor(topCooling,255);
@@ -16,7 +16,7 @@ void EffectFire::initializeEffect()
   Delay = 60;
 }
 
-void EffectFire::runEffect(unsigned long now)
+void EffectFire::frame(unsigned long now)
 {
 	static int8_t sparkleOffset = 4;
 	static uint8_t sparkleSpan = 12;

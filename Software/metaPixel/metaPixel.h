@@ -5,10 +5,15 @@
 #ifndef __METAPIXEL_H__
 #define __METAPIXEL_H__
 #define FASTLED_INTERNAL
+#include <Audio.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
 #include <TeensyDmx.h>
+#include <AudioStream.h>
 #include <rdm.h>
 
 /** Feature Switsches **/
@@ -47,6 +52,7 @@
 #include "EffectPlasma.h"
 #include "EffectPlasmaSimple.h"
 #include "EffectLine.h"
+#include "EffectWaterfall.h"
 
 
 
@@ -75,6 +81,8 @@
 #endif
 #define LED_PIN                   4
 
+/** Audio configuration **/
+#define AUDIO_INPUT AUDIO_INPUT_MIC
 
 /** DEBUG CONFIGURATION **/
 #define DEBUG (1)
@@ -122,6 +130,7 @@ extern uint8_t newMaxPrograms;
 
 extern newParameter_t parameterArray[];
 extern int16_t parameterArraySize;
+
 
 
 #endif

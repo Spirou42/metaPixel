@@ -6,12 +6,12 @@
 #include "Arduino.h"
 #include "Streaming.h"
 
-void EffectLine::initializeEffect()
+void EffectLine::startEffect()
 {
   display.clear();
 }
 
-void EffectLine::runEffect(unsigned long now)
+void EffectLine::frame(unsigned long now)
 {
   static MPPixel start =MPPixel(0,0),end=MPPixel(display.displayWidth()-1,display.displayHeight()-1);
 //  static unsigned long lastNow;

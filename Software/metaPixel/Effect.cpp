@@ -28,11 +28,13 @@ int effectRunner(unsigned long now, void* userdata)
 	static uint16_t lastP = 0;
 	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
 	Effect *effect = effectProgramsN[t].program;
+	Effect *lastEffect = effectProgramsN[t].program;
 	if(t != lastP){
+		lastEffect->stopEffect();
 		lastP = t;
 		Serial << "Program: "<< effect->getName()<<endl;
-		effect->initializeEffect();
+		effect->startEffect();
 	}
-	effect->runEffect(now);
+	effect->frame(now);
 	return 0;
 }

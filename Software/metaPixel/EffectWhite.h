@@ -14,8 +14,8 @@ public:
 	EffectWhite():Effect("White"),colorIndexParam(NULL){};
 
 	EffectWhite(newParameter_t* colIdxPar):Effect("White"),colorIndexParam(colIdxPar){};
-	virtual void initializeEffect();
-	virtual void runEffect(unsigned long now);
+	virtual void startEffect();
+	virtual void frame(unsigned long now);
 
 };
 

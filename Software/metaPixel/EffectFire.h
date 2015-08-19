@@ -15,8 +15,8 @@ public:
   newParameter_t *topCooling;
   EffectFire():Effect("Fire"),bottomHeating(NULL),topCooling(NULL){};
   EffectFire(newParameter_t* bottomH,newParameter_t* topCool):Effect("Fire"),bottomHeating(bottomH),topCooling(topCool){}
-  void initializeEffect();
-  virtual void runEffect(unsigned long now);
+  void startEffect();
+  virtual void frame(unsigned long now);
 private:
   byte heatCells[NUM_LEDS];
   int16_t heatAt(int16_t x, int16_t y);

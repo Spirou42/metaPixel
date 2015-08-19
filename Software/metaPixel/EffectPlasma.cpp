@@ -10,7 +10,7 @@
 #define PSCALE (plasmaScale->value.currentValue())
 #define KSCALE (10.0)
 
-void EffectPlasma::initializeEffect()
+void EffectPlasma::startEffect()
 {
   plasmaScale->value.initTo(3);
   plasmaSpeed->value.initTo(1);
@@ -26,7 +26,7 @@ void EffectPlasma::initializeEffect()
 }
 
 
-void EffectPlasma::runEffect(unsigned long now)
+void EffectPlasma::frame(unsigned long now)
 {
   static MPPixel center = MPPixel();
 	center.x = display.displayWidth()/2.0;

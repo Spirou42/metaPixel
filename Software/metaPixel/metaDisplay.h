@@ -31,9 +31,11 @@ public:
 	uint16_t displayHeight();
 
 	void setPixel(uint16_t x, uint16_t y, CRGB color);
-
 	void setPixel(MPPixel coord,CRGB color);
+	CRGB getPixel(uint16_t x, uint16_t y);
+	CRGB getPixel(MPPixel coord);
 
+	void scrollDown(uint8_t scanLines,bool clear=false);
 	void clear();
 
 	void clearAll();

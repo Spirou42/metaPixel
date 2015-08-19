@@ -1,5 +1,10 @@
 #define FASTLED_INTERNAL
 #define FASTLED_ALLOW_INTERRUPTS 0
+#include <Audio.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
+
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
@@ -17,7 +22,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 1
+#define START_PROG 6
 
 /**********************************************************
 **
@@ -76,7 +81,7 @@ int16_t currentResolution ;
 volatile int16_t nextResolution;
 
 
-boolean effectStarted = false;
+
 
 CRGBPalette16 colorPalettes[]={
 	(CRGBPalette16)RainbowColors_p,
@@ -121,6 +126,7 @@ EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[p
 EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
 EffectLine lineEffect = EffectLine();
+EffectWaterfall waterfallEffect = EffectWaterfall();
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
@@ -130,6 +136,7 @@ effectProgramN_t effectProgramsN[] = {
 		{&simplePlasma,150,NULL},
 		{&lineEffect,150,NULL},
 		{&fireEffect,60,NULL},
+		{&waterfallEffect,100,NULL},
 };
 
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
@@ -183,41 +190,59 @@ void setup()
 	initEncoderUI();
 #endif
 
+
+	/** Setup Audio **/
+	 AudioMemory(12);
+	AudioShield.enable();
+	AudioShield.inputSelect(AUDIO_INPUT);
+	AudioShield.volume(0.8);
+	AudioShield.micGain(255);
+	analyzeFFT.averageTogether(500);
+	audioIn.setActive(false);
+	analyzeFFT.setActive(false);
+
+	/** Setup DMX **/
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
 
-	//	Serial << "LedBuffer: "<<(unsigned long)leds<<" Backbuffer: "<<(unsigned long) led_backbuffer<<endl;
-
+/** initialize Effects **/
 	EffectProgram.initTo(START_PROG);
 	int16_t cP = EffectProgram.currentValue();
 	Delay.initTo(effectProgramsN[cP].delay);
 	Brightness.initTo(BRIGHTNESS);
 	Palette.initTo(0);
 
+	/** Double buffering **/
 #if USE_DOUBLE_BUFFER
 	taskQueue.scheduleFunction(backbufferBlender,NULL,"BBB ",0,66);
 #endif
 
+	/** Debug blinker (legacy) **/
 #if DEBUG_BLINK
 	taskQueue.scheduleFunction(blinker,NULL,"BLNK",1000,1000);
 #endif
 
+	/** Effect scheduler **/
 #if USE_EFFECT_SCEDULER
 	taskQueue.scheduleFunction(effectRunner,NULL,"EFFC",0,Delay.currentValue());
 #endif
 
-	effectStarted = true;
+
+/** Command line interface **/
+#if USE_SERIAL_COMMANDS
+	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
+#endif
+
+/** Legacy menu system **/
 #if USE_LEGACY_MENU
 	encoderClickCallback = clickHandler;
 	lc.clearDisplay(0);
 #endif
+
 	randomSeed(millis());
 	delay(1000);
 	Serial<<"metaPixel initialized"<<endl;
 	Serial<<"Parameters: "<<parameterArraySize<<endl;
 	Serial<<"Programms: "<<newMaxPrograms<<endl;
-#if USE_SERIAL_COMMANDS
-	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
-#endif
 	Serial <<" Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
 }
 
@@ -235,7 +260,6 @@ void loop()
 #if DEBUG_LOOP
 		Serial <<"CP: "<< currentP<<" NP:"<<nextP<<" ";
 #endif
-		effectStarted = true;
 		Delay = effectProgramsN[nextP].delay;
 		EffectProgram.syncValue();
 #if DEBUG_LOOP
