@@ -1,13 +1,15 @@
 /*
-* mPixel class
-* simple class describing a single mPixel Grid
+* metaModule class
+* simple class describing a single metaModule Grid
 
 *
 */
-#ifndef __MPIXEL_H__
-#define __MPIXEL_H__
-
-#include <FastLED.h>
+#ifndef __metaModule_H__
+#define __metaModule_H__
+#define FASTLED_INTERNAL
+#include "Arduino.h"
+#include "Streaming.h"
+#include "FastLED.h"
 
 struct MPPixel{
 public:
@@ -19,18 +21,18 @@ public:
 	}
 };
 
-class mPixel {
+class metaModule {
 protected:
-	CRGB *baseAddress;          ///< start address of the first pixel in the frameBuffer this mPixel controlls
+	CRGB *baseAddress;          ///< start address of the first pixel in the frameBuffer this metaModule controlls
 	uint16_t baseOffset;        ///< offset to the start of the array
 	int8_t w;
 	int8_t h;
 	boolean flipped;
 
 public:
-	mPixel(int8_t width = 4 ,int8_t height = 5, boolean flipped = false) : w(width), h(height),flipped(flipped)
+	metaModule(int8_t width = 4 ,int8_t height = 5, boolean flipped = false) : w(width), h(height),flipped(flipped)
 	{
-		baseAddress = NULL; 
+		baseAddress = NULL;
 	}
 
 	void setFlipped(boolean isFlipped){flipped = isFlipped;}

@@ -1,34 +1,25 @@
 /*
-* mDisplay - a rectangular grid of mPixel modules
+* metaDisplay - a rectangular grid of metaModule modules
 */
-#ifndef __MDISPLAY_H__
-#define __MDISPLAY_H__
+#ifndef __metaDisplay_H__
+#define __metaDisplay_H__
 
-#include "mPixel.h"
-
-#define MODULES_WIDTH   5												// number of modules in X
-#define MODULES_HEIGHT  4											// number of modules in Y
-#define MODULE_WIDTH    4												// width of module in pixels
-#define MODULE_HEIGHT   5												// height of modules in pixels
-
-#define DISPLAY_WIDTH   (MODULES_WIDTH * MODULE_WIDTH)
-#define DISPLAY_HEIGHT  (MODULES_HEIGHT * MODULE_HEIGHT)
-
+#include "metaModule.h"
 typedef enum {lowRes,midRes,hiRes} displayResolution;
 typedef enum {noMir,horMir,verMir,quadMir} displayMirror;
 
-class mDisplay {
+class metaDisplay {
 protected:
 	uint8_t 	moduleWidth,moduleHeight;      ///< number of pixels in each module
 	uint8_t 	width,height;                  ///< number of modules in display
 	CRGB* 		ledBuffer;
 	CRGB* 		backbuffer;
-	mPixel	  *moduleBuffer;
+	metaModule	  *moduleBuffer;
 	displayResolution reso;
 	displayMirror mirMode;
 public:
-	mDisplay():moduleWidth(MODULE_WIDTH),moduleHeight(MODULE_HEIGHT),width(MODULES_WIDTH),height(MODULES_HEIGHT) {};
-	mDisplay(CRGB* buffer, CRGB* bbuff=NULL, uint8_t w=2,uint8_t h=2);/*:moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff);*/
+	metaDisplay():moduleWidth(0),moduleHeight(0),width(0),height(0) {};
+	metaDisplay(CRGB* buffer, CRGB* bbuff=NULL, uint8_t w=2,uint8_t h=2);/*:moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff);*/
 
 	uint16_t XY(uint8_t x, uint8_t y){ return this->XY(MPPixel(x,y));};
 
@@ -59,6 +50,8 @@ public:
 private:
 	void _setPixel(MPPixel coord, CRGB color);
 };
+
+int backbufferBlender(unsigned long now, void* userdata);
 
 CHSV rgb2hsv(const CRGB& rgb);
 #endif

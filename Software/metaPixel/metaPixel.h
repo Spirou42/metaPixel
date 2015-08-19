@@ -19,6 +19,13 @@
 #define USE_SERIAL_COMMANDS 1
 #define USE_DOUBLE_BUFFER 1
 
+/** display configuration **/
+#define MODULES_WIDTH   5												// number of modules in X
+#define MODULES_HEIGHT  4											// number of modules in Y
+#define MODULE_WIDTH    4												// width of module in pixels
+#define MODULE_HEIGHT   5												// height of modules in pixels
+#define DISPLAY_WIDTH   (MODULES_WIDTH * MODULE_WIDTH)
+#define DISPLAY_HEIGHT  (MODULES_HEIGHT * MODULE_HEIGHT)
 
 /** Local Libraries **/
 #include "Types.h"
@@ -26,8 +33,10 @@
 #include "Menu.h"
 #include "Encoder.h"
 #endif
-#include "mPixel.h"
-#include "mDisplay.h"
+
+#include "metaModule.h"
+#include "metaDisplay.h"
+
 #define NUM_LEDS (DISPLAY_WIDTH * DISPLAY_HEIGHT)
 
 #include "Effect.h"
@@ -82,7 +91,8 @@ extern CRGB leds[];               ///< primary framebuffer
 #if USE_DOUBLE_BUFFER
 extern CRGB  led_backbuffer[];    ///< backbuffer
 #endif
-extern mDisplay display;          ///< global display class
+
+extern metaDisplay display;          ///< global display class
 
 extern TeensyDmx DMX;             ///< DMX Interface
 extern Queue taskQueue;           ///< task queue scheduler

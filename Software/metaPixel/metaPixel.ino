@@ -25,14 +25,12 @@
 **
 **********************************************************/
 
-
-
 CRGB  leds[NUM_LEDS];
 #if USE_DOUBLE_BUFFER
 CRGB  led_backbuffer[NUM_LEDS];
-mDisplay display= mDisplay(leds,led_backbuffer,MODULES_WIDTH,MODULES_HEIGHT);
+metaDisplay display= metaDisplay(leds,led_backbuffer,MODULES_WIDTH,MODULES_HEIGHT);
 #else
-mDisplay display= mDisplay(leds,NULL,MODULES_WIDTH,MODULES_HEIGHT);
+metaDisplay display= metaDisplay(leds,NULL,MODULES_WIDTH,MODULES_HEIGHT);
 #endif
 
 /** DMX **/
@@ -305,4 +303,41 @@ void loop()
 	}
 	taskQueue.Run(millis());
 	delay(2);
+}
+
+/**********************************************************
+**
+** backbuffer
+**
+**********************************************************/
+int backbufferBlender(unsigned long now, void* userdata)
+{
+	uint8_t frac = BlendParam.currentValue()/Delay.currentValue();
+	static uint8_t lastFrac =0;
+	if(frac != lastFrac){
+		Serial << "frac"<<frac<<endl;
+		lastFrac = frac;
+	}
+
+#if DEBUG_EFFECTS
+	Serial <<".";
+#endif
+	if(frac < 4){
+#if DEBUG_EFFECTS
+		Serial << "Frac cliped to 4, was "<<frac<<endl;
+
+#endif
+		frac = 4;
+	}
+	for(uint16_t i=0;i<NUM_LEDS;i++){
+		leds[i]=nblend(leds[i],led_backbuffer[i],frac);
+	}
+	if( millis() < 5000 ) {
+		FastLED.setBrightness( scale8( Brightness.currentValue(), (millis() * 256) / 5000));
+	} else {
+		FastLED.setBrightness(Brightness.currentValue());
+	}
+
+	FastLED.show();
+	return 0;
 }

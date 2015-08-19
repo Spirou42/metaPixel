@@ -1,5 +1,10 @@
+/**
+* metaModule
+*/
 
-uint16_t mPixel::XY( uint8_t x, uint8_t y)
+#include "metaModule.h"
+
+uint16_t metaModule::XY( uint8_t x, uint8_t y)
 	{
 		uint16_t i;
 		if(this->flipped){

@@ -83,6 +83,6 @@ extern newParameter_t parameterArray[];
 extern int16_t parameterArraySize;
 
 //extern parameter_t pixelParameters[];
-//extern uint8_t numPixelParams;
+//extern uint8_t numetaModuleParams;
 
 #endif
