@@ -10,6 +10,10 @@ class Parameter {
 public:
 	T _value;
 	volatile T _tempValue;
+	bool _shouldAnimate;
+	T _targetValue;
+	elapsedMillis _sinceLast;
+	unsigned long _tmilli;
 public:
 	Parameter() :_value(T()),_tempValue(T()){}
 	Parameter(T a):_value(a),_tempValue(a){}
@@ -35,11 +39,26 @@ public:
 	void initTo(T a){
 		this->_value = a;
 		this->_tempValue = a;
+		_shouldAnimate = false;
+	}
+
+	void animateTo(T target, unsigned long milli)
+	{
+	  _targetValue = target;
+	  _shouldAnimate = true;
+	  _tmilli = milli;
+	  _sinceLast = 0;
+	}
+	void animateParameter()
+	{
+	  unsigned long k = _sinceLast;
+	  unsigned long frac = (_tmilli-k)/(_targetValue -_value);
+	  Serial << frac<<endl;
+	  _sinceLast = 0;
 	}
 
 	T currentValue(){return _value;}
 	T nextValue(){return _tempValue;}
-
 	bool operator==(const Parameter<T> a)
 	{
 		return (this->_value == a._value);
@@ -78,8 +97,8 @@ public:
 	newParameter():code(0x00),minValue(t()),maxValue(t()),value(NULL){};
 	newParameter(char c, t minVal, t maxVal,Parameter<t>& val): code(c),minValue(minVal),maxValue(maxVal),value(val){};
 } ;
-typedef struct newParameter<int16_t> newParameter_t;
-extern newParameter_t parameterArray[];
+typedef struct newParameter<int16_t> Parameter16_t;
+extern Parameter16_t parameterArray[];
 extern int16_t parameterArraySize;
 
 //extern parameter_t pixelParameters[];

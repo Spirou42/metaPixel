@@ -129,7 +129,7 @@ extern Parameter<int16_t>genericEffectMask2;     ///< generic global Mask 2
 extern effectProgramN_t effectProgramsN[];
 extern uint8_t newMaxPrograms;
 
-extern newParameter_t parameterArray[];
+extern Parameter16_t parameterArray[];
 extern int16_t parameterArraySize;
 
 

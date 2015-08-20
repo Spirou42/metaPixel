@@ -15,12 +15,12 @@
 class EffectNoise:public Effect
 {
 public:
-  newParameter_t *noiseScale;
-  newParameter_t *noiseSpeed;
-  newParameter_t *hueSpeed;
+  Parameter16_t *noiseScale;
+  Parameter16_t *noiseSpeed;
+  Parameter16_t *hueSpeed;
 
   EffectNoise():Effect("Noise"),noiseScale(NULL),noiseSpeed(NULL),hueSpeed(NULL){};
-  EffectNoise(newParameter_t* nScale,newParameter_t* nSpeed, newParameter_t* hSpeed):Effect("noise"),noiseScale(nScale),noiseSpeed(nSpeed),hueSpeed(hSpeed){};
+  EffectNoise(Parameter16_t* nScale,Parameter16_t* nSpeed, Parameter16_t* hSpeed):Effect("noise"),noiseScale(nScale),noiseSpeed(nSpeed),hueSpeed(hSpeed){};
   virtual void startEffect();
 	virtual void frame(unsigned long now);
 protected:

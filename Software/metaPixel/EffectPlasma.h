@@ -13,13 +13,13 @@
 class EffectPlasma:public Effect
 {
 public:
-  newParameter_t *plasmaScale;
-  newParameter_t *plasmaSpeed;
-  newParameter_t *hueSpeed;
-  newParameter_t *plasmaRadius;
-  newParameter_t *plasmaMask;
+  Parameter16_t *plasmaScale;
+  Parameter16_t *plasmaSpeed;
+  Parameter16_t *hueSpeed;
+  Parameter16_t *plasmaRadius;
+  Parameter16_t *plasmaMask;
   EffectPlasma():Effect("Plasma"),plasmaScale(NULL),plasmaSpeed(NULL),hueSpeed(NULL),plasmaRadius(NULL),plasmaMask(NULL){};
-  EffectPlasma(newParameter_t* pScale, newParameter_t* pSpeed, newParameter_t* pRadius, newParameter_t* hSpeed, newParameter_t *mask):Effect("Plasma"),plasmaScale(pScale),plasmaSpeed(pSpeed),hueSpeed(hSpeed),plasmaRadius(pRadius),plasmaMask(mask){};
+  EffectPlasma(Parameter16_t* pScale, Parameter16_t* pSpeed, Parameter16_t* pRadius, Parameter16_t* hSpeed, Parameter16_t *mask):Effect("Plasma"),plasmaScale(pScale),plasmaSpeed(pSpeed),hueSpeed(hSpeed),plasmaRadius(pRadius),plasmaMask(mask){};
   virtual void startEffect();
   virtual void frame(unsigned long now);
 };

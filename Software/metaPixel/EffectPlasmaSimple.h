@@ -10,13 +10,13 @@
 
 class EffectPlasmaSimple : public Effect {
 public:
-  newParameter_t * windowScale;
-  newParameter_t * hueScale;
-  newParameter_t * plasmaSpeed;
-  newParameter_t * mirrorMask;
+  Parameter16_t * windowScale;
+  Parameter16_t * hueScale;
+  Parameter16_t * plasmaSpeed;
+  Parameter16_t * mirrorMask;
 
   EffectPlasmaSimple():Effect("PlaSim"),windowScale(NULL),hueScale(NULL),plasmaSpeed(NULL),mirrorMask(NULL){};
-  EffectPlasmaSimple(newParameter_t* wScale, newParameter_t* hScale, newParameter_t* pSpeed, newParameter_t *miMask):Effect("PlaSim"),windowScale(wScale),hueScale(hScale),plasmaSpeed(pSpeed),mirrorMask(miMask){};
+  EffectPlasmaSimple(Parameter16_t* wScale, Parameter16_t* hScale, Parameter16_t* pSpeed, Parameter16_t *miMask):Effect("PlaSim"),windowScale(wScale),hueScale(hScale),plasmaSpeed(pSpeed),mirrorMask(miMask){};
   virtual void startEffect();
   virtual void frame(unsigned long now);
 protected:

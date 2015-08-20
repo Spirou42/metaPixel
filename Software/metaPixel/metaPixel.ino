@@ -94,28 +94,28 @@ uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
 
 
-newParameter_t parameterArray[] = {
+Parameter16_t parameterArray[] = {
 	// global scope parameters.
 	// these parameters for Program, framerate etc.
-/* 00 */ 	newParameter_t('P',(int16_t)0,(int16_t)0,EffectProgram),
-/* 01 */	newParameter_t('D',(int16_t)1,(int16_t)5000,Delay),
-/* 02 */	newParameter_t('C',(int16_t)0,(int16_t)0,Palette),
-/* 03 */	newParameter_t('B',(int16_t)0,(int16_t)255,Brightness),
-/* 04 */	newParameter_t('Z',(int16_t)0,(int16_t)32000,BlendParam),
+/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,EffectProgram),
+/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,Delay),
+/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,Palette),
+/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,Brightness),
+/* 04 */	Parameter16_t('Z',(int16_t)0,(int16_t)32000,BlendParam),
 
 	// local parameters. These parameters have a different meening for each  Effect program.
-/* 05 */	newParameter_t('U',(int16_t)0,(int16_t)0,genericSpeed1),
-/* 06 */  newParameter_t('V',(int16_t)0,(int16_t)0,genericSpeed2),
-/* 07 */	newParameter_t('R',(int16_t)0,(int16_t)0,genericScale1),
-/* 08 */	newParameter_t('I',(int16_t)0,(int16_t)0,genericScale2),
-/* 09 */	newParameter_t('O',(int16_t)0,(int16_t)0,genericParam1),
-/* 10 */ 	newParameter_t('H',(int16_t)0,(int16_t)0,genericParam2),
-/* 11 */	newParameter_t('M',(int16_t)0,(int16_t)255,genericEffectMask1),
-/* 12 */	newParameter_t('N',(int16_t)0,(int16_t)255,genericEffectMask2),
+/* 05 */	Parameter16_t('U',(int16_t)0,(int16_t)0,genericSpeed1),
+/* 06 */  Parameter16_t('V',(int16_t)0,(int16_t)0,genericSpeed2),
+/* 07 */	Parameter16_t('R',(int16_t)0,(int16_t)0,genericScale1),
+/* 08 */	Parameter16_t('I',(int16_t)0,(int16_t)0,genericScale2),
+/* 09 */	Parameter16_t('O',(int16_t)0,(int16_t)0,genericParam1),
+/* 10 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,genericParam2),
+/* 11 */	Parameter16_t('M',(int16_t)0,(int16_t)255,genericEffectMask1),
+/* 12 */	Parameter16_t('N',(int16_t)0,(int16_t)255,genericEffectMask2),
 };
 typedef enum{param_P,param_D,param_C,param_B,param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
 
-int16_t parameterArraySize = sizeof(parameterArray)/sizeof(newParameter_t);
+int16_t parameterArraySize = sizeof(parameterArray)/sizeof(Parameter16_t);
 
 EffectWhite whiteEffect = EffectWhite(&(parameterArray[param_O]));
 EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[param_H]  );
@@ -130,7 +130,7 @@ EffectWaterfall waterfallEffect = EffectWaterfall();
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
-	 	{&whiteEffect,1000,NULL},
+	 	{&whiteEffect,500,NULL},
 		{&noiseEffect,150,NULL},
 		{&plasmaEffect,150,NULL},
 		{&simplePlasma,150,NULL},

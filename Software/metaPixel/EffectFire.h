@@ -11,12 +11,14 @@
 class EffectFire:public Effect
 {
 public:
-  newParameter_t *bottomHeating;
-  newParameter_t *topCooling;
+  Parameter16_t *bottomHeating;
+  Parameter16_t *topCooling;
+  int16_t _initPalette;
   EffectFire():Effect("Fire"),bottomHeating(NULL),topCooling(NULL){};
-  EffectFire(newParameter_t* bottomH,newParameter_t* topCool):Effect("Fire"),bottomHeating(bottomH),topCooling(topCool){}
+  EffectFire(Parameter16_t* bottomH,Parameter16_t* topCool):Effect("Fire"),bottomHeating(bottomH),topCooling(topCool){}
   void startEffect();
   virtual void frame(unsigned long now);
+  virtual void stopEffect();
 private:
   byte heatCells[NUM_LEDS];
   int16_t heatAt(int16_t x, int16_t y);

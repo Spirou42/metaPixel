@@ -12,6 +12,7 @@ void EffectFire::startEffect()
     heatCells[i]=0;
   }
   BlendParam.initTo(12000);
+  _initPalette = Palette.currentValue();
   Palette.initTo(7);
   Delay = 60;
 }
@@ -113,4 +114,9 @@ int16_t EffectFire::neightbours(int16_t x, int16_t y)
 		result =0;
 	}
 	return result / div;
+}
+void EffectFire::stopEffect()
+{
+  Serial <<"restore "<<_initPalette<<endl;
+  Palette.initTo(_initPalette);
 }

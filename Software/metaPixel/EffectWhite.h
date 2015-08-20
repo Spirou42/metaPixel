@@ -9,13 +9,14 @@ int white(unsigned long now,void* userdata);
 class EffectWhite : public Effect
 {
 public:
-	newParameter_t *colorIndexParam;
+	Parameter16_t *colorIndexParam;
 
 	EffectWhite():Effect("White"),colorIndexParam(NULL){};
 
-	EffectWhite(newParameter_t* colIdxPar):Effect("White"),colorIndexParam(colIdxPar){};
+	EffectWhite(Parameter16_t* colIdxPar):Effect("White"),colorIndexParam(colIdxPar){};
 	virtual void startEffect();
 	virtual void frame(unsigned long now);
+	virtual void stopEffect();
 
 };
 
