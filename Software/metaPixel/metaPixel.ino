@@ -80,9 +80,6 @@ Parameter<int16_t>genericEffectMask2(HorizontalEffect | VerticalEffect | Diagona
 int16_t currentResolution ;
 volatile int16_t nextResolution;
 
-
-
-
 CRGBPalette16 colorPalettes[]={
 	(CRGBPalette16)RainbowColors_p,
 	(CRGBPalette16)CloudColors_p,
@@ -126,7 +123,10 @@ EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[p
 EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
 EffectLine lineEffect = EffectLine();
+
+#if USE_AUDIO_EFFECTS
 EffectWaterfall waterfallEffect = EffectWaterfall();
+#endif
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
@@ -136,7 +136,9 @@ effectProgramN_t effectProgramsN[] = {
 		{&simplePlasma,150,NULL},
 		{&lineEffect,150,NULL},
 		{&fireEffect,60,NULL},
+#if USE_AUDIO_EFFECTS
 		{&waterfallEffect,100,NULL},
+#endif
 };
 
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
@@ -192,15 +194,16 @@ void setup()
 
 
 	/** Setup Audio **/
-	 AudioMemory(12);
+#if USE_AUDIO_EFFECTS
+	AudioMemory(20);
 	AudioShield.enable();
 	AudioShield.inputSelect(AUDIO_INPUT);
-	AudioShield.volume(0.8);
-	AudioShield.micGain(255);
-	analyzeFFT.averageTogether(500);
+	AudioShield.volume(0.5);
+	AudioShield.micGain(200);
+	analyzeFFT.averageTogether(255);
 	audioIn.setActive(false);
 	analyzeFFT.setActive(false);
-
+#endif
 	/** Setup DMX **/
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
 
@@ -249,8 +252,7 @@ void setup()
 void loop()
 {
 	bool parameterChanged = false;
-//	random16_add_entropy( random());
-
+	random16_add_entropy( random());
 	//
   // switch program Slot 0
 	//
@@ -262,7 +264,7 @@ void loop()
 #endif
 		Delay = effectProgramsN[nextP].delay;
 		EffectProgram.syncValue();
-#if DEBUG_LOOP
+#if 0 && DEBUG_LOOP
 		Serial << " PQueue" << taskQueue._itemsInQueue<<endl;
 #endif
 		parameterChanged = true;
@@ -279,7 +281,7 @@ void loop()
 		taskQueue.scheduleChangeFunction("EFFC",Delay.nextValue(),Delay.nextValue());
 #endif
 		Delay.syncValue();
-#if DEBUG_LOOP
+#if 0 & DEBUG_LOOP
 		Serial << "DQueue" << taskQueue._itemsInQueue<<endl;
 #endif
 		parameterChanged = true;
@@ -361,7 +363,6 @@ int backbufferBlender(unsigned long now, void* userdata)
 	} else {
 		FastLED.setBrightness(Brightness.currentValue());
 	}
-
 	FastLED.show();
 	return 0;
 }

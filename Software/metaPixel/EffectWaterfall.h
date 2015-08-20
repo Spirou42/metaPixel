@@ -9,7 +9,9 @@
 #define __EFFECT_WATERFALL_H__
 #include "Effect.h"
 #include "Parameter.h"
+#include "metaPixel.h"
 
+#if USE_AUDIO_EFFECTS
 class AudioInputI2S;
 class AudioAnalyzeFFT256;
 class AudioAnalyzeFFT1024;
@@ -32,4 +34,6 @@ protected:
   void collectBins();
   uint8_t binCollection[20];
 };
+
+#endif
 #endif

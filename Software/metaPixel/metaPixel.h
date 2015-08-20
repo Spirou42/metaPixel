@@ -17,6 +17,7 @@
 #include <rdm.h>
 
 /** Feature Switsches **/
+#define USE_AUDIO_EFFECTS 0
 #define USE_TEENSY_AUDIO 1
 #define USE_LEGACY_MENU (!USE_TEENSY_AUDIO)
 #define USE_EFFECT_SCEDULER 1

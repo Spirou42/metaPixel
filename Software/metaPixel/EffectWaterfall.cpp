@@ -11,13 +11,15 @@
 #include <SPI.h>
 #include <SD.h>
 #include "metaPixel.h"
-
+#include "Math.h"
+#if USE_AUDIO_EFFECTS
 // GUItool: begin automatically generated code
 AudioInputI2S            audioIn;           //xy=109,65
-AudioSynthWaveformSine sinewave;
 AudioAnalyzeFFT1024       analyzeFFT;       //xy=408,57
 AudioConnection          patchCord1(audioIn, 0, analyzeFFT, 0);
-//AudioConnection         patchCord1(sinewave, 0, analyzeFFT, 0);
+//AudioConnection           patchCord1(waveform, 0, analyzeFFT, 0);
+//AudioConnection           patchCord2(waveform,0,audioOut,0);
+
 AudioControlSGTL5000     AudioShield;     //xy=247,216
 
 // GUItool: end automatically generated code
@@ -25,63 +27,53 @@ AudioControlSGTL5000     AudioShield;     //xy=247,216
 void EffectWaterfall::startEffect()
 {
   Serial << "Init waterfall"<<endl;
+//  waveform.begin(WAVEFORM_SINE);
   audioIn.setActive(true);
   analyzeFFT.setActive(true);
-  sinewave.amplitude(1.0);
-  sinewave.frequency(8000);
   analyzeFFT.windowFunction(AudioWindowHanning1024);
   analyzeFFT.averageTogether(20);
   Palette=7;
   display.clearAll();
+  AudioShield.unmuteHeadphone();
 }
 
 void EffectWaterfall::collectBins()
 {
-  binCollection[0] =  analyzeFFT.read(0) * 255;           // 1
-  binCollection[1] =  analyzeFFT.read(1)* 255;            // 1
-  binCollection[2] =  analyzeFFT.read(2, 3)* 255;         // 2
-  binCollection[3] =  analyzeFFT.read(4, 6)* 255;         // 3
-  binCollection[4] =  analyzeFFT.read(7, 10)* 255;        // 4
-  binCollection[5] =  analyzeFFT.read(11, 15)* 255;       // 5
-  binCollection[6] =  analyzeFFT.read(16, 22)* 255;       // 7
-  binCollection[7] =  analyzeFFT.read(23, 32)* 255;       // 10
-  binCollection[8] =  analyzeFFT.read(33, 46)* 255;       // 14
-  binCollection[9] =  analyzeFFT.read(47, 66)* 255;       // 20
-  binCollection[10] = analyzeFFT.read(67, 93)* 255;       // 27
-  binCollection[11] = analyzeFFT.read(94, 131)* 255;      // 38
-  binCollection[12] = analyzeFFT.read(132, 184)* 255;     // 53
-  binCollection[13] = analyzeFFT.read(185, 257)* 255;     // 73
-  binCollection[14] = analyzeFFT.read(258, 359)* 255;     // 102
-  binCollection[15] = analyzeFFT.read(360, 511)* 255;     // 152
+  uint16_t binCount1024[]={1,1,2,2,3,3,4,4,5,6,7,10,14,20,27,38,53,73,102,137};
+  uint16_t currentBin=0;
+  float p=0;
+  for (size_t i = 0;  i < (sizeof(binCount1024)/sizeof(uint16_t)) ; ++i) {
+    uint16_t k = binCount1024[i];
+    if (k==1) {
+      p=analyzeFFT.read(currentBin);
+      currentBin+=k;
+    }else if(k>1){
+      uint16_t stopBin = currentBin+(k-1);
+      p = analyzeFFT.read(currentBin,stopBin);
+      currentBin+=k;
+    }else{
+    }
+    binCollection[i]=255.0*(log(10*p)+1.0);
+  }
 }
 
 void EffectWaterfall::frame(unsigned long now)
 {
-  static float frequency =500.0;
-  static float frequencyStep = 500.0;
+  static float frequency =200.0;
+  static float frequencyStep = 10.0;
   if(analyzeFFT.available()){
     // collect bins
     collectBins();
-    // for(uint16_t i=0; i<display.displayWidth();i++){
-    //
-    //   binCollection[i] = analyzeFFT.read(i*6,6)*255.0;
-    //   Serial << binCollection[i]<<", ";
-    // }
-    //Serial << endl;
     display.scrollDown(1,true);
     for(uint16_t i=0;i<display.displayWidth();i++){
       CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],binCollection[i]);
       display.setPixel(i,display.displayHeight()-1,color);
     }
-
     display.flush();
     frequency+=frequencyStep;
-    if((frequency>20000) || (frequency<500.0)){
+    if((frequency>18000) || (frequency<10.0)){
       frequencyStep =-frequencyStep;
     }
-    AudioNoInterrupts();
-    sinewave.frequency(frequency);
-    AudioInterrupts();
   }
 }
 
@@ -89,4 +81,7 @@ void EffectWaterfall::stopEffect()
 {
   audioIn.setActive(false);
   analyzeFFT.setActive(false);
+  AudioShield.muteHeadphone();
 }
+
+#endif
