@@ -57,28 +57,54 @@ int getParameterFor(char p)
 	return -1;
 }
 
+char getCommand(char** currentChar)
+{
+	while( (**currentChar != 0x00) && (getParameterFor(**currentChar)==-1) && (**currentChar != '#') &&(**currentChar != '!') ){
+		*currentChar = ++ *currentChar;
+	}
+	char command = **currentChar;
+	if(command >=0x61){
+		command -=0x20;
+	}
+	return command;
+}
+
+unsigned long getValue(char** currentChar){
+	unsigned long myValue = 0;
+	while( (**currentChar != 0x00) && (**currentChar <'0' || **currentChar >'9')  ){
+		*currentChar = ++ *currentChar ;
+	}
+	//read number
+	while( (**currentChar != 0x00)&&(**currentChar>='0') && (**currentChar<='9') ){
+		myValue = 10*myValue +(**currentChar-'0');
+		*currentChar = ++ *currentChar;
+	}
+	return myValue;
+}
+
 void commandProcessor(char* line_buffer){
 	char *currentChar = line_buffer;
-
 	do{
 		// read till first know parameter mnomic char;
-		while( (*currentChar != 0x00) && (getParameterFor(*currentChar)==-1)  ){
-			currentChar ++;
-		}
-		char command = *currentChar;
-		if(command >=0x61){
-			command -=0x20;
-		}
 		// read till first number;
-		while( (*currentChar != 0x00) && (*currentChar <'0' || *currentChar >'9')  ){
+		bool animate = false;
+		bool bounce = false;
+		Serial << "Current "<<currentChar<<endl;
+		char command = getCommand(&currentChar);
+		if(command == '#'){
+#if DEBUG_COMMAND
+			Serial << "Got #"<<endl;
+#endif
+			currentChar++;
+			animate = true;
+			command = getCommand(&currentChar);
+		}else if(command == '!'){
 			currentChar ++;
+			animate=true;
+			bounce = true;
+			command = getCommand(&currentChar);
 		}
-		//read number
-		int16_t myValue = 0;
-		while( (*currentChar>='0') && (*currentChar<='9')){
-			myValue = 10*myValue +(*currentChar-'0');
-			currentChar ++;
-		}
+		unsigned long myValue = getValue(&currentChar);
 #if DEBUG_COMMAND
 		Serial << command << ":"<<myValue<<endl;
 #endif
@@ -103,5 +129,14 @@ void commandProcessor(char* line_buffer){
 #endif
 		}
 		*(parameterArray[parameterSlot].value) = myValue;
+		if(animate){
+			int16_t to = getValue(&currentChar);
+			unsigned long tim = getValue(&currentChar)*100;
+			if(bounce){
+				parameterArray[parameterSlot].value -> bounce(to,tim);
+			}else{
+				parameterArray[parameterSlot].value -> animateTo(to,tim);
+			}
+		}
 	}while(*currentChar != 0);
 }

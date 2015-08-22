@@ -13,12 +13,15 @@ public:
 	int16_t _value;
 	volatile int16_t _tempValue;
 	bool _shouldAnimate;
+	bool _bounce;
 	int16_t _targetValue;
+	int16_t _startValue;
 	elapsedMillis _sinceLast;
 	unsigned long _tmilli;
+	unsigned long _smilli;
 public:
-	AnimationValue() :_value(0),_tempValue(0){}
-	AnimationValue(int16_t a):_value(a),_tempValue(a){}
+	AnimationValue() :_value(0),_tempValue(0),_shouldAnimate(false),_bounce(false){}
+	AnimationValue(int16_t a):_value(a),_tempValue(a),_shouldAnimate(false),_bounce(false){}
 
 	void SetValue(int16_t newValue)
 	{
@@ -50,6 +53,14 @@ public:
 	  _shouldAnimate = true;
 	  _tmilli = milli;
 	  _sinceLast = 0;
+	}
+
+	void bounce(int16_t target, unsigned long milli)
+	{
+		_startValue = _tempValue;
+		_smilli = milli;
+		_bounce = true;
+		animateTo(target,milli);
 	}
 	void animateParameter()
 	{
@@ -97,6 +108,9 @@ public:
 		}
 		if((this->_tempValue == this->_targetValue) || (this->_tmilli==0)){
 			this->_shouldAnimate=false;
+		}
+		if ((this->_shouldAnimate == false) && _bounce) {
+			bounce(_startValue,_smilli);
 		}
 	}
 

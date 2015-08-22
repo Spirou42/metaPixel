@@ -13,6 +13,7 @@
 #include <rdm.h>
 #include <Arduino.h>
 #include "metaPixel.h"
+#include "Palettes.h"
 
 
 /* program defined */
@@ -80,6 +81,12 @@ AnimationValue genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEf
 
 int16_t currentResolution ;
 volatile int16_t nextResolution;
+// Gradient palette "arctic_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/arendal/tn/arctic.png.index.html
+// converted for FastLED with gammas (2.6, 2.2, 2.5)
+// Size: 452 bytes of program space.
+
+
 
 CRGBPalette16 colorPalettes[]={
 	(CRGBPalette16)RainbowColors_p,
@@ -89,7 +96,11 @@ CRGBPalette16 colorPalettes[]={
 	(CRGBPalette16)PartyColors_p,
 	(CRGBPalette16)RainbowStripeColors_p,
 	(CRGBPalette16)LavaColors_p,
-	(CRGBPalette16)HeatColors_p
+	(CRGBPalette16)HeatColors_p,
+	(CRGBPalette16)arctic_gp,
+	(CRGBPalette16)temperature_gp,
+	(CRGBPalette16)colombia_gp,
+	(CRGBPalette16)cequal_gp,
 };
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
