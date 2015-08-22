@@ -1,9 +1,19 @@
-//static const char *validParameters="PpDdBbCcUu";
+/**
+* Command.cpp
+* Simple command processor
+*/
+
+#include "Commands.h"
+#include <Arduino.h>
+#include "Streaming.h"
+#include "VT100Stream.h"
+#include "metaPixel.h"
+
 
 /****************************
 Serial Interface
 ****************************/
-#define SERIAL_BUFFER_LENGTH 20
+
 char serial_buffer[SERIAL_BUFFER_LENGTH];
 uint8_t currentChar=0;
 

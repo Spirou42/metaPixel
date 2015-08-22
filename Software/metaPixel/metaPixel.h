@@ -45,7 +45,7 @@
 #include "metaDisplay.h"
 
 #define NUM_LEDS (DISPLAY_WIDTH * DISPLAY_HEIGHT)
-
+#include "Commands.h"
 #include "Effect.h"
 #include "Parameter.h"
 #include "EffectWhite.h"
