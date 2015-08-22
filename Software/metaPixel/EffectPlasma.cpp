@@ -13,10 +13,11 @@
 void EffectPlasma::startEffect()
 {
   plasmaScale->value->initTo(3);
-  plasmaSpeed->value->initTo(1);
+  plasmaSpeed->value->initTo(10);
   hueSpeed->value->initTo(0);
   plasmaRadius->value->initTo(display.displayWidth()/2);
-  plasmaMask->value->initTo(15);
+  plasmaMask->value->initTo(0);
+  plasmaMask->value->animateTo(15,600000);
   Palette=0;
   setMaxValueFor(plasmaScale,255);
   setMaxValueFor(plasmaSpeed,255);
@@ -77,7 +78,7 @@ void EffectPlasma::frame(unsigned long now)
 		display.setPixel(center,CRGB::White);
 	paletteShift+=hueSpeed->value->currentValue();
 	paletteShift%=256;
-	k+=(M_PI/359.0)*plasmaSpeed->value->currentValue()/10.0;
+	k+=(M_PI/360.0)*plasmaSpeed->value->currentValue()/10.0;
 	if(k<0){
 		k=359;
 	}
@@ -89,4 +90,8 @@ void EffectPlasma::frame(unsigned long now)
 void EffectPlasma::printParameter(Print& stream)
 {
    stream << "pSpeed: "<<*plasmaSpeed<<" \thueSpeed: "<<*hueSpeed<<" \tpScale: "<<*plasmaScale<<" \tpRadius: "<<*plasmaRadius<<" \tpMask: "<<*plasmaMask<<endl;
+}
+void EffectPlasma::stopEffect()
+{
+    plasmaMask->value->initTo(0);
 }

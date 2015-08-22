@@ -119,6 +119,7 @@ int16_t EffectFire::neightbours(int16_t x, int16_t y)
 void EffectFire::stopEffect()
 {
   Palette.initTo(_initPalette);
+  bottomHeating->value->initTo(0);
 }
 void EffectFire::printParameter(Print& stream)
 {

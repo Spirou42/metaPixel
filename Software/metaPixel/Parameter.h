@@ -53,6 +53,7 @@ public:
 	}
 	void animateParameter()
 	{
+		static uint8_t lineOffset = 0;
 	  unsigned long k = _sinceLast;
 	  unsigned long frac = (k*65536/_tmilli);
 		int16_t pValue=0;
@@ -77,14 +78,22 @@ public:
 		}else{
 			this->_tempValue = _value+pValue;
 		}
-		if(this->_tmilli > this->_sinceLast){
-			this->_tmilli -= _sinceLast;
-		}else{
-			this->_tempValue = _targetValue;
-			this->_shouldAnimate=false;
-		}
+
+		//Serial <<ScreenPos(10+lineOffset,0)<<clearLineRight<<"k: "<<k<<" Frac "<<frac<<"  StepVal: "<<pValue<<" cValue:"<<this->_value<< " tValue:"<<this->_tempValue<<"  Lmillis:"<<this->_tmilli<<endl;
+
+		lineOffset = (lineOffset+1)%10;
+
 		if(pValue != 0){
+			if(this->_tmilli > this->_sinceLast){
+				this->_tmilli -= _sinceLast;
+			}else{
+				this->_tempValue = _targetValue;
+				this->_shouldAnimate=false;
+			}
 			this->_sinceLast = 0;
+		}else if(this->_tmilli < this->_sinceLast){
+			this->_tempValue = _targetValue;
+			this->_shouldAnimate = false;
 		}
 		if((this->_tempValue == this->_targetValue) || (this->_tmilli==0)){
 			this->_shouldAnimate=false;
@@ -136,7 +145,8 @@ extern int16_t parameterArraySize;
 
 
 inline Print& operator<<(Print& obj, Parameter16_t k){
-	obj<<light<<'['<<k.code<<"] "<<k.value->currentValue()<<" ("<<k.maxValue<<')'<<normal;
+	char p = k.value->_shouldAnimate?'*':' ';
+	obj<<light<<'['<<k.code<<"]"<<p<<k.value->currentValue()<<" ("<<k.maxValue<<')'<<normal;
 	return obj;
 }
 //extern parameter_t pixelParameters[];

@@ -22,6 +22,7 @@ public:
   EffectPlasma(Parameter16_t* pScale, Parameter16_t* pSpeed, Parameter16_t* pRadius, Parameter16_t* hSpeed, Parameter16_t *mask):Effect("Plasma"),plasmaScale(pScale),plasmaSpeed(pSpeed),hueSpeed(hSpeed),plasmaRadius(pRadius),plasmaMask(mask){};
   virtual void startEffect();
   virtual void frame(unsigned long now);
+  virtual void stopEffect();
   virtual void printParameter(Print& stream);
   virtual Parameter16_t* parameterAt(size_t idx){
     Parameter16_t* res = NULL;
