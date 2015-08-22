@@ -8,6 +8,7 @@
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
+#include "VT100Stream.h"
 #include <TeensyDmx.h>
 #include <rdm.h>
 #include <Arduino.h>
@@ -22,7 +23,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 6
+#define START_PROG 1
 
 /**********************************************************
 **
@@ -62,20 +63,20 @@ ballState_t currentState;
 **
 **********************************************************/
 
-Parameter<int16_t>Delay(10);
-Parameter<int16_t>EffectProgram(0);
-Parameter<int16_t>Palette(0);
-Parameter<int16_t>Brightness(BRIGHTNESS);
-Parameter<int16_t>BlendParam(5000);
+AnimationValue Delay(10);
+AnimationValue EffectProgram(0);
+AnimationValue Palette(0);
+AnimationValue Brightness(BRIGHTNESS);
+AnimationValue BlendParam(5000);
 
-Parameter<int16_t>genericSpeed1(8);
-Parameter<int16_t>genericSpeed2(1);
-Parameter<int16_t>genericScale1(50);
-Parameter<int16_t>genericScale2(50);
-Parameter<int16_t>genericParam1(display.displayWidth());
-Parameter<int16_t>genericParam2(display.displayWidth());
-Parameter<int16_t>genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
-Parameter<int16_t>genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
+AnimationValue genericSpeed1(8);
+AnimationValue genericSpeed2(1);
+AnimationValue genericScale1(50);
+AnimationValue genericScale2(50);
+AnimationValue genericParam1(display.displayWidth());
+AnimationValue genericParam2(display.displayWidth());
+AnimationValue genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
+AnimationValue genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
 
 int16_t currentResolution ;
 volatile int16_t nextResolution;
@@ -92,26 +93,28 @@ CRGBPalette16 colorPalettes[]={
 };
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
-
+char * SystemParameterName[]={
+	"Program","Delay","Pallete","Brightness","Fade"
+};
 
 Parameter16_t parameterArray[] = {
 	// global scope parameters.
 	// these parameters for Program, framerate etc.
-/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,EffectProgram),
-/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,Delay),
-/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,Palette),
-/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,Brightness),
-/* 04 */	Parameter16_t('Z',(int16_t)0,(int16_t)32000,BlendParam),
+/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,&EffectProgram),
+/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,&Delay),
+/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,&Palette),
+/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,&Brightness),
+/* 04 */	Parameter16_t('Z',(int16_t)0,(int16_t)32000,&BlendParam),
 
 	// local parameters. These parameters have a different meening for each  Effect program.
-/* 05 */	Parameter16_t('U',(int16_t)0,(int16_t)0,genericSpeed1),
-/* 06 */  Parameter16_t('V',(int16_t)0,(int16_t)0,genericSpeed2),
-/* 07 */	Parameter16_t('R',(int16_t)0,(int16_t)0,genericScale1),
-/* 08 */	Parameter16_t('I',(int16_t)0,(int16_t)0,genericScale2),
-/* 09 */	Parameter16_t('O',(int16_t)0,(int16_t)0,genericParam1),
-/* 10 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,genericParam2),
-/* 11 */	Parameter16_t('M',(int16_t)0,(int16_t)255,genericEffectMask1),
-/* 12 */	Parameter16_t('N',(int16_t)0,(int16_t)255,genericEffectMask2),
+/* 05 */	Parameter16_t('U',(int16_t)0,(int16_t)0,&genericSpeed1),
+/* 06 */  Parameter16_t('V',(int16_t)0,(int16_t)0,&genericSpeed2),
+/* 07 */	Parameter16_t('R',(int16_t)0,(int16_t)0,&genericScale1),
+/* 08 */	Parameter16_t('I',(int16_t)0,(int16_t)0,&genericScale2),
+/* 09 */	Parameter16_t('O',(int16_t)0,(int16_t)0,&genericParam1),
+/* 10 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,&genericParam2),
+/* 11 */	Parameter16_t('M',(int16_t)0,(int16_t)255,&genericEffectMask1),
+/* 12 */	Parameter16_t('N',(int16_t)0,(int16_t)255,&genericEffectMask2),
 };
 typedef enum{param_P,param_D,param_C,param_B,param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
 
@@ -130,7 +133,7 @@ EffectWaterfall waterfallEffect = EffectWaterfall();
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
-	 	{&whiteEffect,500,NULL},
+	 	{&whiteEffect,100,NULL},
 		{&noiseEffect,150,NULL},
 		{&plasmaEffect,150,NULL},
 		{&simplePlasma,150,NULL},
@@ -168,9 +171,24 @@ int blinker(unsigned long now, void* userData)
 **********************************************************/
 void dumpParameters()
 {
-	for(int i=0;i<parameterArraySize;i++){
-		Serial << parameterArray[i].code<<" "<<parameterArray[i].value<<" ("<<parameterArray[i].maxValue<<")"<<endl;
+	uint8_t line = 4;
+	uint8_t column = 0;
+	// dump System Parameters
+	for(int i=0;i<5;i++){
+		Serial << ScreenPos(line,column)<<SystemParameterName[i]<<": "<<parameterArray[i]<<endl;
+		column +=25;
+		if(i && !(i%4)){
+			line ++;
+			column = 0;
+		}
 	}
+	//line ++;
+	column = 0;
+	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
+	Effect *effect = effectProgramsN[t].program;
+	Serial << ScreenPos(2,0)<<clearLineRight<<"Parameter: ";
+	effect->printParameter(Serial);
+	Serial <<ScreenPos(6,0)<<clearLineRight<<">";
 }
 
 void setup()
@@ -179,7 +197,8 @@ void setup()
 	FastLED.setBrightness( BRIGHTNESS );
 	FastLED.show();
 	Serial.begin(115200);
-
+	delay(2000);
+	Serial <<"Startup"<<endl;
 	// tweak global parameter max for Programs and pallettes
 	parameterArray[0].maxValue = newMaxPrograms-1;
 	parameterArray[2].maxValue = numberOfPalettes-1;
@@ -206,14 +225,14 @@ void setup()
 #endif
 	/** Setup DMX **/
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
-
+	Serial << "Init Parameters"<<endl;
 /** initialize Effects **/
 	EffectProgram.initTo(START_PROG);
 	int16_t cP = EffectProgram.currentValue();
 	Delay.initTo(effectProgramsN[cP].delay);
 	Brightness.initTo(BRIGHTNESS);
 	Palette.initTo(0);
-
+Serial << "Starting Tasks"<<endl;
 	/** Double buffering **/
 #if USE_DOUBLE_BUFFER
 	taskQueue.scheduleFunction(backbufferBlender,NULL,"BBB ",0,66);
@@ -229,7 +248,7 @@ void setup()
 	taskQueue.scheduleFunction(effectRunner,NULL,"EFFC",0,Delay.currentValue());
 #endif
 
-
+Serial << "Init Commandline Interface"<<endl;
 /** Command line interface **/
 #if USE_SERIAL_COMMANDS
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
@@ -242,11 +261,12 @@ void setup()
 #endif
 
 	randomSeed(millis());
-	delay(1000);
+
 	Serial<<"metaPixel initialized"<<endl;
 	Serial<<"Parameters: "<<parameterArraySize<<endl;
 	Serial<<"Programms: "<<newMaxPrograms<<endl;
-	Serial <<" Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
+	Serial <<"Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
+	delay(3000);
 }
 
 void loop()
@@ -258,8 +278,8 @@ void loop()
 	//
 	if(EffectProgram.hasChanged()){
 		int16_t nextP = EffectProgram.nextValue();
-		int16_t currentP = EffectProgram.currentValue();
 #if DEBUG_LOOP
+		int16_t currentP = EffectProgram.currentValue();
 		Serial <<"CP: "<< currentP<<" NP:"<<nextP<<" ";
 #endif
 		Delay = effectProgramsN[nextP].delay;
@@ -318,10 +338,9 @@ void loop()
 	{
 		bool t = false;
 		for(int i=4;i<parameterArraySize-1;++i){
-			t = t || parameterArray[i].value.syncValue();
+			t = t || parameterArray[i].value->syncValue();
 		}
 		if(t || parameterChanged){
-			Serial << "---"<<endl;
 			dumpParameters();
 			parameterChanged = false;
 			t= false;
@@ -341,7 +360,7 @@ int backbufferBlender(unsigned long now, void* userdata)
 	uint8_t frac = BlendParam.currentValue()/Delay.currentValue();
 	static uint8_t lastFrac =0;
 	if(frac != lastFrac){
-		Serial << "frac"<<frac<<endl;
+//		Serial << "frac"<<frac<<endl;
 		lastFrac = frac;
 	}
 

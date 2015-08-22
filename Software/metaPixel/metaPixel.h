@@ -12,6 +12,7 @@
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
+#include "VT100Stream.h"
 #include <TeensyDmx.h>
 #include <AudioStream.h>
 #include <rdm.h>
@@ -87,12 +88,12 @@
 
 /** DEBUG CONFIGURATION **/
 #define DEBUG (1)
-#define DEBUG_BLINK   (1 & DEBUG & !USE_TEENSY_AUDIO)
+#define DEBUG_BLINK   (0 & DEBUG & !USE_TEENSY_AUDIO)
 #define DEBUG_EFFECTS (0 & DEBUG)
 #define DEBUG_ENCODER (0 & DEBUG)
 #define DEBUG_MENU    (0 & DEBUG)
-#define DEBUG_COMMAND	(1 & DEBUG)
-#define DEBUG_LOOP		(1 & DEBUG)
+#define DEBUG_COMMAND	(0 & DEBUG)
+#define DEBUG_LOOP		(0 & DEBUG)
 #define DEBUG_EFFECT_SCEDULER (1 & DEBUG)
 
 /** exporting globals **/
@@ -108,23 +109,23 @@ extern Queue taskQueue;           ///< task queue scheduler
 extern CRGBPalette16 colorPalettes[];
 /** global effects parameter **/
 
-extern Parameter<int16_t>EffectProgram;     ///< current running effect program
-extern Parameter<int16_t>Delay;             ///< frame delay for the running effect
-extern Parameter<int16_t>Palette;           ///< actual used palette
-extern Parameter<int16_t>Brightness;        ///< global brightness of the display
-extern Parameter<int16_t>BlendParam;        ///< factor for double buffer blending
+extern AnimationValue EffectProgram;     ///< current running effect program
+extern AnimationValue Delay;             ///< frame delay for the running effect
+extern AnimationValue Palette;           ///< actual used palette
+extern AnimationValue Brightness;        ///< global brightness of the display
+extern AnimationValue BlendParam;        ///< factor for double buffer blending
 
 /** effect specific parameter **/
-extern Parameter<int16_t>genericSpeed1;       ///< generic global parameter
-extern Parameter<int16_t>genericSpeed2;       ///< generic global parameter
-extern Parameter<int16_t>genericScale1;       ///< generic global parameter
-extern Parameter<int16_t>genericScale2;       ///< generic global Parameter
+extern AnimationValue genericSpeed1;       ///< generic global parameter
+extern AnimationValue genericSpeed2;       ///< generic global parameter
+extern AnimationValue genericScale1;       ///< generic global parameter
+extern AnimationValue genericScale2;       ///< generic global Parameter
 
-extern Parameter<int16_t>genericParam1;       ///< generic global parameter
-extern Parameter<int16_t>genericParam2;       ///< generic globa Parameter
+extern AnimationValue genericParam1;       ///< generic global parameter
+extern AnimationValue genericParam2;       ///< generic globa Parameter
 
-extern Parameter<int16_t>genericEffectMask1;     ///< generic global mask parameter
-extern Parameter<int16_t>genericEffectMask2;     ///< generic global Mask 2
+extern AnimationValue genericEffectMask1;     ///< generic global mask parameter
+extern AnimationValue genericEffectMask2;     ///< generic global Mask 2
 
 extern effectProgramN_t effectProgramsN[];
 extern uint8_t newMaxPrograms;
@@ -132,6 +133,6 @@ extern uint8_t newMaxPrograms;
 extern Parameter16_t parameterArray[];
 extern int16_t parameterArraySize;
 
-
+extern void dumpParameters();
 
 #endif

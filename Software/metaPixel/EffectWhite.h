@@ -17,7 +17,15 @@ public:
 	virtual void startEffect();
 	virtual void frame(unsigned long now);
 	virtual void stopEffect();
-
+	virtual void printParameter(Print& stream);
+	virtual Parameter16_t* parameterAt(size_t idx){
+		Parameter16_t* res = NULL;
+		switch(idx){
+			case 0: res = colorIndexParam; break;
+			default: res = NULL;break;
+		}
+		return res;
+	}
 };
 
 

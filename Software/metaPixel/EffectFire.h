@@ -19,6 +19,22 @@ public:
   void startEffect();
   virtual void frame(unsigned long now);
   virtual void stopEffect();
+  virtual void printParameter(Print& stream);
+  virtual Parameter16_t* parameterAt(size_t idx){
+    Parameter16_t * res = NULL;
+    switch(idx){
+      case 0:
+        res = bottomHeating;
+      break;
+      case 1:
+        res = topCooling;
+      break;
+      default:
+        res = NULL;
+
+    }
+    return res;
+  };
 private:
   byte heatCells[NUM_LEDS];
   int16_t heatAt(int16_t x, int16_t y);

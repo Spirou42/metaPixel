@@ -7,15 +7,15 @@
 #include "Streaming.h"
 void EffectNoise::fillnoise8() {
 	for(int i = 0; i < NOISE_DIMENSION; i++) {
-		int ioffset = noiseScale->value.currentValue() * i;
+		int ioffset = noiseScale->value->currentValue() * i;
 		for(int j = 0; j < NOISE_DIMENSION; j++) {
-			int joffset = noiseScale->value.currentValue() * j;
+			int joffset = noiseScale->value->currentValue() * j;
 			noiseD[i][j] = inoise8(noiseX + ioffset,noiseY + joffset,noiseZ);
 			noiseP[i][j] = inoise8(noiseY+joffset,noiseX+ioffset,noiseZ);
 
 		}
 	}
-	noiseZ += noiseSpeed->value.currentValue();
+	noiseZ += noiseSpeed->value->currentValue();
 }
 
 void EffectNoise::startEffect()
@@ -23,9 +23,9 @@ void EffectNoise::startEffect()
   noiseX = random16();
   noiseY = random16();
   noiseZ = random16();
-  noiseSpeed->value.initTo(2);
-  noiseScale->value.initTo(50);
-  hueSpeed->value.initTo(0);
+  noiseSpeed->value->initTo(2);
+  noiseScale->value->initTo(50);
+  hueSpeed->value->initTo(0);
   setMaxValueFor(noiseSpeed,255);
   setMaxValueFor(noiseScale,255);
   setMaxValueFor(hueSpeed,255);
@@ -56,6 +56,21 @@ void EffectNoise::frame(unsigned long now)
       // leds[XY(i,j)] = CHSV(ihue + (noise[j][i]>>2),255,noise[i][j]);
     }
   }
-  ihue+=hueSpeed->value.currentValue();
+  ihue+=hueSpeed->value->currentValue();
   display.flush();
+}
+void EffectNoise::printParameter(Print& stream){
+	stream << "Noise scale: "<<*noiseScale<<" \tNoise speed: "<<*noiseSpeed<<" \thue Speed: "<<*hueSpeed<<endl;
+}
+
+Parameter16_t* EffectNoise::parameterAt(size_t idx)
+{
+		Parameter16_t* res = NULL;
+		switch(idx){
+			case 0: res = noiseScale; break;
+			case 1: res = noiseSpeed; break;
+			case 2: res = hueSpeed; break;
+			default: break;
+		}
+		return res;
 }

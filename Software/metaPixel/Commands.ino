@@ -92,7 +92,6 @@ void commandProcessor(char* line_buffer){
 			Serial << "Clamp to "<<myValue<<endl;
 #endif
 		}
-		parameterArray[parameterSlot].value = myValue;
-		Serial <<"+++++"<<endl;
+		*(parameterArray[parameterSlot].value) = myValue;
 	}while(*currentChar != 0);
 }

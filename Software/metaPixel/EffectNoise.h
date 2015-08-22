@@ -20,9 +20,11 @@ public:
   Parameter16_t *hueSpeed;
 
   EffectNoise():Effect("Noise"),noiseScale(NULL),noiseSpeed(NULL),hueSpeed(NULL){};
-  EffectNoise(Parameter16_t* nScale,Parameter16_t* nSpeed, Parameter16_t* hSpeed):Effect("noise"),noiseScale(nScale),noiseSpeed(nSpeed),hueSpeed(hSpeed){};
+  EffectNoise(Parameter16_t* nScale,Parameter16_t* nSpeed, Parameter16_t* hSpeed):Effect("Noise"),noiseScale(nScale),noiseSpeed(nSpeed),hueSpeed(hSpeed){};
   virtual void startEffect();
 	virtual void frame(unsigned long now);
+  virtual void printParameter(Print& stream);
+  virtual Parameter16_t* parameterAt(size_t idx);
 protected:
   int16_t noiseX;
   int16_t noiseY;

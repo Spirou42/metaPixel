@@ -5,15 +5,16 @@
 #include "EffectPlasmaSimple.h"
 #include "Arduino.h"
 #include "Streaming.h"
+#include "VT100Stream.h"
 
 
 void EffectPlasmaSimple::startEffect()
 {
   Serial << "SimplePlasma Init Effect"<<endl;
-  windowScale->value = 1;
-  hueScale->value = 400;
-  plasmaSpeed->value = 15;
-  mirrorMask->value = 0;
+  *(windowScale->value) = 1;
+  *(hueScale->value) = 400;
+  *(plasmaSpeed->value) = 15;
+  *(mirrorMask->value) = 0;
   setMaxValueFor(windowScale,10);
   setMaxValueFor(hueScale,10000);
   setMaxValueFor(plasmaSpeed,255);
@@ -31,17 +32,17 @@ void EffectPlasmaSimple::frame(unsigned long now)
 	lastCall = now;
 #endif
 
-	uint8_t w = display.displayWidth() * windowScale->value.currentValue();
-	uint8_t h = display.displayHeight() * windowScale->value.currentValue();
+	uint8_t w = display.displayWidth() * windowScale->value->currentValue();
+	uint8_t h = display.displayHeight() * windowScale->value->currentValue();
 
 
-	int32_t yHueDelta32 = ((int32_t)cos16( frame * (27/1) ) * (hueScale->value.currentValue() / w));
-	int32_t xHueDelta32 = ((int32_t)sin16( frame * (39/1) ) * (hueScale->value.currentValue() / h));
+	int32_t yHueDelta32 = ((int32_t)cos16( frame * (27/1) ) * (hueScale->value->currentValue() / w));
+	int32_t xHueDelta32 = ((int32_t)sin16( frame * (39/1) ) * (hueScale->value->currentValue() / h));
 	DrawOneFrame( frame / 0xffff, yHueDelta32 / 32768, xHueDelta32 / 32768);
 #if !USE_DOUBLE_BUFFER
 	FastLED.show();
 #endif
-	frame +=plasmaSpeed->value.currentValue();
+	frame +=plasmaSpeed->value->currentValue();
 #if DEBUG_EFFECTS
 	Serial << "Took: "<<(millis()-lastCall)<<" millisec "<<frame<<endl;
 #endif
@@ -51,8 +52,8 @@ void EffectPlasmaSimple::frame(unsigned long now)
 void EffectPlasmaSimple::DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t xHueDelta8)
 {
   byte lineStartHue = startHue8;
-	uint8_t h= display.displayHeight()/(mirrorMask->value.currentValue()?2:1);
-	uint8_t w= display.displayWidth()/(mirrorMask->value.currentValue()?2:1);
+	uint8_t h= display.displayHeight()/(mirrorMask->value->currentValue()?2:1);
+	uint8_t w= display.displayWidth()/(mirrorMask->value->currentValue()?2:1);
 
 	for( byte y = 0; y < h; y++) {
 		lineStartHue += yHueDelta8;
@@ -63,7 +64,7 @@ void EffectPlasmaSimple::DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t
 			CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],pixelHue);
 			display.setPixel(MPPixel(x,y),color);
 
-			if(mirrorMask->value.currentValue()){
+			if(mirrorMask->value->currentValue()){
 				display.setPixel(x,display.displayHeight()-y-1,color);
 				display.setPixel(x,display.displayHeight()-y-1,color);
 				display.setPixel(display.displayWidth()-x-1,y,color);
@@ -72,4 +73,8 @@ void EffectPlasmaSimple::DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t
 		}
 	}
 	FastLED.show();
+}
+
+void EffectPlasmaSimple::printParameter(Print& stream){
+  stream << "wScale: "<<*windowScale<<" \thScale: "<<*hueScale<<" \tpSpeed: "<<*plasmaSpeed<<" \tmMask: "<<*mirrorMask<<endl;
 }

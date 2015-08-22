@@ -5,8 +5,9 @@ void EffectFire::startEffect()
 {
   setMaxValueFor(bottomHeating,255);
   setMaxValueFor(topCooling,255);
-  bottomHeating->value.initTo(200);
-  topCooling->value.initTo(255);
+  bottomHeating->value->initTo(200);
+  topCooling->value->initTo(255);
+  bottomHeating->value->animateTo(10,300000);
   display.fill(CRGB::Black);
   for(int i=0;i<NUM_LEDS;i++){
     heatCells[i]=0;
@@ -30,7 +31,7 @@ void EffectFire::frame(unsigned long now)
 		for(uint8_t x=0;x<DISPLAY_WIDTH;x++){
 			uint16_t offset = display.XY(x,y);
 //			uint8_t coolBase = ((DISPLAY_HEIGHT+y)*genericSpeed1.currentValue())/10;
-			uint8_t cooling = random8(0, topCooling->value.currentValue());// / display.displayHeight()) + 2);
+			uint8_t cooling = random8(0, topCooling->value->currentValue());// / display.displayHeight()) + 2);
 #if DEBUG_EFFECTS
 			Serial <<"Cooling ("<<x<<", "<<y<<") "<<cooling<<endl;
 #endif
@@ -87,7 +88,7 @@ int16_t EffectFire::heatAt(int16_t x,int16_t y)
 		return -20;
 	}
 	if(y<0)
-		return bottomHeating->value.currentValue();
+		return bottomHeating->value->currentValue();
 	if( (y<0) || (y > DISPLAY_HEIGHT-1)){
 		return -20;
 	}
@@ -117,6 +118,9 @@ int16_t EffectFire::neightbours(int16_t x, int16_t y)
 }
 void EffectFire::stopEffect()
 {
-  Serial <<"restore "<<_initPalette<<endl;
   Palette.initTo(_initPalette);
+}
+void EffectFire::printParameter(Print& stream)
+{
+  stream << "Bottom Heat: "<<*bottomHeating<<" \tTop Cool: "<<*topCooling<<endl;
 }

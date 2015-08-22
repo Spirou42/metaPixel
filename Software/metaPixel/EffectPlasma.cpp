@@ -7,16 +7,16 @@
 #include "Streaming.h"
 
 
-#define PSCALE (plasmaScale->value.currentValue())
+#define PSCALE (plasmaScale->value->currentValue())
 #define KSCALE (10.0)
 
 void EffectPlasma::startEffect()
 {
-  plasmaScale->value.initTo(3);
-  plasmaSpeed->value.initTo(1);
-  hueSpeed->value.initTo(0);
-  plasmaRadius->value.initTo(display.displayWidth()/2);
-  plasmaMask->value.initTo(15);
+  plasmaScale->value->initTo(3);
+  plasmaSpeed->value->initTo(1);
+  hueSpeed->value->initTo(0);
+  plasmaRadius->value->initTo(display.displayWidth()/2);
+  plasmaMask->value->initTo(15);
   Palette=0;
   setMaxValueFor(plasmaScale,255);
   setMaxValueFor(plasmaSpeed,255);
@@ -34,8 +34,8 @@ void EffectPlasma::frame(unsigned long now)
 	static float k = 0;
 	static int paletteShift = 0;
 
-	int xOffset = int(0 + (plasmaRadius->value.currentValue() * cos(k*KSCALE ))) ;
-	int yOffset = int(0 + (plasmaRadius->value.currentValue() *-sin(k*KSCALE )));
+	int xOffset = int(0 + (plasmaRadius->value->currentValue() * cos(k*KSCALE ))) ;
+	int yOffset = int(0 + (plasmaRadius->value->currentValue() *-sin(k*KSCALE )));
 
 //	Serial <<"k:"<<k<<" Xo: "<<xOffset<<" ";
 	center.x+=xOffset;
@@ -49,22 +49,22 @@ void EffectPlasma::frame(unsigned long now)
 			int div = 0;
 			int colorIndex=0;
 			// Vertical Stripes
-			if(plasmaMask->value.currentValue() & VerticalEffect){
+			if(plasmaMask->value->currentValue() & VerticalEffect){
 				colorIndex += int(128.0 + (128.0 * sin( (float)(current.x+xOffset) / (PSCALE*1) )));div++;
 			}
 
 			// Horzontal Stripes
-			if(plasmaMask->value.currentValue() & HorizontalEffect){
+			if(plasmaMask->value->currentValue() & HorizontalEffect){
 				colorIndex += int(128.0 + (128.0 * sin( (current.y+yOffset) / (PSCALE*1)  )));div++;
 			}
 
 			// Diagonal Stripes
-			if(plasmaMask->value.currentValue() & DiagonalEffect){
+			if(plasmaMask->value->currentValue() & DiagonalEffect){
 				colorIndex += int(128.0 + (128.0 * sin((current.x+yOffset + current.y+xOffset) / (PSCALE*1) )));div++;
 			}
 
 			// Circle
-			if(plasmaMask->value.currentValue() & CircleEffect){
+			if(plasmaMask->value->currentValue() & CircleEffect){
 				colorIndex += int(128.0 + (128.0 * sin(center.distanceTo(current) / (PSCALE*1) )));div++;
 			}
 
@@ -75,13 +75,18 @@ void EffectPlasma::frame(unsigned long now)
 	}
 	//	Serial<<"Center: ("<<center.x<<", "<<center.y<<")"<<endl;
 		display.setPixel(center,CRGB::White);
-	paletteShift+=hueSpeed->value.currentValue();
+	paletteShift+=hueSpeed->value->currentValue();
 	paletteShift%=256;
-	k+=(M_PI/359.0)*plasmaSpeed->value.currentValue()/10.0;
+	k+=(M_PI/359.0)*plasmaSpeed->value->currentValue()/10.0;
 	if(k<0){
 		k=359;
 	}
 	if(k>359){
 		k=0;
 	}
+}
+
+void EffectPlasma::printParameter(Print& stream)
+{
+   stream << "pSpeed: "<<*plasmaSpeed<<" \thueSpeed: "<<*hueSpeed<<" \tpScale: "<<*plasmaScale<<" \tpRadius: "<<*plasmaRadius<<" \tpMask: "<<*plasmaMask<<endl;
 }

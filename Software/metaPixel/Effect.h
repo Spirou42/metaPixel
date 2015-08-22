@@ -8,6 +8,7 @@
 #define __EFFECT_H__
 #include <Arduino.h>
 #include <Streaming.h>
+#include "VT100Stream.h"
 #include "Parameter.h"
 
 class Effect
@@ -18,15 +19,23 @@ public:
 	Effect(const char *p):name(p){};
 
 	virtual void startEffect(){}; ///< book keeping on startup initialize max and minvalues
-	virtual void frame(unsigned long now)=0;
-	virtual void stopEffect(){Serial<<"EFS"<<endl;};
+	virtual void frame(unsigned long now){};
+	virtual void stopEffect(){};
+	virtual void printParameter(Print& stream){};
 	const char * getName(){return name;}
+	virtual Parameter16_t* parameterAt(size_t idx){Serial <<"Gnartz";return NULL;};
 	int16_t getValueFor(Parameter16_t *someValue,int16_t defaultValue=0);
 	void setMaxValueFor(Parameter16_t *someValue,int16_t maxVal );
 	const char getCodeFor(Parameter16_t *someValue)
 	{
 		if(NULL!=someValue){return someValue->code;}else{return 0x00;}
 	};
+	friend Print& operator<<(Print &output, Effect *d){
+		output<<"Effect: "<<bold<<d->name<<normal<<endl;
+		output<<"Parameters: ";
+		d->printParameter(output);
+		return output;
+	}
 };
 
 //typedef int (*queuedFunction)(unsigned long,void* userData);

@@ -10,7 +10,7 @@ Effect.cpp
 int16_t Effect::getValueFor(Parameter16_t *someValue,int16_t defaultValue)
 {
 		if(NULL!=someValue){
-			return someValue->value.currentValue();
+			return someValue->value->currentValue();
 		}else{
 			return defaultValue;
 		}
@@ -22,7 +22,6 @@ void Effect::setMaxValueFor(Parameter16_t *someValue,int16_t maxVal)
 			someValue->maxValue = maxVal;
 		}
 }
-
 int effectRunner(unsigned long now, void* userdata)
 {
 	static uint16_t lastP = 0;
@@ -32,13 +31,16 @@ int effectRunner(unsigned long now, void* userdata)
 	if(t != lastP){
 		lastEffect->stopEffect();
 		lastP = t;
-		Serial << "Program: "<< effect->getName()<<endl;
 		effect->startEffect();
+		Serial << clearHome<<effect<<endl;
+		dumpParameters();
+		Serial <<endl;
+
 	}
 	for(int i=0;i<(parameterArraySize-1);i++){
-		Parameter<int16_t> k = (Parameter<int16_t>)parameterArray[i].value;
-		if(k._shouldAnimate){
-			k.animateParameter();
+		AnimationValue *k = parameterArray[i].value;
+		if(k->_shouldAnimate){
+			k->animateParameter();
 		}
 	}
 	effect->frame(now);
