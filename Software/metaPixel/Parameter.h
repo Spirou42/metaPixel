@@ -6,7 +6,7 @@
 #include <Streaming.h>
 #define FASTLED_INTERNAL
 #include <FastLED.h>
-//template <class T>
+#include "VT100Stream.h"
 
 class AnimationValue {
 public:
@@ -154,6 +154,17 @@ public:
 	AnimationValue *value;
 	Parameter16_t():code(0x00),minValue(int16_t()),maxValue(int16_t()),value(NULL){};
 	Parameter16_t(char c, int16_t minVal, int16_t maxVal,AnimationValue* val): code(c),minValue(minVal),maxValue(maxVal),value(val){};
+	int16_t clampValue(int16_t v){
+		if(v<minValue){
+			v = minValue;
+		}else if(v>maxValue){
+			v = maxValue;
+		}
+		return v;
+	}
+	void setValue(int16_t v){
+		value->SetValue(clampValue(v));
+	};
 } ;
 extern Parameter16_t parameterArray[];
 extern int16_t parameterArraySize;

@@ -24,7 +24,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 1
+#define START_PROG 4
 
 /**********************************************************
 **
@@ -185,6 +185,7 @@ void dumpParameters()
 {
 	uint8_t line = 4;
 	uint8_t column = 0;
+	//Serial << clearScreen;
 	// dump System Parameters
 	for(int i=0;i<6;i++){
 		Serial << ScreenPos(line,column)<<SystemParameterName[i]<<": "<<parameterArray[i]<<endl;

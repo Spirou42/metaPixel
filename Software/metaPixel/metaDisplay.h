@@ -5,6 +5,7 @@
 #define __metaDisplay_H__
 
 #include "metaModule.h"
+#include "metaPixel.h"
 typedef enum {noMirror=0,horizontalMirror=1,verticalMirror=2,quadMirror=3} displayMirror;
 
 class metaDisplay {
@@ -13,7 +14,7 @@ protected:
 	uint8_t 	width,height;                  ///< number of modules in display
 	CRGB* 		ledBuffer;
 	CRGB* 		backbuffer;
-	metaModule	  *moduleBuffer;
+	//metaModule	  *moduleBuffer;
 	displayMirror mirMode;
 public:
 	metaDisplay():moduleWidth(0),moduleHeight(0),width(0),height(0) {};
