@@ -12,11 +12,12 @@ void EffectPlasmaSimple::startEffect()
 {
   Serial << "SimplePlasma Init Effect"<<endl;
   *(windowScale->value) = 1;
-  *(hueScale->value) = 400;
+  windowScale->value->_shouldAnimate=false;
+  *(hueScale->value) = 100;
   *(plasmaSpeed->value) = 15;
   *(mirrorMask->value) = 0;
-  setMaxValueFor(windowScale,10);
-  setMaxValueFor(hueScale,10000);
+  setMaxValueFor(windowScale,1000);
+  setMaxValueFor(hueScale,1000);
   setMaxValueFor(plasmaSpeed,255);
   setMaxValueFor(mirrorMask,1);
 	display.fill(CRGB::Black);
@@ -37,7 +38,7 @@ void EffectPlasmaSimple::frame(unsigned long now)
 
 
 	int32_t yHueDelta32 = ((int32_t)cos16( frame * (27/1) ) * (hueScale->value->currentValue() / w));
-	int32_t xHueDelta32 = ((int32_t)sin16( frame * (39/1) ) * (hueScale->value->currentValue() / h));
+	int32_t xHueDelta32 = -((int32_t)sin16( frame * (39/1) ) * (hueScale->value->currentValue() / h));
 	DrawOneFrame( frame / 0xffff, yHueDelta32 / 32768, xHueDelta32 / 32768);
 #if !USE_DOUBLE_BUFFER
 	FastLED.show();

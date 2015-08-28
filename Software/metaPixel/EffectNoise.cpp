@@ -10,9 +10,9 @@ void EffectNoise::fillnoise8() {
 		int ioffset = noiseScale->value->currentValue() * i;
 		for(int j = 0; j < NOISE_DIMENSION; j++) {
 			int joffset = noiseScale->value->currentValue() * j;
-			noiseD[i][j] = inoise8(noiseX + ioffset,noiseY + joffset,noiseZ);
-			noiseP[i][j] = inoise8(noiseY+joffset,noiseX+ioffset,noiseZ);
-
+			noiseH[i][j] = inoise8(noiseX + ioffset, noiseY + joffset, noiseZ);
+			noiseS[i][j] = inoise8(noiseY + joffset, noiseX + ioffset, noiseZ);
+			noiseV[i][j] = inoise8(noiseX + ioffset, noiseY + joffset, noiseZ);
 		}
 	}
 	noiseZ += noiseSpeed->value->currentValue();
@@ -24,12 +24,15 @@ void EffectNoise::startEffect()
   noiseY = random16();
   noiseZ = random16();
   noiseSpeed->value->initTo(2);
-  noiseScale->value->initTo(50);
+  noiseScale->value->initTo(1);
+	noiseScale->value->bounce(90,600000);
   hueSpeed->value->initTo(0);
-  setMaxValueFor(noiseSpeed,255);
+	effectMask->value->initTo(1);
+	setMaxValueFor(noiseSpeed,255);
   setMaxValueFor(noiseScale,255);
   setMaxValueFor(hueSpeed,255);
-  Serial <<noiseSpeed->code<<","<<noiseScale->code<<","<<hueSpeed->code<<endl;
+	setMaxValueFor(effectMask,7);
+  //Serial <<noiseSpeed->code<<","<<noiseScale->code<<","<<hueSpeed->code<<endl;
   Palette=(0);
 }
 
@@ -41,15 +44,25 @@ void EffectNoise::frame(unsigned long now)
       // We use the value at the (i,j) coordinate in the noise
       // array for our brightness, and the flipped value from (j,i)
       // for our pixel's hue.
-      CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],noiseD[i][j]+ihue);
+			uint8_t targetIndex = ihue;
+			if(effectMask->value->currentValue() & 0x1){
+				targetIndex += noiseH[i][j];
+			}
+      CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],targetIndex);
       CHSV hcolor = rgb2hsv(color);
-      hcolor.v = noiseP[i][j];
+			if(effectMask->value->currentValue() & 0x2){
+				hcolor.s += noiseS[i][j];
+			}
+			if(effectMask->value->currentValue() & 0x4){
+				hcolor.v += noiseV[i][j];
+			}
+      //hcolor.v = noiseP[i][j];
 
-                  hcolor = CHSV(ihue + (noiseD[i][j]>>1),255/*(noiseP[i][j]<<3)*/,255/*noiseP[i][j]*/);
+        //          hcolor = CHSV(ihue + (noiseD[i][j]>>1),255/*(noiseP[i][j]<<3)*/,255/*noiseP[i][j]*/);
             //hcolor = CHSV(noiseD[j][i],255,noiseD[i][j]);
 
             //color = ColorFromPalette(colorPalettes[currentPalette],noiseD[j][i]);
-      display.setPixel(i,j,color);
+      display.setPixel(i,j,hcolor);
 
 
       // You can also explore other ways to constrain the hue used, like below
@@ -60,7 +73,7 @@ void EffectNoise::frame(unsigned long now)
   display.flush();
 }
 void EffectNoise::printParameter(Print& stream){
-	stream << "Noise scale: "<<*noiseScale<<" \tNoise speed: "<<*noiseSpeed<<" \thue Speed: "<<*hueSpeed<<endl;
+	stream << "Noise scale: "<<*noiseScale<<" \tNoise speed: "<<*noiseSpeed<<" \thue Speed: "<<*hueSpeed<<" \tMask: "<<*effectMask<<endl;
 }
 
 Parameter16_t* EffectNoise::parameterAt(size_t idx)

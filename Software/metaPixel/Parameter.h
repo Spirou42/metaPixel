@@ -51,6 +51,7 @@ public:
 	{
 	  _targetValue = target;
 	  _shouldAnimate = true;
+		_bounce = false;
 	  _tmilli = milli;
 	  _sinceLast = 0;
 	}
@@ -59,8 +60,8 @@ public:
 	{
 		_startValue = _tempValue;
 		_smilli = milli;
-		_bounce = true;
 		animateTo(target,milli);
+		_bounce = true;
 	}
 	void animateParameter()
 	{

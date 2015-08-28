@@ -6,7 +6,7 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
-#define SERIAL_BUFFER_LENGTH 20
+#define SERIAL_BUFFER_LENGTH 80
 //** reads lines from Serial
 extern int serialReader(unsigned long now, void* userData);
 extern int getParameterFor(char p);

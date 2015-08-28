@@ -4,12 +4,9 @@
 #include "metaDisplay.h"
 #include "Streaming.h"
 #include "Arduino.h"
-void metaDisplay::setResolution(displayResolution res)
-	{
-		reso = res;
-		this->clear();
-	}
-metaDisplay::metaDisplay(CRGB* buffer, CRGB* bbuff, uint8_t w,uint8_t h):moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff),reso(hiRes)
+
+metaDisplay::metaDisplay(CRGB* buffer, CRGB* bbuff, uint8_t w,uint8_t h):
+moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff),mirMode(noMirror)
 {
 	moduleBuffer = new metaModule(moduleWidth*moduleHeight);
 	for(int x=0;x<width;x++){
@@ -52,16 +49,14 @@ uint16_t metaDisplay::XY(MPPixel currentPixel)
 uint16_t metaDisplay::displayWidth()
 {
 	uint16_t wid = 0;
-	switch(this->resolution()){
-		case lowRes:
-			wid = moduleWidth;
-			break;
-		case midRes:
+	wid= moduleWidth*width;
+	switch(mirMode){
+		case noMirror:
+		case horizontalMirror:
+			wid= moduleWidth*width; break;
+		case verticalMirror:
+		case quadMirror:
 			wid = (moduleWidth*width)/2;
-			break;
-		case hiRes:
-			wid= moduleWidth*width;
-			break;
 	}
 	return wid;
 }
@@ -69,17 +64,17 @@ uint16_t metaDisplay::displayWidth()
 uint16_t metaDisplay::displayHeight()
 {
 	uint16_t h=0;
-	switch(this->resolution()){
-		case lowRes:
-			h = height;
-			break;
-		case midRes:
-			h = ((moduleHeight * height) / 2.0) - height/2.0;
-			break;
-		case hiRes:
-			h = moduleHeight*height;
-			break;
+	h = moduleHeight*height;
+	switch(mirMode){
+		case noMirror:
+		case verticalMirror:
+			h = moduleHeight*height; break;
+		case horizontalMirror:
+		case quadMirror:
+			h = (moduleHeight * height)/2;
+		break;
 	}
+
 	return h;
 }
 
@@ -96,66 +91,40 @@ void metaDisplay::_setPixel(MPPixel coord,CRGB color)
 	}
 	uint16_t offset = XY(coord);
 	if(backbuffer){
-		switch(this->resolution()){
-			case lowRes:
-			{
-				MPPixel ncoord = coord;
-				for(int x=0;x<moduleWidth;x++){
-					for(int y=0;y<moduleHeight;y++){
-						ncoord.x = coord.x + x;
-						ncoord.y = coord.y + y;
-						offset = XY(ncoord);
-						backbuffer[offset]=color;
-					}
-				}
-			}
-			break;
-			case midRes:
-			{
-				MPPixel ncoord = coord;
-				for(int x=0;x<2;x++){
-					for(int y=0;y<2;y++){
-						ncoord.x = coord.x + x;
-						ncoord.y = coord.y + y;
-						offset = XY(ncoord);
-						backbuffer[offset]=color;
-					}
-				}
-			}
-				break;
-			case hiRes:
-
-					backbuffer[offset]=color;
-			break;
-		}
+		backbuffer[offset]=color;
 	}else{
-		switch(this->resolution()){
-			case lowRes:
-
-			case midRes:
-
-			case hiRes:
-			uint16_t offset = XY(coord);
-			ledBuffer[offset]=color;
-			break;
-		}
+		ledBuffer[offset]=color;
 	}
 }
 
 
 void metaDisplay::setPixel(MPPixel coord, CRGB color)
 {
-	switch(resolution()){
-		case lowRes:
-		coord.x*=moduleWidth;
-		coord.y*=moduleHeight;
-		break;
-		case midRes:
-		coord.x*=2.0;
-		coord.y=( (coord.y*2.0)+(coord.y%2)+(coord.y/2) );
-		break;
-		case hiRes:
-		break;
+	MPPixel tempCoord = coord;
+	int16_t displayWidth = (moduleWidth * width)-1;
+	int16_t displayHeight = (moduleHeight * height)-1;
+	switch(mirMode){
+		case horizontalMirror:
+			tempCoord = coord;
+			tempCoord.y = displayHeight - coord.y;
+			_setPixel(tempCoord,color);
+			break;
+		case verticalMirror:
+			tempCoord = coord;
+			tempCoord.x = displayWidth - coord.x;
+			_setPixel(tempCoord,color);
+			break;
+		case quadMirror:
+			tempCoord = coord;
+			tempCoord.x = displayWidth-coord.x;
+			_setPixel(tempCoord,color);
+			tempCoord.y = displayHeight-coord.y;
+			_setPixel(tempCoord,color);
+			tempCoord.x = coord.x;
+			_setPixel(tempCoord,color);
+			break;
+		case noMirror:
+			break;
 	}
 	_setPixel(coord,color);
 }

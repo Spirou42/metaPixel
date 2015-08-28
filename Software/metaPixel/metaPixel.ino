@@ -69,6 +69,7 @@ AnimationValue EffectProgram(0);
 AnimationValue Palette(0);
 AnimationValue Brightness(BRIGHTNESS);
 AnimationValue BlendParam(5000);
+AnimationValue MirrorParam(0);
 
 AnimationValue genericSpeed1(8);
 AnimationValue genericSpeed2(1);
@@ -79,8 +80,6 @@ AnimationValue genericParam2(display.displayWidth());
 AnimationValue genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
 AnimationValue genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
 
-int16_t currentResolution ;
-volatile int16_t nextResolution;
 // Gradient palette "arctic_gp", originally from
 // http://soliton.vm.bytemark.co.uk/pub/cpt-city/arendal/tn/arctic.png.index.html
 // converted for FastLED with gammas (2.6, 2.2, 2.5)
@@ -104,8 +103,8 @@ CRGBPalette16 colorPalettes[]={
 };
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
-char * SystemParameterName[]={
-	"Program","Delay","Pallete","Brightness","Fade"
+const char * SystemParameterName[]={
+	"Program","Delay","Pallete","Brightness","Mirror","Fade"
 };
 
 Parameter16_t parameterArray[] = {
@@ -115,25 +114,27 @@ Parameter16_t parameterArray[] = {
 /* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,&Delay),
 /* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,&Palette),
 /* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,&Brightness),
-/* 04 */	Parameter16_t('Z',(int16_t)0,(int16_t)32000,&BlendParam),
+/* 04 */  Parameter16_t('Q',(int16_t)0,(int16_t)3,&MirrorParam),
+/* 05 */	Parameter16_t('Z',(int16_t)0,(int16_t)32000,&BlendParam),
 
-	// local parameters. These parameters have a different meening for each  Effect program.
-/* 05 */	Parameter16_t('U',(int16_t)0,(int16_t)0,&genericSpeed1),
-/* 06 */  Parameter16_t('V',(int16_t)0,(int16_t)0,&genericSpeed2),
-/* 07 */	Parameter16_t('R',(int16_t)0,(int16_t)0,&genericScale1),
-/* 08 */	Parameter16_t('I',(int16_t)0,(int16_t)0,&genericScale2),
-/* 09 */	Parameter16_t('O',(int16_t)0,(int16_t)0,&genericParam1),
-/* 10 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,&genericParam2),
-/* 11 */	Parameter16_t('M',(int16_t)0,(int16_t)255,&genericEffectMask1),
-/* 12 */	Parameter16_t('N',(int16_t)0,(int16_t)255,&genericEffectMask2),
+// local parameters. These parameters have a different meening for each  Effect program.
+/* 06 */	Parameter16_t('U',(int16_t)0,(int16_t)0,&genericSpeed1),
+/* 07 */  Parameter16_t('V',(int16_t)0,(int16_t)0,&genericSpeed2),
+/* 08 */	Parameter16_t('R',(int16_t)0,(int16_t)0,&genericScale1),
+/* 09 */	Parameter16_t('I',(int16_t)0,(int16_t)0,&genericScale2),
+/* 10 */	Parameter16_t('O',(int16_t)0,(int16_t)0,&genericParam1),
+/* 11 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,&genericParam2),
+/* 12 */	Parameter16_t('M',(int16_t)0,(int16_t)255,&genericEffectMask1),
+/* 13 */	Parameter16_t('N',(int16_t)0,(int16_t)255,&genericEffectMask2),
+
 };
-typedef enum{param_P,param_D,param_C,param_B,param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
+typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
 
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(Parameter16_t);
 
 EffectWhite whiteEffect = EffectWhite(&(parameterArray[param_O]));
 EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[param_H]  );
-EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[param_U],&parameterArray[param_V]);
+EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[param_U],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
 EffectLine lineEffect = EffectLine();
@@ -185,7 +186,7 @@ void dumpParameters()
 	uint8_t line = 4;
 	uint8_t column = 0;
 	// dump System Parameters
-	for(int i=0;i<5;i++){
+	for(int i=0;i<6;i++){
 		Serial << ScreenPos(line,column)<<SystemParameterName[i]<<": "<<parameterArray[i]<<endl;
 		column +=25;
 		if(i && !(i%4)){
@@ -339,16 +340,20 @@ void loop()
 		Brightness.syncValue();
 		parameterChanged=true;
 	}
-	if(currentResolution != nextResolution){
-		currentResolution = nextResolution;
-		display.setResolution( (displayResolution)currentResolution);
-#if USE_DOUBLE_BUFFER
-		//		display.clearAll();
-#endif
+
+	//
+	// switch mirror mode Slot(4)
+	//
+	if(MirrorParam.hasChanged()){
+		MirrorParam.syncValue();
+		display.setMirrorMode((displayMirror)MirrorParam.currentValue());
+		parameterChanged=true;
 	}
+
+	/** check all remaining parameters */
 	{
 		bool t = false;
-		for(int i=4;i<parameterArraySize-1;++i){
+		for(int i=5;i<parameterArraySize-1;++i){
 			t = t || parameterArray[i].value->syncValue();
 		}
 		if(t || parameterChanged){
@@ -357,8 +362,10 @@ void loop()
 			t= false;
 		}
 	}
+	/** run all sequence tasks */
 	taskQueue.Run(millis());
-	delay(2);
+
+//	delay(2);
 }
 
 /**********************************************************

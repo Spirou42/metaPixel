@@ -11,6 +11,11 @@
 #include "Streaming.h"
 //#define ESC (char)0x1b
 /// Simple sequences
+enum _XONOFF {
+  XON,
+  XOFF,
+};
+
 enum _VT100Simples {
   esc,            ///< Escape
   clearScreen,    ///< ClearScreen
@@ -56,6 +61,15 @@ inline Print &operator <<(Print& obj,_VT100Simples control)
   case blink:           obj<<(char)0x1b<<"[5m";break;
   default:
     break;
+  }
+  return obj;
+}
+
+inline Print &operator <<(Print& obj,_XONOFF control)
+{
+  switch(control){
+    case XON: obj<< (char) 0x11; break;
+    case XOFF: obj<<(char)0x13;break;
   }
   return obj;
 }

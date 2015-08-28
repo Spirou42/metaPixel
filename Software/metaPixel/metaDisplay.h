@@ -5,8 +5,7 @@
 #define __metaDisplay_H__
 
 #include "metaModule.h"
-typedef enum {lowRes,midRes,hiRes} displayResolution;
-typedef enum {noMir,horMir,verMir,quadMir} displayMirror;
+typedef enum {noMirror=0,horizontalMirror=1,verticalMirror=2,quadMirror=3} displayMirror;
 
 class metaDisplay {
 protected:
@@ -15,7 +14,6 @@ protected:
 	CRGB* 		ledBuffer;
 	CRGB* 		backbuffer;
 	metaModule	  *moduleBuffer;
-	displayResolution reso;
 	displayMirror mirMode;
 public:
 	metaDisplay():moduleWidth(0),moduleHeight(0),width(0),height(0) {};
@@ -29,6 +27,14 @@ public:
 
 	uint16_t displayWidth();
 	uint16_t displayHeight();
+	void setMirrorMode(displayMirror mirM){
+		if(mirMode != mirM){
+			mirMode = mirM;
+			clear();
+		}
+	};
+	displayMirror mirrorMode(){return mirMode;};
+
 
 	void setPixel(uint16_t x, uint16_t y, CRGB color);
 	void setPixel(MPPixel coord,CRGB color);
@@ -44,8 +50,6 @@ public:
 	void flush();
 	void setBrightness(uint8_t b);
 	uint8_t brightness();
-	void setResolution(displayResolution res);
-	displayResolution resolution(){return reso;};
 
 	// Bresenham line algorythm
 	void line(MPPixel st, MPPixel en, CRGB color);

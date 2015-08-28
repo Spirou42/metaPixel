@@ -27,8 +27,8 @@ void EffectFire::frame(unsigned long now)
 
 	// Step 1.  Cool down every cell a little
 	// this works without mapping from XY coordinates to cells
-	for(uint8_t y=0;y<DISPLAY_HEIGHT;y++){
-		for(uint8_t x=0;x<DISPLAY_WIDTH;x++){
+	for(uint8_t y=0;y<display.displayHeight();y++){
+		for(uint8_t x=0;x<display.displayWidth();x++){
 			uint16_t offset = display.XY(x,y);
 //			uint8_t coolBase = ((DISPLAY_HEIGHT+y)*genericSpeed1.currentValue())/10;
 			uint8_t cooling = random8(0, topCooling->value->currentValue());// / display.displayHeight()) + 2);
@@ -42,8 +42,8 @@ void EffectFire::frame(unsigned long now)
 	// for( int k= NUM_LEDS - 1; k >= 2; k--) {
 	//   		heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2] ) / 3;
 	// }
-	for(int y=0;y<DISPLAY_HEIGHT;y++){
-		for(int x=0;x<DISPLAY_WIDTH;x++){
+	for(int y=0;y<display.displayHeight();y++){
+		for(int x=0;x<display.displayWidth();x++){
 			uint16_t offset = display.XY(x,y);
 
 			int16_t h = 0;
@@ -62,20 +62,30 @@ void EffectFire::frame(unsigned long now)
 	}
 
 	// Step 4.  Map from heat cells to LED colors
-	for( int j = 0; j < NUM_LEDS; j++) {
-		int k=heatCells[j];
-		if (k>200){
-			k=200;
-		}
-		// if(k<30){
-		// 	k=0;
-		// }
-#if USE_DOUBLE_BUFFER
-		led_backbuffer[j] = ColorFromPalette(colorPalettes[Palette.currentValue()],k);
-#else
-		leds[j] = ColorFromPalette(colorPalettes[Palette.currentValue()],k);
-#endif
-	}
+  for (int y = 0;y < display.displayHeight();y++) {
+    for (int x = 0; x < display.displayWidth(); x++) {
+      uint16_t offset = display.XY(x,y);
+      int k = heatCells[offset];
+      if(k>200){
+        k=200;
+      }
+      display.setPixel(x,y,ColorFromPalette(colorPalettes[Palette.currentValue()],k));
+    }
+  }
+// 	for( int j = 0; j < NUM_LEDS; j++) {
+// 		int k=heatCells[j];
+// 		if (k>200){
+// 			k=200;
+// 		}
+// 		// if(k<30){
+// 		// 	k=0;
+// 		// }
+// #if USE_DOUBLE_BUFFER
+// 		led_backbuffer[j] = ColorFromPalette(colorPalettes[Palette.currentValue()],k);
+// #else
+// 		leds[j] = ColorFromPalette(colorPalettes[Palette.currentValue()],k);
+// #endif
+// 	}
 #if !USE_DOUBLE_BUFFER
 	FastLED.show();
 #endif
