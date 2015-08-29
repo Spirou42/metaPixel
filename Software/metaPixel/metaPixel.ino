@@ -24,7 +24,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 4
+#define START_PROG 5
 
 /**********************************************************
 **
@@ -127,7 +127,7 @@ typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_U,param_V,pa
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(Parameter16_t);
 
 EffectWhite whiteEffect = EffectWhite(&(parameterArray[param_O]));
-EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[param_H]  );
+EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[param_H],&parameterArray[param_U]);
 EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[param_U],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);

@@ -13,9 +13,10 @@ class EffectFire:public Effect
 public:
   Parameter16_t *bottomHeating;
   Parameter16_t *topCooling;
+  Parameter16_t *sparcleFreq;
   int16_t _initPalette;
-  EffectFire():Effect("Fire"),bottomHeating(NULL),topCooling(NULL){};
-  EffectFire(Parameter16_t* bottomH,Parameter16_t* topCool):Effect("Fire"),bottomHeating(bottomH),topCooling(topCool){}
+  EffectFire():Effect("Fire"),bottomHeating(NULL),topCooling(NULL),sparcleFreq(NULL){};
+  EffectFire(Parameter16_t* bottomH,Parameter16_t* topCool,Parameter16_t *sFreq):Effect("Fire"),bottomHeating(bottomH),topCooling(topCool),sparcleFreq(sFreq){}
   void startEffect();
   virtual void frame(unsigned long now);
   virtual void stopEffect();

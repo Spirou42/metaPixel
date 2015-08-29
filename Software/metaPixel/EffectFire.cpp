@@ -5,9 +5,11 @@ void EffectFire::startEffect()
 {
   setMaxValueFor(bottomHeating,255);
   setMaxValueFor(topCooling,255);
+  setMaxValueFor(sparcleFreq,255);
   bottomHeating->value->initTo(200);
   topCooling->value->initTo(255);
   bottomHeating->value->animateTo(10,300000);
+  sparcleFreq->value->initTo(10);
   display.fill(CRGB::Black);
   for(int i=0;i<NUM_LEDS;i++){
     heatCells[i]=0;
@@ -31,7 +33,7 @@ void EffectFire::frame(unsigned long now)
 		for(uint8_t x=0;x<display.displayWidth();x++){
 			uint16_t offset = display.XY(x,y);
 //			uint8_t coolBase = ((DISPLAY_HEIGHT+y)*genericSpeed1.currentValue())/10;
-			uint8_t cooling = random8(0, topCooling->value->currentValue());// / display.displayHeight()) + 2);
+			uint8_t cooling = random8((y)*2,topCooling->value->currentValue());// / display.displayHeight()) + 2);
 #if DEBUG_EFFECTS
 			Serial <<"Cooling ("<<x<<", "<<y<<") "<<cooling<<endl;
 #endif
@@ -55,10 +57,10 @@ void EffectFire::frame(unsigned long now)
 	}
 
 	// Step 3.  Randomly ignite new 'sparks' of heat near the bottom
-	if( random8() < SPARKLES ) {
+	if( random8() <= sparcleFreq->value->currentValue() ) {
 		int x = random8(sparkleSpan)+sparkleOffset;
 		uint16_t offset = display.XY(x,0);
-		heatCells[offset] = qadd8( heatCells[offset], random8(160,255) );
+		heatCells[offset] = qadd8( heatCells[offset], random8(200,255) );
 	}
 
 	// Step 4.  Map from heat cells to LED colors
@@ -133,5 +135,5 @@ void EffectFire::stopEffect()
 }
 void EffectFire::printParameter(Print& stream)
 {
-  stream << "Bottom Heat: "<<*bottomHeating<<" \tTop Cool: "<<*topCooling<<endl;
+  stream << "Bottom Heat: "<<*bottomHeating<<" \tTop Cool: "<<*topCooling<<" \tSparcles: "<<*sparcleFreq<<endl;
 }
