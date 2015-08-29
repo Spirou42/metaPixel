@@ -92,7 +92,7 @@
 #define DEBUG_EFFECTS (0 & DEBUG)
 #define DEBUG_ENCODER (0 & DEBUG)
 #define DEBUG_MENU    (0 & DEBUG)
-#define DEBUG_PARSER	(1 & DEBUG)
+#define DEBUG_PARSER	(0 & DEBUG)
 #define DEBUG_SERIAL  (0 & DEBUG)
 #define DEBUG_COMMAND (1 & DEBUG)
 #define DEBUG_LOOP		(0 & DEBUG)
@@ -137,4 +137,5 @@ extern int16_t parameterArraySize;
 
 extern void dumpParameters();
 extern CommandQueue commandQueue;
+extern bool parametersInvalid;
 #endif

@@ -12,7 +12,7 @@
 /****************************
 Serial Interface
 ****************************/
-const char *allowedCommands="#!*";
+const char *allowedCommands="#!*&";
 char serial_buffer[SERIAL_BUFFER_LENGTH];
 uint8_t currentCharB=0;
 CommandQueue commandQueue = CommandQueue();
@@ -103,7 +103,7 @@ long getValue(char** currentChar){
 	return myValue;
 }
 #if USE_OLD_COMMAND
-void commandProcessor(char* line_buffer)
+void commandProcessor(char* line_buffer, bool executeImediately)
 {
 	char *currentChar = line_buffer;
 	Serial << XOFF;
@@ -193,7 +193,7 @@ void commandProcessor(char* line_buffer)
 	Serial << XON;
 }
 #else
-void commandProcessor(char* line_buffer)
+void commandProcessor(char* line_buffer, bool executeImediately)
 {
 	char *currentChar = line_buffer;
 	Serial << XOFF;
@@ -257,6 +257,15 @@ void commandProcessor(char* line_buffer)
 				// currentCommandObj = NULL;
 
 			}
+		}else if(command == '&'){	// and a pause
+			currentChar++;
+			int16_t value = getValue(&currentChar);
+			currentCommandObj = new metaPixelCommand(commandWait);
+			CommandWait_t *dd = &currentCommandObj->data.commandWaitData;
+			dd->waitForAnimationStop = false;
+			dd->parameter = NULL;
+			dd->time = value * 1000;
+
 		}else{					// this is a parameterSet
 			currentChar++;
 			Parameter16_t* param = getParameterFor(command);
@@ -286,7 +295,15 @@ void commandProcessor(char* line_buffer)
 			#if DEBUG_PARSER
 			Serial << clearLineRight<< "Command Object Ok"<<endl;
 			#endif
-			commandQueue.addCommand(currentCommandObj);
+			if(executeImediately){
+				if(currentCommandObj->type !=commandWait ){
+					// we only execute non wait commands
+					currentCommandObj->processCommand();
+				}
+				delete currentCommandObj;
+			}else{
+				commandQueue.addCommand(currentCommandObj);
+			}
 			currentCommandObj = NULL;
 			/*
 			bool result = currentCommandObj->processCommand();
@@ -369,6 +386,7 @@ bool metaPixelCommand::processCommand()
 					}
 				}
 				result = true;
+				parametersInvalid = true;
 			}
 		}
 		break;
@@ -379,7 +397,7 @@ bool metaPixelCommand::processCommand()
 void CommandQueue::addCommand(metaPixelCommand* cmd)
 {
 	#if DEBUG_COMMAND
-	Serial << clearLineRight<<"addCommand "<<endl;
+	Serial << clearLineRight<<"addCommand 0x"<<_HEX((unsigned long)cmd)<<endl;
 	#endif
 	if(!queueStart){
 		cmd->nextCommand=NULL;
@@ -403,17 +421,41 @@ metaPixelCommand *CommandQueue::popCommand()
 			queueLength = 0;
 		}
 	}
+	#if DEBUG_COMMAND
+	if(cmd)
+		Serial <<clearLineRight<< "pop command 0x"<<_HEX((unsigned long)cmd)<<endl;
+	#endif
 	return cmd;
 }
 
 void CommandQueue::processQueue()
 {
 	metaPixelCommand *p=NULL;
-	while( (p=popCommand())!= NULL ){
+	if(waiting){
+		if (waitTimer >=waitTill) {
+			waiting = false;
+			waitTill = 0;
+			waitTimer = 0;
+			#if DEBUG_COMMAND
+			Serial << ScreenPos(38,0)<<clearLineRight;
+			#endif
+		}else{
+			#if DEBUG_COMMAND
+			Serial <<ScreenPos(38,0)<<clearLineRight<< "Waiting to "<<waitTill<<" ("<<waitTimer<<")"<<endl;
+			#endif
+		}
+	}
+	while( !waiting && ((p=popCommand())!= NULL)  ){
 		#if DEBUG_COMMAND
 		Serial <<clearLineRight<<bold<<"Process command at "<<_HEX((unsigned long)p)<<normal<<endl;
 		#endif
-		p->processCommand();
+		if(p->type == commandWait){
+			waiting = true;
+			waitTimer = 0;
+			waitTill = p->data.commandWaitData.time;
+		}else{
+			p->processCommand();
+		}
 		delete p;
 	}
 

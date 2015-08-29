@@ -79,13 +79,7 @@ AnimationValue genericParam1(display.displayWidth());
 AnimationValue genericParam2(display.displayWidth());
 AnimationValue genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
 AnimationValue genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
-
-// Gradient palette "arctic_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/arendal/tn/arctic.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 452 bytes of program space.
-
-
+bool parametersInvalid = false;
 
 CRGBPalette16 colorPalettes[]={
 	(CRGBPalette16)RainbowColors_p,
@@ -199,6 +193,7 @@ void dumpParameters()
 	column = 0;
 	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
 	Effect *effect = effectProgramsN[t].program;
+	Serial << ScreenPos(1,0)<<clearLineRight<<effect<<endl;
 	Serial << ScreenPos(2,0)<<clearLineRight<<"Parameter: ";
 	effect->printParameter(Serial);
 	Serial <<ScreenPos(6,0)<<clearLineRight<<">";
@@ -284,7 +279,7 @@ void setup()
 
 void loop()
 {
-	bool parameterChanged = false;
+
 	random16_add_entropy( random());
 	//
 	// switch program Slot 0
@@ -300,7 +295,7 @@ void loop()
 		#if 0 && DEBUG_LOOP
 		Serial << " PQueue" << taskQueue._itemsInQueue<<endl;
 		#endif
-		parameterChanged = true;
+		parametersInvalid = true;
 	}
 
 	//
@@ -317,13 +312,13 @@ void loop()
 		#if 0 & DEBUG_LOOP
 		Serial << "DQueue" << taskQueue._itemsInQueue<<endl;
 		#endif
-		parameterChanged = true;
+		parametersInvalid = true;
 	}
 	//
 	// switch palette Slot(2)
 	//
 	if(Palette.hasChanged()){
-		parameterChanged = true;
+		parametersInvalid = true;
 		Palette.syncValue();
 		#if DEBUG_LOOP
 		Serial << "Palette changed to "<<Palette.currentValue()<<endl;
@@ -339,7 +334,7 @@ void loop()
 		#endif
 		FastLED.setBrightness(Brightness.nextValue());
 		Brightness.syncValue();
-		parameterChanged=true;
+		parametersInvalid=true;
 	}
 
 	//
@@ -348,7 +343,7 @@ void loop()
 	if(MirrorParam.hasChanged()){
 		MirrorParam.syncValue();
 		display.setMirrorMode((displayMirror)MirrorParam.currentValue());
-		parameterChanged=true;
+		parametersInvalid=true;
 	}
 
 	/** check all remaining parameters */
@@ -357,9 +352,9 @@ void loop()
 		for(int i=5;i<parameterArraySize-1;++i){
 			t = t || parameterArray[i].value->syncValue();
 		}
-		if(t || parameterChanged){
+		if(t || parametersInvalid){
 			dumpParameters();
-			parameterChanged = false;
+			parametersInvalid = false;
 			t= false;
 		}
 	}

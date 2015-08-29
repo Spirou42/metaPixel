@@ -12,7 +12,7 @@ extern int serialReader(unsigned long now, void* userData);
 extern int getParameterIdxFor(char p);
 extern Parameter16_t * getParameterFor(char p);
 //* processes lines
-extern void commandProcessor(char* line_buffer);
+extern void commandProcessor(char* line_buffer,bool executeImediately = false);
 //* line buffer
 extern char serial_buffer[SERIAL_BUFFER_LENGTH];
 
@@ -69,6 +69,9 @@ public:
   metaPixelCommand* queueStart;
   metaPixelCommand* queueEnd;
   size_t            queueLength;
+  elapsedMillis     waitTimer;
+  bool              waiting;
+  unsigned long     waitTill;
   CommandQueue():queueStart(NULL),queueEnd(NULL),queueLength(0){};
   void addCommand(metaPixelCommand* cmd);
   metaPixelCommand* popCommand();
