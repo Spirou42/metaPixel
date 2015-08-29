@@ -6,7 +6,7 @@
 
 #include "metaModule.h"
 #include "metaPixel.h"
-typedef enum {noMirror=0,horizontalMirror=1,verticalMirror=2,quadMirror=3} displayMirror;
+typedef enum {noMirror=0,horizontalMirror=1,horizontalSwapMirror=2,verticalMirror=3,quadMirror=4,quadSwapMirror=5} displayMirror;
 
 class metaDisplay {
 protected:

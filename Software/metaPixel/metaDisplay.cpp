@@ -52,10 +52,12 @@ uint16_t metaDisplay::displayWidth()
 	wid= moduleWidth*width;
 	switch(mirMode){
 		case noMirror:
+		case horizontalSwapMirror:
 		case horizontalMirror:
 			wid= moduleWidth*width; break;
 		case verticalMirror:
 		case quadMirror:
+		case quadSwapMirror:
 			wid = (moduleWidth*width)/2;
 	}
 	return wid;
@@ -69,8 +71,10 @@ uint16_t metaDisplay::displayHeight()
 		case noMirror:
 		case verticalMirror:
 			h = moduleHeight*height; break;
+		case horizontalSwapMirror:
 		case horizontalMirror:
 		case quadMirror:
+		case quadSwapMirror:
 			h = (moduleHeight * height)/2;
 		break;
 	}
@@ -104,6 +108,8 @@ void metaDisplay::setPixel(MPPixel coord, CRGB color)
 	int16_t displayWidth = (moduleWidth * width)-1;
 	int16_t displayHeight = (moduleHeight * height)-1;
 	switch(mirMode){
+		case horizontalSwapMirror:
+			coord.y = this->displayHeight()-coord.y;
 		case horizontalMirror:
 			tempCoord = coord;
 			tempCoord.y = displayHeight - coord.y;
@@ -114,6 +120,8 @@ void metaDisplay::setPixel(MPPixel coord, CRGB color)
 			tempCoord.x = displayWidth - coord.x;
 			_setPixel(tempCoord,color);
 			break;
+		case quadSwapMirror:
+			coord.y = this->displayHeight()-coord.y;
 		case quadMirror:
 			tempCoord = coord;
 			tempCoord.x = displayWidth-coord.x;
