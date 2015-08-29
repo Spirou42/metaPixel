@@ -146,8 +146,8 @@ EffectWaterfall waterfallEffect = EffectWaterfall();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
 	 	{&whiteEffect,100,NULL},
-		{&noiseEffect,150,NULL},
-		{&plasmaEffect,150,NULL},
+		{&noiseEffect,150,NULL}, // "*rU6C8!R20 80 60"
+		{&plasmaEffect,150,"C8"},
 		{&simplePlasma,150,NULL},
 		{&lineEffect,150,NULL},
 		{&fireEffect,60,NULL},
@@ -363,6 +363,7 @@ void loop()
 			t= false;
 		}
 	}
+	commandQueue.processQueue();
 	/** run all sequence tasks */
 	taskQueue.Run(millis());
 

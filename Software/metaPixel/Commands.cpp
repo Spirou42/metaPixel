@@ -12,32 +12,38 @@
 /****************************
 Serial Interface
 ****************************/
-const char *allowedCommands="#!*";
+const char *allowedCommands="#!+";
 char serial_buffer[SERIAL_BUFFER_LENGTH];
 uint8_t currentCharB=0;
+CommandQueue commandQueue = CommandQueue();
 
 int serialReader(unsigned long now, void* userData)
 {
 	bool endLine=false;
 	while(Serial.available()){
 		char c = Serial.read();
+		#if DEBUG_SERIAL
+		Serial<<clearLineRight<<"Got Char: 0x"<<_HEX(c)<<"|"<<c<<"| ("<<currentCharB<<")"<<endl;
+		Serial.flush();
+		#endif
 		if(c==0x0d){
 			c = 0x00;
 			endLine = true;
 		}
-		serial_buffer[currentCharB++]=c;
-		if(currentCharB ==(SERIAL_BUFFER_LENGTH-1)){
-			serial_buffer[currentCharB]=0x00;
-			commandProcessor(serial_buffer);
-			currentCharB =0;
-		}
+		serial_buffer[currentCharB]=c;
+		currentCharB++;
+		// if(currentCharB ==(SERIAL_BUFFER_LENGTH-1)){
+		// 	serial_buffer[currentCharB]=0x00;
+		// 	commandProcessor(serial_buffer);
+		// 	currentCharB =0;
+		// }
 		if(endLine){
-			#if DEBUG_COMMAND
-			Serial << "Line:"<<serial_buffer <<endl;
+			#if DEBUG_SERIAL
+			Serial << clearLineRight<<"Line:"<<serial_buffer <<endl;
 			#endif
 			commandProcessor(serial_buffer);
-			#if DEBUG_COMMAND
-			Serial <<clearLineRight<<"cleanBuffer"<< endl;
+			#if DEBUG_SERIAL
+			Serial <<clearLineRight<<"cleanBuffer"<<endl;
 			#endif
 			memset(serial_buffer,0x00,SERIAL_BUFFER_LENGTH);
 			currentCharB = 0;
@@ -71,6 +77,9 @@ Parameter16_t* getParameterFor(char p)
 
 char getCommand(char** currentChar)
 {
+	#if DEBUG_PARSER
+	Serial << "getCommand:" << endl;
+	#endif
 	while( (**currentChar != 0x00) && (getParameterIdxFor(**currentChar)==-1) && (index(allowedCommands,(int)**currentChar)==NULL) ){
 		*currentChar =  (*currentChar+1);
 	}
@@ -94,7 +103,8 @@ long getValue(char** currentChar){
 	return myValue;
 }
 #if USE_OLD_COMMAND
-void commandProcessor(char* line_buffer){
+void commandProcessor(char* line_buffer)
+{
 	char *currentChar = line_buffer;
 	Serial << XOFF;
 	do{
@@ -103,13 +113,13 @@ void commandProcessor(char* line_buffer){
 		// read till first number;
 		bool animate = false;
 		bool bounce = false;
-		#if DEBUG_COMMAND
+		#if DEBUG_PARSER
 		Serial <<clearLineRight<< "Current "<<currentChar<<endl;
 		#endif
 		char command = getCommand(&currentChar);
 		if(command == '#')		// Animate
 		{
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial << clearLineRight<<"Animate"<<endl;
 			#endif
 			currentChar++;
@@ -117,7 +127,7 @@ void commandProcessor(char* line_buffer){
 			command = getCommand(&currentChar);
 		}else if(command == '!')	// bounce
 		{
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial << clearLineRight<<"Bounce"<<endl;
 			#endif
 			currentChar ++;
@@ -126,14 +136,14 @@ void commandProcessor(char* line_buffer){
 			command = getCommand(&currentChar);
 		}else if(command == '*') // reset animation
 		{
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial << clearLineRight<<"Reset command"<<endl;
 			#endif
 			currentChar ++;
 			command = getCommand(&currentChar);
 			int parameterSlot = getParameterIdxFor(command);
 			if(parameterSlot != -1){
-				#if DEBUG_COMMAND
+				#if DEBUG_PARSER
 				Serial << clearLineRight<<" RSlot "<<parameterSlot<<" "<<parameterArray[parameterSlot]<<endl;
 				#endif
 				parameterArray[parameterSlot].value->_shouldAnimate=false;
@@ -144,11 +154,11 @@ void commandProcessor(char* line_buffer){
 
 		if(processParameter){
 			long myValue = getValue(&currentChar);
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial << clearLineRight<<command << ":"<<myValue<<endl;
 			#endif
 			int parameterSlot = getParameterIdxFor(command);
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial << clearLineRight<<"Slot: "<<parameterSlot<<endl;
 			#endif
 			if(parameterSlot==-1){
@@ -158,13 +168,13 @@ void commandProcessor(char* line_buffer){
 
 			if(myValue <parameterArray[parameterSlot].minValue){
 				myValue = parameterArray[parameterSlot].minValue;
-				#if DEBUG_COMMAND
+				#if DEBUG_PARSER
 				Serial << clearLineRight<<"Clamp to "<<myValue<<endl;
 				#endif
 			}
 			if(myValue>parameterArray[parameterSlot].maxValue){
 				myValue = parameterArray[parameterSlot].maxValue;
-				#if DEBUG_COMMAND
+				#if DEBUG_PARSER
 				Serial << clearLineRight<<"Clamp to "<<myValue<<endl;
 				#endif
 			}
@@ -183,45 +193,51 @@ void commandProcessor(char* line_buffer){
 	Serial << XON;
 }
 #else
-void commandProcessor(char* line_buffer){
+void commandProcessor(char* line_buffer)
+{
 	char *currentChar = line_buffer;
 	Serial << XOFF;
 	do{
-		#if DEBUG_COMMAND
-		Serial <<clearLineRight<< "Current "<<currentChar<<endl;
+		#if DEBUG_PARSER
+		Serial <<clearLineRight<< "Current Line: |"<<currentChar<<'|'<<endl;
 		#endif
 		char command = getCommand(&currentChar);
 		metaPixelCommand *currentCommandObj = NULL;
-		#if DEBUG_COMMAND
-		Serial <<clearLineRight<<"Command Object "<<_HEX((unsigned long)currentCommandObj)<<endl;
-		#endif
-		if( (command == '#') || (command == '!') || (command == '*'))		// Animate and bounce
+
+		if( (command == '#') || (command == '!') || (command == '+'))		// Animate and bounce
 		{
 			currentChar++;
-			//goto cleanUp;
+
 			bool isBounce = (command == '!');
-			bool isReset = (command == '*');
-			#if DEBUG_COMMAND
+			bool isReset = (command == '+');
+			#if DEBUG_PARSER
 			Serial << clearLineRight<<"Animate B"<<isBounce<<" R"<<isReset<<endl;
 			#endif
-			currentCommandObj = new metaPixelCommand(commandAnimation);
-			command = getCommand(&currentChar);		// get ParameterName
 
+			command = getCommand(&currentChar);		// get ParameterName
 			Parameter16_t* param = getParameterFor(command);
 			if(param != NULL){
+				currentCommandObj = new metaPixelCommand(commandAnimation);
+
+				#if DEBUG_PARSER
+				if(currentCommandObj== NULL){
+					Serial << clearLineRight<<bold<<"Command NULL"<<normal<<endl;
+				}
+				#endif
+
 				CommandParameterAnimation_t * dd = &currentCommandObj->data.parameterAnimationData;
 				dd->parameter = param;
 				if(!isReset){
-					#if DEBUG_COMMAND
+					#if DEBUG_PARSER
 					Serial << clearLineRight<<"animate"<<endl;
 					#endif
 					// read in from, to, time
 					dd->fromValue = getValue(&currentChar);
 					dd->toValue = getValue(&currentChar);
-					dd->timeToGo = getValue(&currentChar)*10;
+					dd->timeToGo = getValue(&currentChar)*1000;
 					dd->bounce = isBounce;
 				}else{
-					#if DEBUG_COMMAND
+					#if DEBUG_PARSER
 					Serial << clearLineRight<<"Reset"<<endl;
 					#endif
 					currentChar ++;
@@ -231,62 +247,65 @@ void commandProcessor(char* line_buffer){
 					dd->bounce = false;
 				}
 			}else{
-				#if DEBUG_COMMAND
+				#if DEBUG_PARSER
 				Serial <<clearLineRight<< "Invalid Parameter delete command"<<endl;
 				#endif
-				delete currentCommandObj;
-				currentCommandObj = NULL;
-				//goto cleanUp;
+				// delete currentCommandObj;
+				// currentCommandObj = NULL;
+
 			}
 		}else{					// this is a parameterSet
 			currentChar++;
-			currentCommandObj = new metaPixelCommand(commandParameter);
-			//goto cleanUp;
 			Parameter16_t* param = getParameterFor(command);
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial << clearLineRight<< "SetParameter: "<<*param<<endl;
 			#endif
 			if(param != NULL){
+				currentCommandObj = new metaPixelCommand(commandParameter);
 				CommandParameterSet_t * dd = &currentCommandObj->data.parameterSetData;
 				dd->parameter = param;
 				dd->value = getValue(&currentChar);
 			}else{
-				#if DEBUG_COMMAND
+				#if DEBUG_PARSER
 				Serial << clearLineRight<<"Invalid Parameter in Set, delete command"<<endl;
 				#endif
-				delete currentCommandObj;
-				currentCommandObj = NULL;
-				//goto cleanUp;
+				// delete currentCommandObj;
+				// currentCommandObj = NULL;
+
 			}
 		}
-//cleanUp:
-		#if DEBUG_COMMAND
+		//cleanUp:
+
+		#if DEBUG_PARSER
 		Serial <<clearLineRight<<"continue "<<currentCommandObj->type<<" ("<<_HEX((unsigned long)currentCommandObj)<<')'<<endl;
 		#endif
 		if(currentCommandObj != NULL){
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial << clearLineRight<< "Command Object Ok"<<endl;
 			#endif
+			commandQueue.addCommand(currentCommandObj);
+			currentCommandObj = NULL;
+/*
 			bool result = currentCommandObj->processCommand();
 			if(!result){
-				#if DEBUG_COMMAND
+				#if DEBUG_PARSER
 				Serial << clearLineRight<<"Command Failed"<<endl;
 				#endif
 			}
 			delete currentCommandObj;
 			currentCommandObj = NULL;
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial <<clearLineRight<<"command "<<currentCommandObj->type<<" ("<<_HEX((unsigned long)currentCommandObj)<<')'<<endl;
 			#endif
-
+			*/
 		}else{
-			#if DEBUG_COMMAND
+			#if DEBUG_PARSER
 			Serial <<clearLineRight<< "Command was deleted"<<endl;
 			#endif
 		}
 	}while(*currentChar != 0);
 	Serial << XON;
-	#if DEBUG_COMMAND
+	#if DEBUG_PARSER
 	Serial <<clearLineRight<< "Command processor end"<<endl;
 	#endif
 }
@@ -294,63 +313,101 @@ void commandProcessor(char* line_buffer){
 
 bool metaPixelCommand::processCommand()
 {
-	#if DEBUG_COMMAND
+	#if DEBUG_PARSER
 	Serial << clearLineRight<<"processCommand:"<<endl;
 	#endif
 	bool result = false;
 	switch(this->type){
 		case commandParameter:
-			{
+		{
+			#if DEBUG_COMMAND
+			Serial << clearLineRight<< "Set Parameter ";
+			#endif
+			CommandParameterSet_t dd = data.parameterSetData;
+			if (dd.parameter) {
 				#if DEBUG_COMMAND
-				Serial << clearLineRight<< "Set Parameter ";
+				Serial << *dd.parameter<<" to "<<dd.value<<endl;
 				#endif
-				CommandParameterSet_t dd = data.parameterSetData;
-				if (dd.parameter) {
-					#if DEBUG_COMMAND
-					Serial << *dd.parameter<<" to "<<dd.value<<endl;
-					#endif
-					dd.parameter->setValue(dd.value);
-					result = true;
-				}else{
-					#if DEBUG_COMMAND
-					Serial << clearLineRight<<"(invalid)"<<endl;
-					#endif
-				}
+				dd.parameter->setValue(dd.value);
+				result = true;
+			}else{
+				#if DEBUG_COMMAND
+				Serial << clearLineRight<<"(invalid)"<<endl;
+				#endif
 			}
+		}
 		break;
 		case commandAnimation:
-			{
+		{
+			#if DEBUG_COMMAND
+			Serial << clearLineRight<< "Animate"<<endl;
+			#endif
+			CommandParameterAnimation_t dd = data.parameterAnimationData;
+			if (dd.parameter) {
 				#if DEBUG_COMMAND
-				Serial << clearLineRight<< "Animate"<<endl;
+				Serial << clearLineRight<<" Parameter :"<<*dd.parameter<<endl;
 				#endif
-				CommandParameterAnimation_t dd = data.parameterAnimationData;
-				if (dd.parameter) {
+				int16_t start = dd.parameter->clampValue(dd.fromValue);
+				int16_t stop = dd.parameter->clampValue(dd.toValue);
+				#if DEBUG_COMMAND
+				Serial << clearLineRight<<" Start: "<<start<<" End:"<<stop<<endl;
+				#endif
+				if((start == stop) || (dd.timeToGo == 0)){
 					#if DEBUG_COMMAND
-					Serial << clearLineRight<<" Parameter :"<<*dd.parameter<<endl;
+					Serial << clearLineRight<<"Stop Animation"<<endl;
 					#endif
-					int16_t start = dd.parameter->clampValue(dd.fromValue);
-					int16_t stop = dd.parameter->clampValue(dd.toValue);
-					#if DEBUG_COMMAND
-					Serial << clearLineRight<<" Start: "<<start<<" End:"<<stop<<endl;
-					#endif
-					if((start == stop) || (dd.timeToGo == 0)){
-						#if DEBUG_COMMAND
-						Serial << clearLineRight<<"Stop Animation"<<endl;
-						#endif
-						dd.parameter->value->_shouldAnimate = false;
+					dd.parameter->value->_shouldAnimate = false;
+				}else{
+					dd.parameter->setValue(start);
+					if (dd.bounce) {
+						dd.parameter->value->bounce(stop,dd.timeToGo);
 					}else{
-						dd.parameter->setValue(start);
-						if (dd.bounce) {
-							dd.parameter->value->bounce(stop,dd.timeToGo);
-						}else{
-							dd.parameter->value->animateTo(stop,dd.timeToGo);
-						}
+						dd.parameter->value->animateTo(stop,dd.timeToGo);
 					}
-					result = true;
 				}
+				result = true;
 			}
+		}
 		break;
 		case commandWait: break;
 	}
 	return result;
+}
+void CommandQueue::addCommand(metaPixelCommand* cmd)
+{
+	#if DEBUG_COMMAND
+	Serial << clearLineRight<<"addCommand "<<endl;
+	#endif
+	if(!queueStart){
+		cmd->nextCommand=NULL;
+		queueStart = cmd;
+		queueEnd = cmd;
+		queueLength = 1;
+	}else{
+		queueEnd->nextCommand=cmd;
+		queueEnd = cmd;
+		queueLength++;
+	}
+}
+metaPixelCommand *CommandQueue::popCommand()
+{
+	metaPixelCommand* cmd = queueStart;
+	if (cmd) {
+		queueStart = cmd->nextCommand;
+		if (queueStart == NULL) {
+			queueEnd = NULL;
+			queueLength = 0;
+		}
+	}
+	return cmd;
+}
+
+void CommandQueue::processQueue()
+{
+	metaPixelCommand *p=NULL;
+	while( (p=popCommand())!= NULL ){
+		p->processCommand();
+		delete p;
+	}
+
 }

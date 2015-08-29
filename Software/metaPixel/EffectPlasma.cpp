@@ -17,7 +17,7 @@ void EffectPlasma::startEffect()
   hueSpeed->value->initTo(0);
   plasmaRadius->value->initTo(display.displayWidth()/2);
   plasmaMask->value->initTo(0);
-  plasmaMask->value->animateTo(15,300000);
+  plasmaMask->value->animateTo(15,60000);
   Palette=0;
   setMaxValueFor(plasmaScale,255);
   setMaxValueFor(plasmaSpeed,255);

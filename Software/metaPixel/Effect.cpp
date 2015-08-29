@@ -33,6 +33,9 @@ int effectRunner(unsigned long now, void* userdata)
 		lastP = t;
 		effect->startEffect();
 		Serial << clearHome<<effect<<endl;
+		if(effectProgramsN[t].parameter){
+			commandProcessor((char*)effectProgramsN[t].parameter);
+		}
 		dumpParameters();
 		Serial <<endl;
 

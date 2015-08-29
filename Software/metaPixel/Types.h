@@ -24,7 +24,7 @@ typedef struct {
 typedef struct {
 	Effect* program;
 	uint16_t delay;
-	char *parameter;
+	const char *parameter;
 }effectProgramN_t;
 
 

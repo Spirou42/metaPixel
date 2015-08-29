@@ -62,4 +62,16 @@ public:
   metaPixelCommand(commandType_t t):type(t),data(){};
   bool processCommand();
 };
+
+class CommandQueue
+{
+public:
+  metaPixelCommand* queueStart;
+  metaPixelCommand* queueEnd;
+  size_t            queueLength;
+  CommandQueue():queueStart(NULL),queueEnd(NULL),queueLength(0){};
+  void addCommand(metaPixelCommand* cmd);
+  metaPixelCommand* popCommand();
+  void processQueue();
+};
 #endif
