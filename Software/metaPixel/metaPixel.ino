@@ -132,6 +132,7 @@ EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[p
 EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
 EffectLine lineEffect = EffectLine();
+EffectWhitney whitneyEffect = EffectWhitney(&parameterArray[param_U]);
 
 #if USE_AUDIO_EFFECTS
 EffectWaterfall waterfallEffect = EffectWaterfall();
@@ -145,6 +146,7 @@ effectProgramN_t effectProgramsN[] = {
 	{&simplePlasma,150,NULL},
 	{&lineEffect,150,NULL},
 	{&fireEffect,60,NULL},
+	{&whitneyEffect,60,NULL},
 	#if USE_AUDIO_EFFECTS
 	{&waterfallEffect,100,NULL},
 	#endif
@@ -177,28 +179,46 @@ int blinker(unsigned long now, void* userData)
 **********************************************************/
 void dumpParameters()
 {
-	uint8_t line = 4;
-	uint8_t column = 0;
-	//Serial << clearScreen;
-	// dump System Parameters
-	for(int i=0;i<6;i++){
-		Serial << ScreenPos(line,column)<<SystemParameterName[i]<<": "<<parameterArray[i]<<endl;
-		column +=25;
-		if(i && !(i%4)){
-			line ++;
-			column = 0;
-		}
-	}
-	//line ++;
-	column = 0;
+
+	uint8_t line = 1;
+	uint8_t column = 1;
 	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
 	Effect *effect = effectProgramsN[t].program;
-	Serial << ScreenPos(1,0)<<clearLineRight<<effect<<endl;
-	Serial << ScreenPos(2,0)<<clearLineRight<<"Parameter: ";
-	effect->printParameter(Serial);
-	Serial <<ScreenPos(6,0)<<clearLineRight<<">";
+	Serial << ScreenPos(line++,column)<<clearLineRight<<effect<<endl;
+	Serial << ScreenPos(line++,column)<<clearLineRight<<"Parameter:";
+	line = 3;
+	Serial<<ScreenPos(line,1)<<clearLineRight;
+	size_t params = effect->numberOfParameters();
+	for(size_t i=0;i<params;i++){
+		Serial << ScreenPos(line,column)<<effect->parameterNameAt(i);
+		column +=NAME_CELL_LENGTH;
+		Serial << ScreenPos(line,column)<<*effect->parameterAt(i);
+		column +=PARAMETER_CELL_LENGTH;
+		if(column > LINE_LENGTH){
+			line ++;
+			column = 1;
+			Serial << ScreenPos(line,column)<<clearLineRight;
+		}
+	}
+	//effect->printParameter(Serial);
+	line = 6;
+	column =1;
+	for(int i=0;i<6;i++){
+		Serial << ScreenPos(line,column)<<SystemParameterName[i];
+		column +=NAME_CELL_LENGTH;
+		Serial <<ScreenPos(line,column)<<parameterArray[i]<<endl;
+		column +=PARAMETER_CELL_LENGTH;
+		if(column>LINE_LENGTH){
+			line ++;
+			column = 1;
+			Serial<<ScreenPos(line,column)<<clearLineRight;
+		}
+	}
+	line ++;
+	Serial <<ScreenPos(line,1)<<clearLineRight<<">";
 }
 
+elapsedMillis commandQueueTimer = 0;
 void setup()
 {
 	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
@@ -359,6 +379,14 @@ void loop()
 		}
 	}
 	commandQueue.processQueue();
+	/** Create output on command processing **/
+	if(commandQueueTimer>1000){
+		if(commandQueue.waiting){
+			Serial << ScreenPos(12,1)<<clearLineRight<<commandQueue<<endl;
+		}
+		Serial << clearDown;
+		commandQueueTimer = 0;
+	}
 	/** run all sequence tasks */
 	taskQueue.Run(millis());
 	#if DEBUG_LOOP

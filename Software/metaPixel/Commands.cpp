@@ -8,7 +8,7 @@
 #include "Streaming.h"
 #include "VT100Stream.h"
 #include "metaPixel.h"
-#define USE_OLD_COMMAND 0
+
 /****************************
 Serial Interface
 ****************************/
@@ -102,97 +102,7 @@ long getValue(char** currentChar){
 	}
 	return myValue;
 }
-#if USE_OLD_COMMAND
-void commandProcessor(char* line_buffer, bool executeImediately)
-{
-	char *currentChar = line_buffer;
-	Serial << XOFF;
-	do{
-		bool processParameter = true;
-		// read till first know parameter mnomic char;
-		// read till first number;
-		bool animate = false;
-		bool bounce = false;
-		#if DEBUG_PARSER
-		Serial <<clearLineRight<< "Current "<<currentChar<<endl;
-		#endif
-		char command = getCommand(&currentChar);
-		if(command == '#')		// Animate
-		{
-			#if DEBUG_PARSER
-			Serial << clearLineRight<<"Animate"<<endl;
-			#endif
-			currentChar++;
-			animate = true;
-			command = getCommand(&currentChar);
-		}else if(command == '!')	// bounce
-		{
-			#if DEBUG_PARSER
-			Serial << clearLineRight<<"Bounce"<<endl;
-			#endif
-			currentChar ++;
-			animate=true;
-			bounce = true;
-			command = getCommand(&currentChar);
-		}else if(command == '*') // reset animation
-		{
-			#if DEBUG_PARSER
-			Serial << clearLineRight<<"Reset command"<<endl;
-			#endif
-			currentChar ++;
-			command = getCommand(&currentChar);
-			int parameterSlot = getParameterIdxFor(command);
-			if(parameterSlot != -1){
-				#if DEBUG_PARSER
-				Serial << clearLineRight<<" RSlot "<<parameterSlot<<" "<<parameterArray[parameterSlot]<<endl;
-				#endif
-				parameterArray[parameterSlot].value->_shouldAnimate=false;
-			}
-			processParameter = false;
-			currentChar ++;
-		}
 
-		if(processParameter){
-			long myValue = getValue(&currentChar);
-			#if DEBUG_PARSER
-			Serial << clearLineRight<<command << ":"<<myValue<<endl;
-			#endif
-			int parameterSlot = getParameterIdxFor(command);
-			#if DEBUG_PARSER
-			Serial << clearLineRight<<"Slot: "<<parameterSlot<<endl;
-			#endif
-			if(parameterSlot==-1){
-				Serial << XON;
-				return;
-			}
-
-			if(myValue <parameterArray[parameterSlot].minValue){
-				myValue = parameterArray[parameterSlot].minValue;
-				#if DEBUG_PARSER
-				Serial << clearLineRight<<"Clamp to "<<myValue<<endl;
-				#endif
-			}
-			if(myValue>parameterArray[parameterSlot].maxValue){
-				myValue = parameterArray[parameterSlot].maxValue;
-				#if DEBUG_PARSER
-				Serial << clearLineRight<<"Clamp to "<<myValue<<endl;
-				#endif
-			}
-			*(parameterArray[parameterSlot].value) = myValue;
-			if(animate){
-				int16_t to = getValue(&currentChar);
-				unsigned long tim = getValue(&currentChar)*100;
-				if(bounce){
-					parameterArray[parameterSlot].value -> bounce(to,tim);
-				}else{
-					parameterArray[parameterSlot].value -> animateTo(to,tim);
-				}
-			}
-		}
-	}while(*currentChar != 0);
-	Serial << XON;
-}
-#else
 void commandProcessor(char* line_buffer, bool executeImediately)
 {
 	char *currentChar = line_buffer;
@@ -329,7 +239,7 @@ Serial << XON;
 Serial <<clearLineRight<< "Command processor end"<<endl;
 #endif
 }
-#endif
+
 
 bool metaPixelCommand::processCommand()
 {

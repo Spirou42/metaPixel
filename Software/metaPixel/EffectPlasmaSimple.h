@@ -29,7 +29,20 @@ public:
       default: res = NULL; break;
     }
     return res;
-  }
+  };
+  virtual const char * parameterNameAt(size_t idx){
+    const char * result = NULL;
+    switch(idx){
+      case 0: result = "wScale";  break;
+      case 1: result = "hScale";  break;
+      case 2: result = "pSpeed";  break;
+      case 3: result = "mMask";   break;
+      default: result = NULL; break;
+    }
+    return result;
+  };
+  virtual size_t numberOfParameters(){return 4;};
+  
   virtual void printParameter(Print& stream);
 
 protected:

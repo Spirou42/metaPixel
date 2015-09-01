@@ -61,6 +61,34 @@ public:
   CommandData_t data;
   metaPixelCommand(commandType_t t):type(t),data(){};
   bool processCommand();
+  friend Print& operator<<(Print& out,metaPixelCommand* command){
+    out << clearLineRight<< " [";
+    switch(command->type){
+      case commandParameter:
+        out << "Set "<<command->data.parameterSetData.parameter->code<<" to "<<command->data.parameterSetData.value; break;
+      case commandAnimation:
+        {
+          CommandParameterAnimation_t dd = command->data.parameterAnimationData;
+          const char *f,*m,*l;
+
+          if(dd.bounce){
+            f = "Bounce ";
+            m = " between ";
+            l = " and ";
+          }else{
+            f = "Animate ";
+            m = " from ";
+            l = " to ";
+          }
+          out << f<<dd.parameter->code<<m<<dd.fromValue<<l<<dd.toValue;
+        }
+        break;
+      case commandWait:
+        out << "Wait for "<<command->data.commandWaitData.time/1000;
+    }
+    out <<" ]";
+    return out;
+  }
 };
 
 class CommandQueue
@@ -76,5 +104,17 @@ public:
   void addCommand(metaPixelCommand* cmd);
   metaPixelCommand* popCommand();
   void processQueue();
+  friend Print& operator<<(Print& obj, CommandQueue& comQ)
+  {
+    if(comQ.waiting){
+        obj<<clearLineRight<<"Waiting "<<(comQ.waitTill - comQ.waitTimer)/1000<<endl;
+    }
+    metaPixelCommand *l = comQ.queueStart;
+    while(l){
+      Serial <<clearLineRight<< l << endl;
+      l = l->nextCommand;
+    }
+    return obj;
+  };
 };
 #endif

@@ -75,15 +75,3 @@ void EffectNoise::frame(unsigned long now)
 void EffectNoise::printParameter(Print& stream){
 	stream << "Noise scale: "<<*noiseScale<<" \tNoise speed: "<<*noiseSpeed<<" \thue Speed: "<<*hueSpeed<<" \tMask: "<<*effectMask<<endl;
 }
-
-Parameter16_t* EffectNoise::parameterAt(size_t idx)
-{
-		Parameter16_t* res = NULL;
-		switch(idx){
-			case 0: res = noiseScale; break;
-			case 1: res = noiseSpeed; break;
-			case 2: res = hueSpeed; break;
-			default: break;
-		}
-		return res;
-}

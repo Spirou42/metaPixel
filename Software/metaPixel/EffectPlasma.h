@@ -13,13 +13,13 @@
 class EffectPlasma:public Effect
 {
 public:
-  Parameter16_t *plasmaScale;
   Parameter16_t *plasmaSpeed;
   Parameter16_t *hueSpeed;
+  Parameter16_t *plasmaScale;
   Parameter16_t *plasmaRadius;
   Parameter16_t *plasmaMask;
-  EffectPlasma():Effect("Plasma"),plasmaScale(NULL),plasmaSpeed(NULL),hueSpeed(NULL),plasmaRadius(NULL),plasmaMask(NULL){};
-  EffectPlasma(Parameter16_t* pScale, Parameter16_t* pSpeed, Parameter16_t* pRadius, Parameter16_t* hSpeed, Parameter16_t *mask):Effect("Plasma"),plasmaScale(pScale),plasmaSpeed(pSpeed),hueSpeed(hSpeed),plasmaRadius(pRadius),plasmaMask(mask){};
+  EffectPlasma():Effect("Plasma"),plasmaSpeed(NULL),hueSpeed(NULL),plasmaScale(NULL),plasmaRadius(NULL),plasmaMask(NULL){};
+  EffectPlasma(Parameter16_t* pScale, Parameter16_t* pSpeed, Parameter16_t* pRadius, Parameter16_t* hSpeed, Parameter16_t *mask):Effect("Plasma"),plasmaSpeed(pSpeed),hueSpeed(hSpeed),plasmaScale(pScale),plasmaRadius(pRadius),plasmaMask(mask){};
   virtual void startEffect();
   virtual void frame(unsigned long now);
   virtual void stopEffect();
@@ -36,5 +36,16 @@ public:
     }
     return res;
   }
+  virtual const char* parameterNameAt(size_t idx){
+    const char * result = NULL;
+    switch(idx){
+      case 0: result = "pSpeed";  break;
+      case 1: result = "hSpeed";  break;
+      case 2: result = "pScale";  break;
+      case 3: result = "pRadius"; break;
+      case 4: result = "pMask";   break;
+    }
+    return result;
+  };
 };
 #endif

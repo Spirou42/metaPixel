@@ -22,6 +22,7 @@ enum _VT100Simples {
   clearHome,      ///< clear Home
   cursorHome,     ///< cursor Home
   clearLineRight, ///< clear line right of cursor
+  clearDown,
   bold,           ///< bold on
   light,          ///< light Mode
   normal,         ///< normal Mode
@@ -53,6 +54,7 @@ inline Print &operator <<(Print& obj,_VT100Simples control)
   case clearHome:       obj<<(char)0x1b<<"[2J"<<(char)0x1b<<"[H";break;
   case cursorHome:      obj<<(char)0x1b<<"[H";break;
   case clearLineRight:  obj<<(char)0x1b<<"[K"; break;
+  case clearDown:       obj<<(char)0x1b<<"[0J"; break;
   case bold:            obj<<(char)0x1b<<"[1m";break;
   case light:           obj<<(char)0x1b<<"[2m";break;
   case normal:          obj<<(char)0x1b<<"[0m";break;

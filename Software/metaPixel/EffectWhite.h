@@ -25,7 +25,16 @@ public:
 			default: res = NULL;break;
 		}
 		return res;
-	}
+	};
+	virtual const char* parameterNameAt(size_t idx){
+		const char * result = NULL;
+		switch(idx){
+			case 0: result = "ColorIDX"; break;
+			default: result = NULL; break;
+		}
+		return result;
+	};
+	virtual size_t numberOfParameters(){return 1;};
 };
 
 

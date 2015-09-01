@@ -55,6 +55,7 @@
 #include "EffectPlasmaSimple.h"
 #include "EffectLine.h"
 #include "EffectWaterfall.h"
+#include "EffectWhitney.h"
 
 
 
@@ -94,10 +95,14 @@
 #define DEBUG_MENU    (0 & DEBUG)
 #define DEBUG_PARSER	(0 & DEBUG)
 #define DEBUG_SERIAL  (0 & DEBUG)
-#define DEBUG_COMMAND (1 & DEBUG)
+#define DEBUG_COMMAND (0 & DEBUG)
 #define DEBUG_LOOP		(0 & DEBUG)
 #define DEBUG_EFFECT_SCEDULER (1 & DEBUG)
 
+/** settings serial masks **/
+#define NAME_CELL_LENGTH      10
+#define PARAMETER_CELL_LENGTH 20
+#define LINE_LENGTH           75
 /** exporting globals **/
 extern CRGB leds[];               ///< primary framebuffer
 #if USE_DOUBLE_BUFFER

@@ -25,7 +25,28 @@ public:
   virtual void startEffect();
 	virtual void frame(unsigned long now);
   virtual void printParameter(Print& stream);
-  virtual Parameter16_t* parameterAt(size_t idx);
+  virtual Parameter16_t* parameterAt(size_t idx){
+  		Parameter16_t* res = NULL;
+  		switch(idx){
+  			case 0: res = noiseScale; break;
+  			case 1: res = noiseSpeed; break;
+  			case 2: res = hueSpeed; break;
+  			default: break;
+  		}
+  		return res;
+  };
+  virtual const char * parameterNameAt(size_t idx){
+    const char *result = NULL;
+    switch(idx){
+      case 0: result = "nScale";  break;
+      case 1: result = "nSpeed";  break;
+      case 2: result = "hSpeed";  break;
+      default: result = NULL; break;
+    }
+    return result;
+  };
+  virtual size_t numberOfParameters(){return 3;};
+
 protected:
   int16_t noiseX;
   int16_t noiseY;
