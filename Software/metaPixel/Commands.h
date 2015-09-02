@@ -48,7 +48,7 @@ typedef struct _CommandWait
 
 typedef union _commandData
 {
-  CommandParameterSet_t parameterSetData;
+   CommandParameterSet_t parameterSetData;
   CommandParameterAnimation_t parameterAnimationData;
   CommandWait_t commandWaitData;
 }CommandData_t;

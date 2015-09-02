@@ -214,6 +214,17 @@ void dumpParameters()
 			Serial<<ScreenPos(line,column)<<clearLineRight;
 		}
 	}
+	// collect parameter String
+	// String paramString = String(" ");
+	// for(size_t i=0;i<6;i++){
+	// 	String * k = parameterArray[i].getCommandString();
+	// 	paramString += (*k);
+	// }
+	// for(size_t i=0;i<params;i++){
+	// 	String *k = (effect->parameterAt(i))->getCommandString();
+	// 	paramString +=(*k);
+	// }
+	// Serial <<ScreenPos(line++,0)<<clearLineRight<<paramString;
 	line ++;
 	Serial <<ScreenPos(line,1)<<clearLineRight<<">";
 }

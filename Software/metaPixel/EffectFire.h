@@ -26,6 +26,7 @@ public:
     switch(idx){
       case 0: res = bottomHeating;  break;
       case 1: res = topCooling;     break;
+      case 2: res = sparcleFreq; break;
       default:res = NULL; break;
 
     }

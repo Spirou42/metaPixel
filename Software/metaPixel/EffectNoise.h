@@ -31,6 +31,7 @@ public:
   			case 0: res = noiseScale; break;
   			case 1: res = noiseSpeed; break;
   			case 2: res = hueSpeed; break;
+        case 3: res = effectMask; break;
   			default: break;
   		}
   		return res;
@@ -41,11 +42,12 @@ public:
       case 0: result = "nScale";  break;
       case 1: result = "nSpeed";  break;
       case 2: result = "hSpeed";  break;
+      case 3: result = "nMask"; break;
       default: result = NULL; break;
     }
     return result;
   };
-  virtual size_t numberOfParameters(){return 3;};
+  virtual size_t numberOfParameters(){return 4;};
 
 protected:
   int16_t noiseX;

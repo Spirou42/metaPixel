@@ -7,6 +7,7 @@
 #define FASTLED_INTERNAL
 #include <FastLED.h>
 #include "VT100Stream.h"
+//#include "Arduino.h"
 
 class AnimationValue {
 public:
@@ -165,6 +166,27 @@ public:
 	void setValue(int16_t v){
 		value->SetValue(clampValue(v));
 	};
+	// String * getCommandString(){
+	// 	String *result =NULL;
+	// 	// if(value->_shouldAnimate){
+	// 	// 	if(value->_bounce){
+	// 	// 		result = new String("!");
+	// 	// 	}else{
+	// 	// 		result = new String("#");
+	// 	// 	}
+	// 	// 	(*result) += code;
+	// 	// 	(*result) += value->_startValue ;
+	// 	// 	(*result) += " ";
+	// 	// 	(*result) += value->_targetValue;
+	// 	// 	(*result) += " ";
+	// 	// 	(*result) += value->_smilli;
+	// 	// }else
+	// 	{
+	// 		result = new String(code);
+	// 		*result+=value->currentValue();
+	// 	}
+	// 	return result;
+	// }
 } ;
 extern Parameter16_t parameterArray[];
 extern int16_t parameterArraySize;
