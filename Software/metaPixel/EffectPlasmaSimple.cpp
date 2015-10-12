@@ -1,5 +1,6 @@
 /**
 * EffectPlasmaSimple
+* I800 R2 U30
 */
 
 #include "EffectPlasmaSimple.h"

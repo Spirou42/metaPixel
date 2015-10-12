@@ -1,3 +1,8 @@
+/**
+* EffectFire.cpp
+* O70 H150 U80 D60 d60 Z12000
+*/
+
 #include "EffectFire.h"
 #define COOLING 250
 #define SPARKLES 10
@@ -8,7 +13,7 @@ void EffectFire::startEffect()
   setMaxValueFor(sparcleFreq,255);
   bottomHeating->value->initTo(200);
   topCooling->value->initTo(255);
-  bottomHeating->value->animateTo(10,300000);
+  //bottomHeating->value->animateTo(10,300000);
   sparcleFreq->value->initTo(10);
   display.fill(CRGB::Black);
   for(int i=0;i<NUM_LEDS;i++){

@@ -1,5 +1,6 @@
 /**
 * EffectWhitney.cpp
+* D60 C0 B160 Q0 Z12000 U180
 */
 
 #include "EffectWhitney.h"

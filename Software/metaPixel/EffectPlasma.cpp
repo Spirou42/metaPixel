@@ -1,5 +1,6 @@
 /**
 * EffectPlasma.cpp
+* D150 C0 B160 Q0 Z8000 U12 V0 I6 R10 M15
 */
 
 #include "EffectPlasma.h"
@@ -17,7 +18,7 @@ void EffectPlasma::startEffect()
   hueSpeed->value->initTo(0);
   plasmaRadius->value->initTo(display.displayWidth()/2);
   plasmaMask->value->initTo(0);
-  plasmaMask->value->animateTo(15,60000);
+  //plasmaMask->value->animateTo(15,60000);
   Palette=0;
   setMaxValueFor(plasmaScale,255);
   setMaxValueFor(plasmaSpeed,255);
@@ -75,7 +76,7 @@ void EffectPlasma::frame(unsigned long now)
 		}
 	}
 	//	Serial<<"Center: ("<<center.x<<", "<<center.y<<")"<<endl;
-		display.setPixel(center,CRGB::White);
+//		display.setPixel(center,CRGB::White);
 	paletteShift+=hueSpeed->value->currentValue();
 	paletteShift%=256;
 	k+=(M_PI/360.0)*(plasmaSpeed->value->currentValue()/10.0);

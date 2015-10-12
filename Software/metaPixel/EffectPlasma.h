@@ -24,6 +24,7 @@ public:
   virtual void frame(unsigned long now);
   virtual void stopEffect();
   virtual void printParameter(Print& stream);
+  virtual size_t numberOfParameters(){return 5;};
   virtual Parameter16_t* parameterAt(size_t idx){
     Parameter16_t* res = NULL;
     switch(idx){

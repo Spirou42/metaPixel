@@ -141,11 +141,11 @@ EffectWaterfall waterfallEffect = EffectWaterfall();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
 	{&whiteEffect,100,NULL},
-	{&noiseEffect,150,"*rU6C8!R20 80 60"}, //"*rU6C8!R20 80 60"
-	{&plasmaEffect,150,"C8"},
-	{&simplePlasma,150,NULL},
-	{&lineEffect,150,NULL},
-	{&fireEffect,60,NULL},
+	{&noiseEffect,150,"D100C0B160Q0Z12000R20U8V1M5"}, //"*rU6C8!R20 80 60"
+	{&plasmaEffect,150,"D150C0B160Q0Z8000U12V2I6R10M15"},
+	{&simplePlasma,150,"I800R2U30"},
+	{&lineEffect,65,"Q4c0"},
+	{&fireEffect,60,"O70H150U70D60Z12000"},
 	{&whitneyEffect,60,NULL},
 	#if USE_AUDIO_EFFECTS
 	{&waterfallEffect,100,NULL},

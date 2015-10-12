@@ -51,9 +51,10 @@ public:
 	void animateTo(int16_t target, unsigned long milli)
 	{
 	  _targetValue = target;
+		_startValue = _tempValue;
 	  _shouldAnimate = true;
 		_bounce = false;
-	  _tmilli = milli;
+	  _smilli = _tmilli = milli;
 	  _sinceLast = 0;
 	}
 
@@ -166,27 +167,27 @@ public:
 	void setValue(int16_t v){
 		value->SetValue(clampValue(v));
 	};
-	// String * getCommandString(){
-	// 	String *result =NULL;
-	// 	// if(value->_shouldAnimate){
-	// 	// 	if(value->_bounce){
-	// 	// 		result = new String("!");
-	// 	// 	}else{
-	// 	// 		result = new String("#");
-	// 	// 	}
-	// 	// 	(*result) += code;
-	// 	// 	(*result) += value->_startValue ;
-	// 	// 	(*result) += " ";
-	// 	// 	(*result) += value->_targetValue;
-	// 	// 	(*result) += " ";
-	// 	// 	(*result) += value->_smilli;
-	// 	// }else
-	// 	{
-	// 		result = new String(code);
-	// 		*result+=value->currentValue();
-	// 	}
-	// 	return result;
-	// }
+	String * getCommandString(){
+		String *result =NULL;
+		if(value->_shouldAnimate){
+			if(value->_bounce){
+				result = new String("!");
+			}else{
+				result = new String("#");
+			}
+			(*result) += code;
+			(*result) += value->_startValue;
+			(*result) += " ";
+			(*result) += value->_targetValue;
+			(*result) += " ";
+			(*result) += value->_smilli/1000;
+		}else
+		{
+			result = new String(code);
+			*result+=value->currentValue();
+		}
+		return result;
+	}
 } ;
 extern Parameter16_t parameterArray[];
 extern int16_t parameterArraySize;

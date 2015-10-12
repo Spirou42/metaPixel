@@ -1,5 +1,6 @@
 /**
 * EffectNoise.cpp
+* P1 D100 C0 B160 Q0 Z12000 R20 U8 V1 M5
 */
 
 #include "EffectNoise.h"
@@ -11,7 +12,7 @@ void EffectNoise::fillnoise8() {
 		for(int j = 0; j < NOISE_DIMENSION; j++) {
 			int joffset = noiseScale->value->currentValue() * j;
 			noiseH[i][j] = inoise8(noiseX + ioffset, noiseY + joffset, noiseZ);
-			noiseS[i][j] = inoise8(noiseY + joffset, noiseX + ioffset, noiseZ);
+			noiseS[i][j] = inoise8(noiseX + joffset, noiseY + ioffset, noiseZ);
 			noiseV[i][j] = inoise8(noiseX + ioffset, noiseY + joffset, noiseZ);
 		}
 	}
@@ -25,7 +26,7 @@ void EffectNoise::startEffect()
   noiseZ = random16();
   noiseSpeed->value->initTo(2);
   noiseScale->value->initTo(1);
-	noiseScale->value->bounce(90,600000);
+	//noiseScale->value->bounce(90,600000);
   hueSpeed->value->initTo(0);
 	effectMask->value->initTo(1);
 	setMaxValueFor(noiseSpeed,255);
