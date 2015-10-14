@@ -15,14 +15,16 @@ public:
 	volatile int16_t _tempValue;
 	bool _shouldAnimate;
 	bool _bounce;
+	bool _stopNext;
+	bool _lastDirection;
 	int16_t _targetValue;
 	int16_t _startValue;
 	elapsedMillis _sinceLast;
 	unsigned long _tmilli;
 	unsigned long _smilli;
 public:
-	AnimationValue() :_value(0),_tempValue(0),_shouldAnimate(false),_bounce(false){}
-	AnimationValue(int16_t a):_value(a),_tempValue(a),_shouldAnimate(false),_bounce(false){}
+	AnimationValue() :_value(0),_tempValue(0),_shouldAnimate(false),_bounce(false),_stopNext(false){}
+	AnimationValue(int16_t a):_value(a),_tempValue(a),_shouldAnimate(false),_bounce(false),_stopNext(false){}
 
 	void SetValue(int16_t newValue)
 	{
@@ -33,6 +35,11 @@ public:
 		return _value;
 	}
 	bool hasChanged(){ return (this->_value != this->_tempValue);}
+
+	void setStopNext(bool flag){this->_stopNext = flag;}
+
+	bool getStopNext(){return this->_stopNext;}
+	bool isAnimating(){return this->_shouldAnimate;}
 	bool syncValue()
 	{
 		if(this->_value != this->_tempValue){
@@ -56,6 +63,7 @@ public:
 		_bounce = false;
 	  _smilli = _tmilli = milli;
 	  _sinceLast = 0;
+		_lastDirection = this->_targetValue<this->_value;
 	}
 
 	void bounce(int16_t target, unsigned long milli)
@@ -67,7 +75,7 @@ public:
 	}
 	void animateParameter()
 	{
-		static uint8_t lineOffset = 0;
+		//static uint8_t lineOffset = 0;
 	  unsigned long k = _sinceLast;
 	  unsigned long frac = (k*65536/_tmilli);
 		int16_t pValue=0;
@@ -79,41 +87,52 @@ public:
 			frac = 1;
 		}
 		uint16_t distanceToGo=0;
-		bool down = false;
+		bool currentDirection = false;
 		if(this->_targetValue>this->_value){
 			distanceToGo = this->_targetValue - this->_value;
 		}else{
 			distanceToGo = this->_value - this->_targetValue;
-			down = true;
+			currentDirection = true;
 		}
 		pValue = scale16(distanceToGo,frac);
-		if(down){
+		if(currentDirection){
 			this->_tempValue = _value - pValue;
 		}else{
-			this->_tempValue = _value+pValue;
+			this->_tempValue = _value + pValue;
 		}
+
+		if(currentDirection != this->_lastDirection){
+			if(_stopNext){
+				this->_shouldAnimate = false;
+			}
+			_lastDirection = currentDirection;
+		}
+
 
 		//Serial <<ScreenPos(10+lineOffset,0)<<clearLineRight<<"k: "<<k<<" Frac "<<frac<<"  StepVal: "<<pValue<<" cValue:"<<this->_value<< " tValue:"<<this->_tempValue<<"  Lmillis:"<<this->_tmilli<<endl;
 
-		lineOffset = (lineOffset+1)%10;
+		//lineOffset = (lineOffset+1)%10;
 
 		if(pValue != 0){
 			if(this->_tmilli > this->_sinceLast){
-				this->_tmilli -= _sinceLast;
+				this->_tmilli -= this->_sinceLast;
 			}else{
-				this->_tempValue = _targetValue;
-				this->_shouldAnimate=false;
+				this->_tempValue = this->_targetValue;
+				this->_shouldAnimate = false;
 			}
 			this->_sinceLast = 0;
 		}else if(this->_tmilli < this->_sinceLast){
-			this->_tempValue = _targetValue;
+			this->_tempValue = this->_targetValue;
 			this->_shouldAnimate = false;
 		}
 		if((this->_tempValue == this->_targetValue) || (this->_tmilli==0)){
-			this->_shouldAnimate=false;
+			this->_shouldAnimate = false;
 		}
-		if ((this->_shouldAnimate == false) && _bounce) {
+		if ((this->_shouldAnimate == false) && this->_bounce && !this->_stopNext) {
 			bounce(_startValue,_smilli);
+		}
+		if(!this->_shouldAnimate){
+			this->_stopNext = false;
 		}
 	}
 

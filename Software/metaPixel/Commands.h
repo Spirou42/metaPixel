@@ -84,7 +84,11 @@ public:
         }
         break;
       case commandWait:
+      if(command->data.commandWaitData.parameter){
+        out << "Wait for parameter"<<*(command->data.commandWaitData.parameter)<<endl;
+      }else{
         out << "Wait for "<<command->data.commandWaitData.time/1000;
+      }
     }
     out <<" ]";
     return out;
@@ -100,6 +104,7 @@ public:
   elapsedMillis     waitTimer;
   bool              waiting;
   unsigned long     waitTill;
+  Parameter16_t     *waitParameter;
   CommandQueue():queueStart(NULL),queueEnd(NULL),queueLength(0){};
   void addCommand(metaPixelCommand* cmd);
   metaPixelCommand* popCommand();

@@ -1,6 +1,18 @@
 /**
 * Command.cpp
 * Simple command processor
+* Commands are simple single char mnomics. We have two different types of commands
+* simple assignments
+*		here a variable name is followed by the number i.e. A17
+*
+* And commands:
+* commands do a bit more of work
+* we have the following commands
+*	Bounce 		[!] ![varname][startValue] [endValue] [sec.]		- bounces the parameters value between start and end value in [sec.] time
+* Animate 	[#]	#[varName][startValue] [endValue] [sec.]		- single animation of parameters value from start to end value ind [sec.] time
+* Stop   		[*] *[varName]																	- interrup the animation on [varName] parameter
+* WaitTime	[&] &[sec.]																			- dissables the command processing for [sec] seconds
+* WaitAnim	[%] %[varName]																	- wait for the animation to finnish -
 */
 
 #include "Commands.h"
@@ -12,7 +24,7 @@
 /****************************
 Serial Interface
 ****************************/
-const char *allowedCommands="#!*&";
+const char *allowedCommands="#!*&%";
 char serial_buffer[SERIAL_BUFFER_LENGTH];
 uint8_t currentCharB=0;
 CommandQueue commandQueue = CommandQueue();
@@ -117,7 +129,7 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 		char command = getCommand(&currentChar);
 		metaPixelCommand *currentCommandObj = NULL;
 
-		if( (command == '#') || (command == '!') || (command == '*'))		// Animate and bounce
+		if( (command == '#') || (command == '!') || (command == '*'))		// Animate and bounce and stop-animation
 		{
 			currentChar++;
 
@@ -167,7 +179,7 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 				// currentCommandObj = NULL;
 
 			}
-		}else if(command == '&'){	// and a pause
+		}else if(command == '&'){	// and WaitForTime
 			currentChar++;
 			int16_t value = getValue(&currentChar);
 			currentCommandObj = new metaPixelCommand(commandWait);
@@ -175,7 +187,20 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 			dd->waitForAnimationStop = false;
 			dd->parameter = NULL;
 			dd->time = value * 1000;
-
+		}else if(command == '%'){	// and waitForAnmination
+			currentChar++;
+			command = getCommand(&currentChar);
+			currentChar++;
+			Parameter16_t* param = getParameterFor(command);
+			if(param != NULL){
+				currentCommandObj = new metaPixelCommand(commandWait);
+				CommandWait_t *dd = &currentCommandObj->data.commandWaitData;
+				dd->waitForAnimationStop = true;
+				dd->parameter = param;
+				dd->time = 0;
+			}else{
+				Serial << "FUCK"<<endl;
+			}
 		}else{					// this is a parameterSet
 			currentChar++;
 			Parameter16_t* param = getParameterFor(command);
@@ -342,17 +367,31 @@ void CommandQueue::processQueue()
 {
 	metaPixelCommand *p=NULL;
 	if(waiting){
-		if (waitTimer >=waitTill) {
-			waiting = false;
-			waitTill = 0;
-			waitTimer = 0;
-			#if DEBUG_COMMAND
-			Serial << ScreenPos(38,0)<<clearLineRight;
-			#endif
+		if(waitParameter == NULL){
+			if (waitTimer >= waitTill) {
+				waiting = false;
+				waitTill = 0;
+				waitTimer = 0;
+				#if DEBUG_COMMAND
+				Serial << ScreenPos(38,0)<<clearLineRight;
+				#endif
+			}else{
+				#if DEBUG_COMMAND
+				Serial <<ScreenPos(38,0)<<clearLineRight<< "Waiting to "<<waitTill<<" ("<<waitTimer<<")"<<endl;
+				#endif
+			}
 		}else{
-			#if DEBUG_COMMAND
-			Serial <<ScreenPos(38,0)<<clearLineRight<< "Waiting to "<<waitTill<<" ("<<waitTimer<<")"<<endl;
-			#endif
+			if(!waitParameter->value->isAnimating()){
+				waiting = false;
+				waitTill = 0;
+				waitTimer = 0;
+				waitParameter = NULL;
+			}else{
+				#if DEBUG_COMMAND
+				Serial <<ScreenPos(38,0)<<clearLineRight<< "Waiting FOR "<<*waitParameter<<endl;
+				#endif
+
+			}
 		}
 	}
 	while( !waiting && ((p=popCommand())!= NULL)  ){
@@ -360,9 +399,14 @@ void CommandQueue::processQueue()
 		Serial <<clearLineRight<<bold<<"Process command at "<<_HEX((unsigned long)p)<<normal<<endl;
 		#endif
 		if(p->type == commandWait){
+			CommandWait_t *dd = &p->data.commandWaitData;
 			waiting = true;
 			waitTimer = 0;
-			waitTill = p->data.commandWaitData.time;
+			waitTill = dd->time;
+			waitParameter = dd->parameter;
+			if(waitParameter){
+				waitParameter->value->setStopNext(true);
+			}
 		}else{
 			p->processCommand();
 		}

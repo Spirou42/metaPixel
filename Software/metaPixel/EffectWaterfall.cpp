@@ -4,15 +4,17 @@
 * update is current delay
 * no parameters
 */
+#include "metaPixel.h"
+#if USE_AUDIO_EFFECTS
 #include "EffectWaterfall.h"
 #include <Arduino.h>
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
-#include "metaPixel.h"
+
 #include "Math.h"
-#if USE_AUDIO_EFFECTS
+
 // GUItool: begin automatically generated code
 AudioInputI2S            audioIn;           //xy=109,65
 AudioAnalyzeFFT1024       analyzeFFT;       //xy=408,57

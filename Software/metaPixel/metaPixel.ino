@@ -1,9 +1,9 @@
 #define FASTLED_INTERNAL
 #define FASTLED_ALLOW_INTERRUPTS 0
-#include <Audio.h>
+/* #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
-#include <SD.h>
+#include <SD.h>*/
 
 #include <Queue.h>
 #include <FastLED.h>
@@ -163,7 +163,7 @@ uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 **
 **********************************************************/
 
-#if DEBUG_BLINK && !USE_TEENSY_AUDIO
+#if DEBUG_BLINK
 int blinker(unsigned long now, void* userData)
 {
 	static boolean state = HIGH;

@@ -5,10 +5,10 @@
 #ifndef __METAPIXEL_H__
 #define __METAPIXEL_H__
 #define FASTLED_INTERNAL
-#include <Audio.h>
+/*#include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
-#include <SD.h>
+#include <SD.h>*/
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
