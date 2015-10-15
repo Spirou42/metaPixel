@@ -17,4 +17,6 @@ The metaPixel Software uses the Arduino build environment, Teensyduino to add Te
 
 
 ## Structural Overview
-The work horse of the metaPixel control software is the task switcher of the Queue library [**taskQueue**]. All processes such as Effects, command line interface, UI SubSystem (current implementation is outdated) and the DMX interface are implemented either interrupt based or 
+The work horse of the metaPixel control software is the task switcher of the Queue library [**taskQueue**]. All processes such as Effects, command line interface, UI SubSystem (current implementation is outdated) and the DMX interface are implemented either interrupt based or by calling a processing function on a regular basis.
+
+ 
