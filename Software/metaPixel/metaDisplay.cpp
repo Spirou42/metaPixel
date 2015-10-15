@@ -212,10 +212,12 @@ uint8_t metaDisplay::brightness()
 void metaDisplay::line(MPPixel st, MPPixel en, CRGB color) {
 	int dx = abs(en.x-st.x), sx = st.x < en.x ? 1 : -1;
 	int dy = -abs(en.y-st.y), sy = st.y < en.y ? 1 : -1;
+	//Serial << "Dx:"<<dx<<" Dy:"<<dy<<" StepsC "<<sqrt((dx+dy)*(dx+dy));
+	int aSteps = 0;
 	int err = dx + dy, e2;
 	for(;;) {
 		setPixel(st,color);
-
+		++aSteps;
 		if (st.x == en.x && st.y == en.y) break;
 		e2 = 2 * err;
 		if (e2 > dy) {
@@ -226,7 +228,9 @@ void metaDisplay::line(MPPixel st, MPPixel en, CRGB color) {
 			err += dx;
 			st.y += sy;
 		}
+
 	}
+	//Serial << "StepsA "<<aSteps<<endl;
 }
 
 CHSV rgb2hsv(const CRGB& rgb)

@@ -24,7 +24,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 5
+#define START_PROG 6
 
 /**********************************************************
 **
@@ -109,7 +109,7 @@ Parameter16_t parameterArray[] = {
 	/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,&Palette),
 	/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,&Brightness),
 	/* 04 */  Parameter16_t('Q',(int16_t)0,(int16_t)5,&MirrorParam),
-	/* 05 */	Parameter16_t('Z',(int16_t)0,(int16_t)32000,&BlendParam),
+	/* 05 */	Parameter16_t('Z',(int16_t)1,(int16_t)14,&BlendParam),
 
 	// local parameters. These parameters have a different meening for each  Effect program.
 	/* 06 */	Parameter16_t('U',(int16_t)0,(int16_t)0,&genericSpeed1),
@@ -131,8 +131,8 @@ EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[par
 EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[param_U],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
-EffectLine lineEffect = EffectLine();
-EffectWhitney whitneyEffect = EffectWhitney(&parameterArray[param_U]);
+EffectLine lineEffect = EffectLine(&parameterArray[param_V]);
+EffectWhitney whitneyEffect = EffectWhitney(&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V]);
 
 #if USE_AUDIO_EFFECTS
 EffectWaterfall waterfallEffect = EffectWaterfall();
@@ -146,7 +146,7 @@ effectProgramN_t effectProgramsN[] = {
 	{&simplePlasma,150,"I800R2U30"},
 	{&lineEffect,65,"Q4c0"},
 	{&fireEffect,60,"O70H150U70D60Z12000"},
-	{&whitneyEffect,60,NULL},
+	{&whitneyEffect,67,"m4z14"},
 	#if USE_AUDIO_EFFECTS
 	{&waterfallEffect,100,NULL},
 	#endif
@@ -418,7 +418,7 @@ void loop()
 **********************************************************/
 int backbufferBlender(unsigned long now, void* userdata)
 {
-	uint8_t frac = BlendParam.currentValue()/Delay.currentValue();
+	uint8_t frac = (BlendParam.currentValue()*1000)/Delay.currentValue();
 	static uint8_t lastFrac =0;
 	if(frac != lastFrac){
 		//		Serial << "frac"<<frac<<endl;

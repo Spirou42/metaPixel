@@ -19,16 +19,15 @@
 
 /** Feature Switsches **/
 #define USE_AUDIO_EFFECTS 0
-#define USE_TEENSY_AUDIO 1
-#define USE_LEGACY_MENU (!USE_TEENSY_AUDIO)
+#define USE_TEENSY_AUDIO_LAYOUT 1
+#define USE_LEGACY_MENU (!USE_TEENSY_AUDIO_LAYOUT)
 #define USE_EFFECT_SCEDULER 1
-#define USE_OLD_EFFECTS !USE_EFFECT_SCEDULER
 #define USE_SERIAL_COMMANDS 1
 #define USE_DOUBLE_BUFFER 1
 
 /** display configuration **/
 #define MODULES_WIDTH   5												// number of modules in X
-#define MODULES_HEIGHT  4											// number of modules in Y
+#define MODULES_HEIGHT  4											  // number of modules in Y
 #define MODULE_WIDTH    4												// width of module in pixels
 #define MODULE_HEIGHT   5												// height of modules in pixels
 #define DISPLAY_WIDTH   (MODULES_WIDTH * MODULE_WIDTH)
@@ -79,7 +78,7 @@
 #define LC_CS_PIN                 1
 #endif
 
-#if !USE_TEENSY_AUDIO
+#if !USE_TEENSY_AUDIO_LAYOUT
 #define LED_BLINK_PIN            13
 #endif
 #define LED_PIN                   4
@@ -89,7 +88,7 @@
 
 /** DEBUG CONFIGURATION **/
 #define DEBUG (1)
-#define DEBUG_BLINK   (0 & DEBUG & !USE_TEENSY_AUDIO)
+#define DEBUG_BLINK   (0 & DEBUG & !USE_TEENSY_AUDIO_LAYOUT)
 #define DEBUG_EFFECTS (0 & DEBUG)
 #define DEBUG_ENCODER (0 & DEBUG)
 #define DEBUG_MENU    (0 & DEBUG)

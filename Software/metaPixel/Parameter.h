@@ -217,6 +217,20 @@ inline Print& operator<<(Print& obj, Parameter16_t k){
 	obj<<light<<'['<<k.code<<"]"<<p<<k.value->currentValue()<<" ("<<k.maxValue<<')'<<normal;
 	return obj;
 }
+
+class CommandString
+{
+public:
+	Parameter16_t *parameter;
+	CommandString():parameter(NULL){};
+	CommandString(Parameter16_t *k):parameter(k){};
+	friend Print &operator<<(Print &obj,CommandString p){
+		String *k = p.parameter->getCommandString();
+		obj << (char*)k;
+		return obj;
+	};
+};
+
 //extern parameter_t pixelParameters[];
 //extern uint8_t numetaModuleParams;
 

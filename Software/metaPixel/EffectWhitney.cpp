@@ -12,6 +12,10 @@ void EffectWhitney::startEffect()
   millisSinceStart = 0;
   frameCounter = 0;
   setMaxValueFor(cycleLength,20000);
+  setMaxValueFor(lumenScale,100);
+  setMaxValueFor(hueSpeed,255);
+  hueSpeed->value->initTo(2);
+  lumenScale->value->initTo(2);
   *(cycleLength->value) = 60*3;
 }
 
@@ -34,17 +38,22 @@ void EffectWhitney::frame(unsigned long now)
     a = timer * r;
     //len = i*crad/(float) numberOfPixels;
     //rad = max(1,len*0.25);
-
-    float lum = (sin(a)+1)/2;
-    float hue = (r+timer* 0.01);
+    float lScale = (lumenScale->value->currentValue()/50.0)-1.0;
+    float lum = (sin(a)+1.0) / 2 ;
+    float hue = (r+timer / (256.0-hueSpeed->value->currentValue())/* *0.001 hueSpeed*/);
     uint8_t h =((hue-int(hue))*255);
 
     float x = (i%display.displayWidth());
     float y = (i/display.displayWidth());
-//        Serial << clearLineRight<<"Set ("<<x<<", "<<y<<") to"<<h<<endl;
+    //Serial << "Lumen: "<<lum<<" lScale:"<<lScale<<endl;
     CRGB c = ColorFromPalette(colorPalettes[Palette.currentValue()],h);
     CHSV hC = rgb2hsv(c);
-    hC.v=lum*255;
+    float k = lum*255;
+    while(k>255){
+      k-=255;
+    }
+
+    hC.v= (k);
     display.setPixel(x,y,hC);
   }
   frameCounter++;
