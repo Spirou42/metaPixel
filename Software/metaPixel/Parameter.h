@@ -8,7 +8,10 @@
 #include <FastLED.h>
 #include "VT100Stream.h"
 //#include "Arduino.h"
-
+/**
+AnimationValue creates a simple, interrupt changable 16 bit value.
+The value can be animated between two limits.
+*/
 class AnimationValue {
 public:
 	int16_t _value;
@@ -166,7 +169,9 @@ public:
 // } parameter_t;
 
 
-
+/**
+Parameter16_t is contains an AnimationValue and
+*/
 class Parameter16_t{
 public:
 	char code;					// char, naming the parameter
