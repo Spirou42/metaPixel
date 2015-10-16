@@ -8,7 +8,7 @@
 
 void EffectLine::startEffect()
 {
-  display.clear();
+  //display.clear();
   setMaxValueFor(hueSpeed,255);
   hueSpeed->value->initTo(3);
 }

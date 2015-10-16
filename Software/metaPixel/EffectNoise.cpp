@@ -24,11 +24,15 @@ void EffectNoise::startEffect()
   noiseX = random16();
   noiseY = random16();
   noiseZ = random16();
-  noiseSpeed->value->initTo(2);
-  noiseScale->value->initTo(1);
-	//noiseScale->value->bounce(90,600000);
-  hueSpeed->value->initTo(0);
-	effectMask->value->initTo(1);
+	BlendParam.initTo(5);
+	Delay.initTo(100);
+	MirrorParam.initTo(0);
+
+  initValueFor(noiseSpeed,8);
+  initValueFor(noiseScale,20);
+  initValueFor(hueSpeed,1);
+	initValueFor(effectMask,5);
+
 	setMaxValueFor(noiseSpeed,255);
   setMaxValueFor(noiseScale,255);
   setMaxValueFor(hueSpeed,255);

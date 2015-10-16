@@ -21,7 +21,7 @@ void EffectPlasmaSimple::startEffect()
   setMaxValueFor(hueScale,1000);
   setMaxValueFor(plasmaSpeed,255);
   setMaxValueFor(mirrorMask,1);
-	display.fill(CRGB::Black);
+	//display.fill(CRGB::Black);
 }
 
 void EffectPlasmaSimple::frame(unsigned long now)

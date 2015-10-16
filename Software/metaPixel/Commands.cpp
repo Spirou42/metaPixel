@@ -24,7 +24,7 @@
 /****************************
 Serial Interface
 ****************************/
-const char *allowedCommands="#!*&%";
+const char *allowedCommands="#!*&%?";
 char serial_buffer[SERIAL_BUFFER_LENGTH];
 uint8_t currentCharB=0;
 CommandQueue commandQueue = CommandQueue();
@@ -128,7 +128,10 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 		#endif
 		char command = getCommand(&currentChar);
 		metaPixelCommand *currentCommandObj = NULL;
-
+		if(command == '?'){
+			currentChar ++;
+			currentCommandObj = new metaPixelCommand(commandDump);
+		}else
 		if( (command == '#') || (command == '!') || (command == '*'))		// Animate and bounce and stop-animation
 		{
 			currentChar++;
@@ -173,7 +176,7 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 				}
 			}else{
 				#if DEBUG_PARSER
-					Serial <<clearLineRight<< "Invalid Parameter delete command"<<endl;
+				Serial <<clearLineRight<< "Invalid Parameter delete command"<<endl;
 				#endif
 				// delete currentCommandObj;
 				// currentCommandObj = NULL;
@@ -187,6 +190,9 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 			dd->waitForAnimationStop = false;
 			dd->parameter = NULL;
 			dd->time = value * 1000;
+			if(dd->time == 0){
+				dd->time=200;
+			}
 		}else if(command == '%'){	// and waitForAnmination
 			currentChar++;
 			command = getCommand(&currentChar);
@@ -325,6 +331,14 @@ bool metaPixelCommand::processCommand()
 			}
 		}
 		break;
+		case commandDump:
+		{
+			uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
+			Effect *effect = effectProgramsN[t].program;
+			String * paramString = effect->parameterString();
+			Serial << ScreenPos(20,1)<<clearLineRight<<*paramString;
+		}
+		break;
 		case commandWait: break;
 	}
 	return result;
@@ -358,7 +372,7 @@ metaPixelCommand *CommandQueue::popCommand()
 	}
 	#if DEBUG_COMMAND
 	if(cmd)
-		Serial <<clearLineRight<< "pop command 0x"<<_HEX((unsigned long)cmd)<<endl;
+	Serial <<clearLineRight<< "pop command 0x"<<_HEX((unsigned long)cmd)<<endl;
 	#endif
 	return cmd;
 }
@@ -388,7 +402,7 @@ void CommandQueue::processQueue()
 				waitParameter = NULL;
 			}else{
 				#if DEBUG_COMMAND
-				Serial <<ScreenPos(38,0)<<clearLineRight<< "Waiting FOR "<<*waitParameter<<endl;
+				Serial <<ScreenPos(38,0)<<clearLineRight<< "Waiting FOR "<<*waitParameter;
 				#endif
 
 			}
@@ -407,6 +421,7 @@ void CommandQueue::processQueue()
 			if(waitParameter){
 				waitParameter->value->setStopNext(true);
 			}
+			break;
 		}else{
 			p->processCommand();
 		}

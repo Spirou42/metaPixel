@@ -31,7 +31,7 @@ public:
 	void setMirrorMode(displayMirror mirM){
 		if(mirMode != mirM){
 			mirMode = mirM;
-			clear();
+			//clear();
 		}
 	};
 	displayMirror mirrorMode(){return mirMode;};

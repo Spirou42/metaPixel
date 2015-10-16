@@ -120,6 +120,7 @@ extern AnimationValue Delay;             ///< frame delay for the running effect
 extern AnimationValue Palette;           ///< actual used palette
 extern AnimationValue Brightness;        ///< global brightness of the display
 extern AnimationValue BlendParam;        ///< factor for double buffer blending
+extern AnimationValue MirrorParam;       ///< global display mirror mode
 
 /** effect specific parameter **/
 extern AnimationValue genericSpeed1;       ///< generic global parameter

@@ -6,7 +6,7 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 #include "Parameter.h"
-#define SERIAL_BUFFER_LENGTH 80
+#define SERIAL_BUFFER_LENGTH 512
 //** reads lines from Serial
 extern int serialReader(unsigned long now, void* userData);
 extern int getParameterIdxFor(char p);
@@ -21,6 +21,7 @@ extern char serial_buffer[SERIAL_BUFFER_LENGTH];
 typedef enum _commandType {
   commandParameter,
   commandAnimation,
+  commandDump,
   commandWait,
 } commandType_t;
 
@@ -83,12 +84,18 @@ public:
           out << f<<dd.parameter->code<<m<<dd.fromValue<<l<<dd.toValue;
         }
         break;
+      case commandDump:
+        {
+          out << "Dump";
+        }
+        break;
       case commandWait:
-      if(command->data.commandWaitData.parameter){
-        out << "Wait for parameter"<<*(command->data.commandWaitData.parameter)<<endl;
-      }else{
-        out << "Wait for "<<command->data.commandWaitData.time/1000;
-      }
+        if(command->data.commandWaitData.parameter){
+          out << "Wait for parameter"<<*(command->data.commandWaitData.parameter);
+        }else{
+          out << "Wait for "<<command->data.commandWaitData.time/1000;
+        }
+        break;
     }
     out <<" ]";
     return out;
@@ -112,7 +119,11 @@ public:
   friend Print& operator<<(Print& obj, CommandQueue& comQ)
   {
     if(comQ.waiting){
+      if(!comQ.waitParameter){
         obj<<clearLineRight<<"Waiting "<<(comQ.waitTill - comQ.waitTimer)/1000<<endl;
+      }else{
+        obj<<clearLineRight<<"Waiting for animation on ["<<(comQ.waitParameter->code)<<"] to end"<<endl;
+      }
     }
     metaPixelCommand *l = comQ.queueStart;
     while(l){

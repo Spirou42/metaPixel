@@ -141,12 +141,12 @@ EffectWaterfall waterfallEffect = EffectWaterfall();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
 	{&whiteEffect,100,NULL},
-	{&noiseEffect,150,"D100C0B160Q0Z12000R20U8V1M5"}, //"*rU6C8!R20 80 60"
-	{&plasmaEffect,150,"D150C0B160Q0Z8000U12V2I6R10M15"},
-	{&simplePlasma,150,"I800R2U30"},
-	{&lineEffect,65,"Q4c0"},
+	{&noiseEffect,150,NULL}, //"*rU6C8!R20 80 60"
+	{&plasmaEffect,150,"D150C0B160Q0Z8U12V2I6R10M15"},
+	{&simplePlasma,150,"I800R2U30Z6"},
+	{&lineEffect,65,"c0v5z2"},
 	{&fireEffect,60,"O70H150U70D60Z12000"},
-	{&whitneyEffect,67,"m4z14"},
+	{&whitneyEffect,67,"q0z14r200v200"},
 	#if USE_AUDIO_EFFECTS
 	{&waterfallEffect,100,NULL},
 	#endif
@@ -390,17 +390,19 @@ void loop()
 			t= false;
 		}
 	}
+	/** run all sequence tasks */
+	taskQueue.Run(millis());
+
 	commandQueue.processQueue();
 	/** Create output on command processing **/
 	if(commandQueueTimer>1000){
 		if(commandQueue.waiting){
 			Serial << ScreenPos(12,1)<<clearLineRight<<commandQueue<<endl;
 		}
+		Serial << clearLineRight;
 		Serial << clearDown;
 		commandQueueTimer = 0;
 	}
-	/** run all sequence tasks */
-	taskQueue.Run(millis());
 	#if DEBUG_LOOP
 	{
 		static int p = 0;
