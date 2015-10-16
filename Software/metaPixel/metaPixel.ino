@@ -54,32 +54,44 @@ struct RDMINIT rdmData {
 	0   // Definition of additional commands
 };
 TeensyDmx DMX(Serial3, &rdmData, 30);
+
+/** the global task queue */
 Queue taskQueue;
+
 #if USE_LEGACY_MENU
 ballState_t currentState;
 #endif
+
 /**********************************************************
 **
 ** Parameters
 **
 **********************************************************/
 
-AnimationValue Delay(10);
-AnimationValue EffectProgram(0);
-AnimationValue Palette(0);
-AnimationValue Brightness(BRIGHTNESS);
-AnimationValue BlendParam(5000);
-AnimationValue MirrorParam(0);
+/** these are the parameters controlling global states */
+AnimationValue Delay(10);												///< delay in ms between two calls to the Effect::frame method
+AnimationValue EffectProgram(0);								///< index of the currently running effect program
+AnimationValue Palette(0);											///< active palette
+AnimationValue Brightness(BRIGHTNESS);					///< current brithness of the display
+AnimationValue BlendParam(5);										///< detemines how fast the backbuffer is blended into the display buffer
+AnimationValue MirrorParam(0);									///< current display mirror state
 
-AnimationValue genericSpeed1(8);
-AnimationValue genericSpeed2(1);
-AnimationValue genericScale1(50);
-AnimationValue genericScale2(50);
-AnimationValue genericParam1(display.displayWidth());
-AnimationValue genericParam2(display.displayWidth());
-AnimationValue genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
-AnimationValue genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);
+/** these parameters are used by the Effects */
+AnimationValue genericSpeed1(8);												///< generic parameter for Effects
+AnimationValue genericSpeed2(1);												///< generic parameter for Effects
+AnimationValue genericScale1(50);												///< generic parameter for Effects
+AnimationValue genericScale2(50);												///< generic parameter for Effects
+AnimationValue genericParam1(display.displayWidth());		///< generic parameter for Effects
+AnimationValue genericParam2(display.displayWidth());		///< generic parameter for Effects
+AnimationValue genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);		///< generic parameter for Effects
+AnimationValue genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);		///< generic parameter for Effects
 bool parametersInvalid = false;
+
+/**********************************************************
+**
+** Palettes
+**
+**********************************************************/
 
 CRGBPalette16 colorPalettes[]={
 	(CRGBPalette16)RainbowColors_p,
@@ -100,32 +112,37 @@ uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 const char * SystemParameterName[]={
 	"Program","Delay","Pallete","Brightness","Mirror","Fade"
 };
-
+/** All of the accessible parameters */
 Parameter16_t parameterArray[] = {
 	// global scope parameters.
 	// these parameters for Program, framerate etc.
-	/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,&EffectProgram),
-	/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,&Delay),
-	/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,&Palette),
-	/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,&Brightness),
-	/* 04 */  Parameter16_t('Q',(int16_t)0,(int16_t)5,&MirrorParam),
-	/* 05 */	Parameter16_t('Z',(int16_t)1,(int16_t)14,&BlendParam),
+	/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,		&EffectProgram),
+	/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,	&Delay),
+	/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,		&Palette),
+	/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,	&Brightness),
+	/* 04 */  Parameter16_t('Q',(int16_t)0,(int16_t)5,		&MirrorParam),
+	/* 05 */	Parameter16_t('Z',(int16_t)1,(int16_t)14,		&BlendParam),
 
 	// local parameters. These parameters have a different meening for each  Effect program.
-	/* 06 */	Parameter16_t('U',(int16_t)0,(int16_t)0,&genericSpeed1),
-	/* 07 */  Parameter16_t('V',(int16_t)0,(int16_t)0,&genericSpeed2),
-	/* 08 */	Parameter16_t('R',(int16_t)0,(int16_t)0,&genericScale1),
-	/* 09 */	Parameter16_t('I',(int16_t)0,(int16_t)0,&genericScale2),
-	/* 10 */	Parameter16_t('O',(int16_t)0,(int16_t)0,&genericParam1),
-	/* 11 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,&genericParam2),
-	/* 12 */	Parameter16_t('M',(int16_t)0,(int16_t)255,&genericEffectMask1),
-	/* 13 */	Parameter16_t('N',(int16_t)0,(int16_t)255,&genericEffectMask2),
+	/* 06 */	Parameter16_t('U',(int16_t)0,(int16_t)0,		&genericSpeed1),
+	/* 07 */  Parameter16_t('V',(int16_t)0,(int16_t)0,		&genericSpeed2),
+	/* 08 */	Parameter16_t('R',(int16_t)0,(int16_t)0,		&genericScale1),
+	/* 09 */	Parameter16_t('I',(int16_t)0,(int16_t)0,		&genericScale2),
+	/* 10 */	Parameter16_t('O',(int16_t)0,(int16_t)0,		&genericParam1),
+	/* 11 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,		&genericParam2),
+	/* 12 */	Parameter16_t('M',(int16_t)0,(int16_t)255,	&genericEffectMask1),
+	/* 13 */	Parameter16_t('N',(int16_t)0,(int16_t)255,	&genericEffectMask2),
 
 };
 typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
 
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(Parameter16_t);
 
+/**********************************************************
+**
+** Effects
+**
+**********************************************************/
 EffectWhite whiteEffect = EffectWhite(&(parameterArray[param_O]));
 EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[param_H],&parameterArray[param_U]);
 EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[param_U],&parameterArray[param_V],&parameterArray[param_M]);
@@ -154,12 +171,9 @@ effectProgramN_t effectProgramsN[] = {
 
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 
-
-
-
 /**********************************************************
 **
-** DEBUG
+** DEBUG & Helpers
 **
 **********************************************************/
 
@@ -172,14 +186,8 @@ int blinker(unsigned long now, void* userData)
 	return 0;
 }
 #endif
-/**********************************************************
-**
-** Arduino
-**
-**********************************************************/
 void dumpParameters()
 {
-
 	uint8_t line = 1;
 	uint8_t column = 1;
 	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
@@ -230,6 +238,13 @@ void dumpParameters()
 	Serial <<ScreenPos(line,1)<<clearLineRight<<">";
 }
 
+
+/**********************************************************
+**
+** Arduino
+**
+**********************************************************/
+
 elapsedMillis commandQueueTimer = 0;
 void setup()
 {
@@ -251,7 +266,6 @@ void setup()
 	initEncoderUI();
 	#endif
 
-
 	/** Setup Audio **/
 	#if USE_AUDIO_EFFECTS
 	AudioMemory(20);
@@ -263,16 +277,21 @@ void setup()
 	audioIn.setActive(false);
 	analyzeFFT.setActive(false);
 	#endif
+
 	/** Setup DMX **/
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
 	Serial << "Init Parameters"<<endl;
+
 	/** initialize Effects **/
 	EffectProgram.initTo(START_PROG);
 	int16_t cP = EffectProgram.currentValue();
 	Delay.initTo(effectProgramsN[cP].delay);
 	Brightness.initTo(BRIGHTNESS);
 	Palette.initTo(0);
+
+	/** initialize Queued Task */
 	Serial << "Starting Tasks"<<endl;
+
 	/** Double buffering **/
 	#if USE_DOUBLE_BUFFER
 	taskQueue.scheduleFunction(backbufferBlender,NULL,"BBB ",0,66);
@@ -288,8 +307,9 @@ void setup()
 	taskQueue.scheduleFunction(effectRunner,NULL,"EFFC",0,Delay.currentValue());
 	#endif
 
-	Serial << "Init Commandline Interface"<<endl;
+
 	/** Command line interface **/
+	Serial << "Init Commandline Interface"<<endl;
 	#if USE_SERIAL_COMMANDS
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
 	#endif
@@ -311,7 +331,6 @@ void setup()
 
 void loop()
 {
-
 	random16_add_entropy( random());
 	//
 	// switch program Slot 0

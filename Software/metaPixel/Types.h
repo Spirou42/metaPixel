@@ -1,4 +1,7 @@
-
+/**
+PlasmaTypes / types.h
+Legacy file, the contents will be moced to other files soon
+*/
 #ifndef __PLASMATYPES_H__
 #define __PLASMATYPES_H__
 #include "Effect.h"

@@ -22,7 +22,6 @@ int effectRunner(unsigned long now, void* userdata)
 		}
 		dumpParameters();
 		Serial <<endl;
-
 	}
 	for(int i=0;i<(parameterArraySize-1);i++){
 		AnimationValue *k = parameterArray[i].value;
