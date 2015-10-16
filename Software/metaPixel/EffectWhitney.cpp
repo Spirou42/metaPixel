@@ -27,6 +27,7 @@ void EffectWhitney::startEffect()
   hueSpeed->value->initTo(2);
   lumenScale->value->initTo(75);
   *(cycleLength->value) = 60*3;
+  BlendParam.initTo(14);
 }
 
 void EffectWhitney::stopEffect()

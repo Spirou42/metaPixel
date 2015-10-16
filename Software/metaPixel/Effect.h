@@ -11,6 +11,7 @@
 #include "VT100Stream.h"
 #include "Parameter.h"
 
+
 class Effect
 {
 public:
@@ -68,6 +69,11 @@ public:
 			Parameter16_t * param= parameterAt(i);
 			*parameterString += 	*param->getCommandString();
 		}
+		*parameterString += " ";
+		*parameterString += *parameterArray[1].getCommandString();
+		*parameterString += *parameterArray[2].getCommandString();
+		*parameterString += *parameterArray[4].getCommandString();
+		*parameterString += *parameterArray[5].getCommandString();
 		return parameterString;
 	}
 };

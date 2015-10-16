@@ -54,9 +54,9 @@ protected:
   int16_t noiseY;
   int16_t noiseZ;
   uint8_t ihue;
-  uint8_t noiseH[NOISE_DIMENSION][NOISE_DIMENSION];
-  uint8_t noiseS[NOISE_DIMENSION][NOISE_DIMENSION];
-  uint8_t noiseV[NOISE_DIMENSION][NOISE_DIMENSION];
+  int8_t noiseH[NOISE_DIMENSION][NOISE_DIMENSION];
+  int8_t noiseS[NOISE_DIMENSION][NOISE_DIMENSION];
+  int8_t noiseV[NOISE_DIMENSION][NOISE_DIMENSION];
   void fillnoise8();
 };
 

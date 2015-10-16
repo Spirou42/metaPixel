@@ -12,11 +12,17 @@ extern int serialReader(unsigned long now, void* userData);
 extern int getParameterIdxFor(char p);
 extern Parameter16_t * getParameterFor(char p);
 //* processes lines
-extern void commandProcessor(char* line_buffer,bool executeImediately = false);
+extern void commandProcessor(const char* line_buffer,bool executeImediately = false);
 //* line buffer
 extern char serial_buffer[SERIAL_BUFFER_LENGTH];
 
-
+#define ANIMATE_COMMAND   '@'
+#define BOUNCE_COMMAND    '~'
+#define STOP_COMMAND      '*'
+#define WAITTIME_COMMAND  '&'
+#define WAITANIM_COMMAND  '%'
+#define DUMP_COMMAND      '?'
+#define DEMO_COMMAND      '#'
 
 typedef enum _commandType {
   commandParameter,

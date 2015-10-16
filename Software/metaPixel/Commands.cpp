@@ -8,11 +8,12 @@
 * And commands:
 * commands do a bit more of work
 * we have the following commands
-*	Bounce 		[!] ![varname][startValue] [endValue] [sec.]		- bounces the parameters value between start and end value in [sec.] time
-* Animate 	[#]	#[varName][startValue] [endValue] [sec.]		- single animation of parameters value from start to end value ind [sec.] time
+*	Bounce 		[@] @[varname][startValue] [endValue] [sec.]		- bounces the parameters value between start and end value in [sec.] time
+* Animate 	[~]	~[varName][startValue] [endValue] [sec.]		- single animation of parameters value from start to end value ind [sec.] time
 * Stop   		[*] *[varName]																	- interrup the animation on [varName] parameter
 * WaitTime	[&] &[sec.]																			- dissables the command processing for [sec] seconds
-* WaitAnim	[%] %[varName]																	- wait for the animation to finnish -
+* WaitAnim	[%] %[varName]																	- wait for the animation to finnish
+* dump			[?] ?																						- dump current command string
 */
 
 #include "Commands.h"
@@ -24,7 +25,18 @@
 /****************************
 Serial Interface
 ****************************/
-const char *allowedCommands="#!*&%?";
+const char* demoStringArray[] = {
+	"p0&10",
+	"p1&0R15U5V6M1D100C8Q0Z5&20c0&20@u5,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8",
+	"p2&10",
+	"p3&10",
+	"p4&10",
+	"p5&10@O70,8,30@U70,10,30%o&10@o8,77,30h160@u10,70,10%o&15@o77,65,20@u10,66,10%oh150",
+	"p6&0Q0Z1U180R400V1&20@r400,200,20@z1,5,60%r@r200,30,60%r@z5,14,60@r30,75,30%z@z14,1,60@r75,400,60%z"
+};
+int16_t demoStrings = sizeof(demoStringArray)/sizeof(const char*);
+
+const char *allowedCommands="@~*&%?#";
 char serial_buffer[SERIAL_BUFFER_LENGTH];
 uint8_t currentCharB=0;
 CommandQueue commandQueue = CommandQueue();
@@ -59,6 +71,7 @@ int serialReader(unsigned long now, void* userData)
 			#endif
 			memset(serial_buffer,0x00,SERIAL_BUFFER_LENGTH);
 			currentCharB = 0;
+			dumpParameters();
 		}
 	}
 	return 0;
@@ -87,7 +100,7 @@ Parameter16_t* getParameterFor(char p)
 	}
 }
 
-char getCommand(char** currentChar)
+char getCommand(const char** currentChar)
 {
 	#if DEBUG_PARSER
 	//Serial << "getCommand:" << endl;
@@ -96,13 +109,13 @@ char getCommand(char** currentChar)
 		*currentChar =  (*currentChar+1);
 	}
 	char command = **currentChar;
-	if(command >=0x61){
+	if((command >=0x61) && (command <=0x7a)){
 		command -=0x20;
 	}
 	return command;
 }
 
-long getValue(char** currentChar){
+long getValue(const char** currentChar){
 	long myValue = 0;
 	while( (**currentChar != 0x00) && (**currentChar <'0' || **currentChar >'9')  ){
 		*currentChar = (*currentChar+1) ;
@@ -115,9 +128,9 @@ long getValue(char** currentChar){
 	return myValue;
 }
 
-void commandProcessor(char* line_buffer, bool executeImediately)
+void commandProcessor(const char* line_buffer, bool executeImediately)
 {
-	char *currentChar = line_buffer;
+	const char *currentChar = line_buffer;
 	Serial << XOFF;
 	#if DEBUG_PARSER
 	Serial << ScreenPos(8,0);
@@ -128,16 +141,14 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 		#endif
 		char command = getCommand(&currentChar);
 		metaPixelCommand *currentCommandObj = NULL;
-		if(command == '?'){
-			currentChar ++;
+		currentChar++;
+		if(command == DUMP_COMMAND){
 			currentCommandObj = new metaPixelCommand(commandDump);
 		}else
-		if( (command == '#') || (command == '!') || (command == '*'))		// Animate and bounce and stop-animation
+		if( (command == ANIMATE_COMMAND) || (command == BOUNCE_COMMAND) || (command == STOP_COMMAND))		// Animate and bounce and stop-animation
 		{
-			currentChar++;
-
-			bool isBounce = (command == '!');
-			bool isReset = (command == '*');
+			bool isBounce = (command == BOUNCE_COMMAND);
+			bool isReset = (command == STOP_COMMAND);
 			#if DEBUG_PARSER
 			// Serial << clearLineRight<<"Animate B"<<isBounce<<" R"<<isReset<<endl;
 			#endif
@@ -182,8 +193,7 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 				// currentCommandObj = NULL;
 
 			}
-		}else if(command == '&'){	// and WaitForTime
-			currentChar++;
+		}else if(command == WAITTIME_COMMAND){	// and WaitForTime
 			int16_t value = getValue(&currentChar);
 			currentCommandObj = new metaPixelCommand(commandWait);
 			CommandWait_t *dd = &currentCommandObj->data.commandWaitData;
@@ -193,8 +203,7 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 			if(dd->time == 0){
 				dd->time=200;
 			}
-		}else if(command == '%'){	// and waitForAnmination
-			currentChar++;
+		}else if(command == WAITANIM_COMMAND){	// and waitForAnmination
 			command = getCommand(&currentChar);
 			currentChar++;
 			Parameter16_t* param = getParameterFor(command);
@@ -207,8 +216,17 @@ void commandProcessor(char* line_buffer, bool executeImediately)
 			}else{
 				Serial << "FUCK"<<endl;
 			}
+		}else if(command == DEMO_COMMAND){
+			int16_t value = getValue(&currentChar);
+			const char *demoString = NULL;
+			if( (value >=0) && (value<demoStrings) ){
+				demoString = demoStringArray[value];
+			}
+			if(demoString){
+				Serial << ScreenPos(32,1)<<clearLineRight<<"DEMO: "<<demoString<<endl;
+				commandProcessor(demoString);
+			}
 		}else{					// this is a parameterSet
-			currentChar++;
 			Parameter16_t* param = getParameterFor(command);
 			#if DEBUG_PARSER
 			// Serial << clearLineRight<< "SetParameter: "<<*param<<endl;
@@ -337,6 +355,7 @@ bool metaPixelCommand::processCommand()
 			Effect *effect = effectProgramsN[t].program;
 			String * paramString = effect->parameterString();
 			Serial << ScreenPos(20,1)<<clearLineRight<<*paramString;
+			delete(paramString);
 		}
 		break;
 		case commandWait: break;

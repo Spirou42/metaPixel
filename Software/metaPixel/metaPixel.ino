@@ -24,7 +24,7 @@
 #define USE_WHITE  1
 #define USE_NOISE  1
 
-#define START_PROG 6
+#define START_PROG 1
 
 /**********************************************************
 **
@@ -134,7 +134,7 @@ Parameter16_t parameterArray[] = {
 	/* 13 */	Parameter16_t('N',(int16_t)0,(int16_t)255,	&genericEffectMask2),
 
 };
-typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
+
 
 int16_t parameterArraySize = sizeof(parameterArray)/sizeof(Parameter16_t);
 
@@ -163,7 +163,7 @@ effectProgramN_t effectProgramsN[] = {
 	{&simplePlasma,150,"I800R2U30Z6"},
 	{&lineEffect,65,"c0v5z2"},
 	{&fireEffect,60,"O70H150U70D60Z12000"},
-	{&whitneyEffect,67,"q0z14r200v200"},
+	{&whitneyEffect,67,"q0"},
 	#if USE_AUDIO_EFFECTS
 	{&waterfallEffect,100,NULL},
 	#endif
@@ -252,7 +252,7 @@ void setup()
 	FastLED.setBrightness( BRIGHTNESS );
 	FastLED.show();
 	Serial.begin(115200);
-	delay(2000);
+	delay(200);
 	Serial <<"Startup"<<endl;
 	// tweak global parameter max for Programs and pallettes
 	parameterArray[0].maxValue = newMaxPrograms-1;

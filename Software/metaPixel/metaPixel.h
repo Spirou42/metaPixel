@@ -143,4 +143,6 @@ extern int16_t parameterArraySize;
 extern void dumpParameters();
 extern CommandQueue commandQueue;
 extern bool parametersInvalid;
+
+typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N } pramId;
 #endif
