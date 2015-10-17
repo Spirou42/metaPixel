@@ -1,0 +1,11 @@
+For 3.3V VCC supply 5V power supply, connect J1 on the circuit board
+LEDU (backlight) Power 3.3 (unacceptable 5V)
+GND Ground
+
+TFT cs pick P3 ^ 5;
+TFT DC connection P2 ^ 3;
+TFT sdI pick P2 ^ 2;
+TFT scK pick P2 ^ 1;
+RESET pick P3 ^ 4;
+
+SDO can not answer
