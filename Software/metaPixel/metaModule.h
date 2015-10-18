@@ -43,6 +43,8 @@ public:
 	uint16_t getBaseOffset(){return baseOffset;}
 
 	uint16_t XY( uint8_t x, uint8_t y);
+	uint16_t XYabs(uint8_t x, uint8_t y);
+	void setToMeanColor();
 };
 
 #endif

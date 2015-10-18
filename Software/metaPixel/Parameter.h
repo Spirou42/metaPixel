@@ -219,7 +219,7 @@ extern int16_t parameterArraySize;
 
 inline Print& operator<<(Print& obj, Parameter16_t k){
 	char p = k.value->_shouldAnimate?'*':' ';
-	obj<<light<<'['<<k.code<<"]"<<p<<k.value->currentValue()<<" ("<<k.maxValue<<')'<<normal;
+	obj<<'['<<k.code<<"]"<<p<<k.value->currentValue()<<" ("<<k.maxValue<<')';
 	return obj;
 }
 

@@ -45,12 +45,8 @@ void EffectLine::frame(unsigned long now)
 
       }
     }
-
-
   }
-#if !USE_DOUBLE_BUFFER
-  FastLED.show();
-#endif
+  display.flush();
 }
 void EffectLine::printParameter(Print& stream){
 	stream << "hueSpeed: "<<*hueSpeed<<endl;

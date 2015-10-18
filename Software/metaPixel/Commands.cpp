@@ -79,7 +79,7 @@ int serialReader(unsigned long now, void* userData)
 
 int getParameterIdxFor(char p)
 {
-	if(p>0x61){
+	if( (p>=0x61) && (p<=0x7a) ){
 		p-=0x20;
 	}
 	for(int16_t l = 0 ; l<parameterArraySize;l++){
@@ -345,7 +345,7 @@ bool metaPixelCommand::processCommand()
 					}
 				}
 				result = true;
-				parametersInvalid = true;
+				parameterHasChanged = true;
 			}
 		}
 		break;

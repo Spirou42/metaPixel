@@ -1100,12 +1100,12 @@ Based on the following sources:
 <net name="SCLK" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="14/A0"/>
-<wire x1="53.34" y1="22.86" x2="66.04" y2="22.86" width="0.1524" layer="91"/>
-<label x="55.88" y="22.86" size="1.4224" layer="95"/>
+<wire x1="53.34" y1="22.86" x2="88.9" y2="22.86" width="0.1524" layer="91"/>
+<label x="83.82" y="22.86" size="1.4224" layer="95"/>
 </segment>
 <segment>
 <wire x1="134.62" y1="43.18" x2="119.38" y2="43.18" width="0.1524" layer="91"/>
-<label x="121.92" y="43.18" size="1.778" layer="95"/>
+<label x="121.92" y="43.18" size="1.4224" layer="95"/>
 <pinref part="SV1" gate="1" pin="10"/>
 </segment>
 </net>
@@ -1119,25 +1119,24 @@ Based on the following sources:
 <net name="MOSI" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="7"/>
-<wire x1="22.86" y1="38.1" x2="10.16" y2="38.1" width="0.1524" layer="91"/>
-<label x="10.16" y="38.1" size="1.4224" layer="95"/>
+<wire x1="22.86" y1="38.1" x2="-5.08" y2="38.1" width="0.1524" layer="91"/>
+<label x="-5.08" y="38.1" size="1.4224" layer="95"/>
 </segment>
 <segment>
 <wire x1="134.62" y1="40.64" x2="119.38" y2="40.64" width="0.1524" layer="91"/>
-<label x="121.92" y="40.64" size="1.778" layer="95"/>
+<label x="121.92" y="40.64" size="1.4224" layer="95"/>
 <pinref part="SV1" gate="1" pin="8"/>
 </segment>
 </net>
 <net name="MISO" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="12"/>
-<wire x1="22.86" y1="25.4" x2="10.16" y2="25.4" width="0.1524" layer="91"/>
-<label x="10.16" y="25.4" size="1.4224" layer="95"/>
+<wire x1="22.86" y1="25.4" x2="-5.08" y2="25.4" width="0.1524" layer="91"/>
+<label x="-5.08" y="25.4" size="1.4224" layer="95"/>
 </segment>
 <segment>
 <wire x1="149.86" y1="43.18" x2="162.56" y2="43.18" width="0.1524" layer="91"/>
-<label x="149.86" y="43.18" size="1.778" layer="95"/>
-<label x="149.86" y="43.18" size="1.778" layer="95"/>
+<label x="149.86" y="43.18" size="1.4224" layer="95"/>
 <pinref part="SV1" gate="1" pin="9"/>
 </segment>
 </net>
@@ -1247,43 +1246,43 @@ Based on the following sources:
 <net name="LCD_LED" class="0">
 <segment>
 <wire x1="149.86" y1="38.1" x2="162.56" y2="38.1" width="0.1524" layer="91"/>
-<label x="149.86" y="38.1" size="1.778" layer="95"/>
+<label x="149.86" y="38.1" size="1.4224" layer="95"/>
 <pinref part="SV1" gate="1" pin="5"/>
 </segment>
 <segment>
 <pinref part="U$1" gate="G$1" pin="3"/>
-<wire x1="22.86" y1="48.26" x2="10.16" y2="48.26" width="0.1524" layer="91"/>
-<label x="10.16" y="48.26" size="1.4224" layer="95"/>
+<wire x1="22.86" y1="48.26" x2="-5.08" y2="48.26" width="0.1524" layer="91"/>
+<label x="-5.08" y="48.26" size="1.4224" layer="95"/>
 </segment>
 </net>
 <net name="!LCD_CS" class="0">
 <segment>
 <wire x1="149.86" y1="40.64" x2="162.56" y2="40.64" width="0.1524" layer="91"/>
-<label x="149.86" y="40.64" size="1.778" layer="95"/>
+<label x="149.86" y="40.64" size="1.4224" layer="95"/>
 <pinref part="SV1" gate="1" pin="7"/>
 </segment>
 <segment>
 <pinref part="U$1" gate="G$1" pin="20/A6"/>
-<wire x1="53.34" y1="38.1" x2="66.04" y2="38.1" width="0.1524" layer="91"/>
-<label x="55.88" y="38.1" size="1.4224" layer="95"/>
+<wire x1="53.34" y1="38.1" x2="88.9" y2="38.1" width="0.1524" layer="91"/>
+<label x="81.28" y="38.1" size="1.4224" layer="95"/>
 </segment>
 </net>
 <net name="!LCD_RST" class="0">
 <segment>
 <wire x1="134.62" y1="38.1" x2="119.38" y2="38.1" width="0.1524" layer="91"/>
-<label x="121.92" y="38.1" size="1.778" layer="95"/>
+<label x="121.92" y="38.1" size="1.4224" layer="95"/>
 <pinref part="SV1" gate="1" pin="6"/>
 </segment>
 <segment>
 <pinref part="U$1" gate="G$1" pin="2"/>
-<wire x1="22.86" y1="50.8" x2="10.16" y2="50.8" width="0.1524" layer="91"/>
-<label x="10.16" y="50.8" size="1.4224" layer="95"/>
+<wire x1="22.86" y1="50.8" x2="-5.08" y2="50.8" width="0.1524" layer="91"/>
+<label x="-5.08" y="50.8" size="1.4224" layer="95"/>
 </segment>
 </net>
 <net name="!ADS_CS" class="0">
 <segment>
 <wire x1="149.86" y1="45.72" x2="162.56" y2="45.72" width="0.1524" layer="91"/>
-<label x="152.4" y="45.72" size="1.778" layer="95"/>
+<label x="152.4" y="45.72" size="1.4224" layer="95"/>
 <pinref part="SV1" gate="1" pin="11"/>
 </segment>
 <segment>
@@ -1308,14 +1307,14 @@ Based on the following sources:
 <segment>
 <pinref part="IC1" gate="A" pin="A1"/>
 <wire x1="83.82" y1="-15.24" x2="68.58" y2="-15.24" width="0.1524" layer="91"/>
-<label x="68.58" y="-15.24" size="1.778" layer="95"/>
+<label x="68.58" y="-15.24" size="1.4224" layer="95"/>
 </segment>
 </net>
 <net name="WS2812O" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="B1"/>
 <wire x1="109.22" y1="-15.24" x2="124.46" y2="-15.24" width="0.1524" layer="91"/>
-<label x="114.3" y="-15.24" size="1.778" layer="95"/>
+<label x="114.3" y="-15.24" size="1.4224" layer="95"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -1328,6 +1327,18 @@ Based on the following sources:
 <segment>
 <pinref part="IC1" gate="A" pin="A3"/>
 <wire x1="83.82" y1="-20.32" x2="68.58" y2="-20.32" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="LCD_DC" class="0">
+<segment>
+<pinref part="SV1" gate="1" pin="12"/>
+<wire x1="134.62" y1="45.72" x2="119.38" y2="45.72" width="0.1524" layer="91"/>
+<label x="121.92" y="45.72" size="1.4224" layer="95"/>
+</segment>
+<segment>
+<pinref part="U$1" gate="G$1" pin="5"/>
+<wire x1="22.86" y1="43.18" x2="-5.08" y2="43.18" width="0.1524" layer="91"/>
+<label x="-5.08" y="43.18" size="1.4224" layer="95"/>
 </segment>
 </net>
 </nets>

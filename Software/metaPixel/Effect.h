@@ -24,11 +24,16 @@ public:
 	virtual void stopEffect(){};
 	virtual void printParameter(Print& stream){};
 	const char * getName(){return name;}
-
+	/**
+	* Parameter handling
+	*/
 	virtual size_t 					numberOfParameters(){return 0;};
 	virtual Parameter16_t* 	parameterAt(size_t idx){Serial <<"Gnartz";return NULL;};
 	virtual const char* 		parameterNameAt(size_t idx){Serial <<"Gnartz2";return NULL;};
 
+	/**
+	* Parameter16_t helper
+	*/
 	int16_t getValueFor(Parameter16_t *someValue,int16_t defaultValue=0){
 			if(NULL!=someValue){
 				return someValue->value->currentValue();

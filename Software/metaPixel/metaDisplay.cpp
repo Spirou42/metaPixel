@@ -6,7 +6,7 @@
 #include "Arduino.h"
 metaModule	  moduleBuffer[MODULES_WIDTH*MODULES_HEIGHT];
 metaDisplay::metaDisplay(CRGB* buffer, CRGB* bbuff, uint8_t w,uint8_t h):
-moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff),mirMode(noMirror)
+moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff),lowResMode(false),mirMode(noMirror)
 {
 	//moduleBuffer = new metaModule(moduleWidth*moduleHeight);
 	for(int x=0;x<width;x++){
@@ -17,7 +17,7 @@ moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(b
 				flipped = true;
 			}
 			moduleBuffer[i] = metaModule(moduleWidth, moduleHeight,flipped);
-			moduleBuffer[i].setBaseAddress(buffer+(i*moduleWidth*moduleHeight));
+			moduleBuffer[i].setBaseAddress(backbuffer+(i*moduleWidth*moduleHeight));
 			moduleBuffer[i].setBaseOffset(i*moduleWidth*moduleHeight);
 		}
 	}
@@ -41,8 +41,7 @@ uint16_t metaDisplay::XY(MPPixel currentPixel)
 	uint8_t modX=(currentPixel.x / moduleWidth),modY=(currentPixel.y/moduleHeight);
 	uint8_t xMod = (currentPixel.x % moduleWidth), yMod=(currentPixel.y%moduleHeight);
 	uint16_t moduleOffset = XYModule(modX,modY);
-	uint16_t pixelInModule = moduleBuffer[moduleOffset].XY(xMod,yMod);
-	uint16_t pixelInBuffer = pixelInModule+ moduleBuffer[moduleOffset].getBaseOffset();
+	uint16_t pixelInBuffer = moduleBuffer[moduleOffset].XYabs(xMod,yMod);
 	return pixelInBuffer;
 };
 
@@ -196,6 +195,13 @@ void metaDisplay::flush()
 {
 	if(!backbuffer){
 		FastLED.show();
+	}else{
+		if(lowResMode){
+			for(uint8_t i=0;i<(MODULES_WIDTH*MODULES_HEIGHT);++i){
+				moduleBuffer[i].setToMeanColor();
+			}
+//			Serial <<endl<<"---------------"<<endl;
+		}
 	}
 }
 

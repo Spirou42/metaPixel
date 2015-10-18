@@ -80,6 +80,7 @@ void EffectPlasma::frame(unsigned long now)
 	paletteShift+=hueSpeed->value->currentValue();
 	paletteShift%=256;
 	k+=(M_PI/360.0)*(plasmaSpeed->value->currentValue()/10.0);
+  display.flush();
 }
 
 void EffectPlasma::printParameter(Print& stream)

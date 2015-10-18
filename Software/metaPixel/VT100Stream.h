@@ -70,8 +70,8 @@ inline Print &operator <<(Print& obj,_VT100Simples control)
 inline Print &operator <<(Print& obj,_XONOFF control)
 {
   switch(control){
-    case XON: obj<< (char) 0x11; break;
-    case XOFF:obj<<(char)0x13;break;
+    case XON:   obj<< (char) 0x11;  break;
+    case XOFF:  obj<<(char)0x13;    break;
   }
   return obj;
 }

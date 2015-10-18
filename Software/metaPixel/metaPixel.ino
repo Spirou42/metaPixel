@@ -75,6 +75,7 @@ AnimationValue Palette(0);											///< active palette
 AnimationValue Brightness(BRIGHTNESS);					///< current brithness of the display
 AnimationValue BlendParam(5);										///< detemines how fast the backbuffer is blended into the display buffer
 AnimationValue MirrorParam(0);									///< current display mirror state
+AnimationValue ResolutionParam(1);							///< current display resolution
 
 /** these parameters are used by the Effects */
 AnimationValue genericSpeed1(8);												///< generic parameter for Effects
@@ -85,7 +86,7 @@ AnimationValue genericParam1(display.displayWidth());		///< generic parameter fo
 AnimationValue genericParam2(display.displayWidth());		///< generic parameter for Effects
 AnimationValue genericEffectMask1(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);		///< generic parameter for Effects
 AnimationValue genericEffectMask2(HorizontalEffect | VerticalEffect | DiagonalEffect | CircleEffect);		///< generic parameter for Effects
-bool parametersInvalid = false;
+bool parameterHasChanged = false;
 
 /**********************************************************
 **
@@ -110,7 +111,7 @@ CRGBPalette16 colorPalettes[]={
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
 const char * SystemParameterName[]={
-	"Program","Delay","Pallete","Brightness","Mirror","Fade"
+	"Program","Delay","Pallete","Brightness","Mirror","Fade","Res"
 };
 /** All of the accessible parameters */
 Parameter16_t parameterArray[] = {
@@ -122,16 +123,17 @@ Parameter16_t parameterArray[] = {
 	/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,	&Brightness),
 	/* 04 */  Parameter16_t('Q',(int16_t)0,(int16_t)5,		&MirrorParam),
 	/* 05 */	Parameter16_t('Z',(int16_t)1,(int16_t)14,		&BlendParam),
+	/* 06 */	Parameter16_t('A',(int16_t)0,(int16_t)1,		&ResolutionParam),
 
 	// local parameters. These parameters have a different meening for each  Effect program.
-	/* 06 */	Parameter16_t('U',(int16_t)0,(int16_t)0,		&genericSpeed1),
-	/* 07 */  Parameter16_t('V',(int16_t)0,(int16_t)0,		&genericSpeed2),
-	/* 08 */	Parameter16_t('R',(int16_t)0,(int16_t)0,		&genericScale1),
-	/* 09 */	Parameter16_t('I',(int16_t)0,(int16_t)0,		&genericScale2),
-	/* 10 */	Parameter16_t('O',(int16_t)0,(int16_t)0,		&genericParam1),
-	/* 11 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,		&genericParam2),
-	/* 12 */	Parameter16_t('M',(int16_t)0,(int16_t)255,	&genericEffectMask1),
-	/* 13 */	Parameter16_t('N',(int16_t)0,(int16_t)255,	&genericEffectMask2),
+	/* 07 */	Parameter16_t('U',(int16_t)0,(int16_t)0,		&genericSpeed1),
+	/* 08 */  Parameter16_t('V',(int16_t)0,(int16_t)0,		&genericSpeed2),
+	/* 09 */	Parameter16_t('R',(int16_t)0,(int16_t)0,		&genericScale1),
+	/* 10 */	Parameter16_t('I',(int16_t)0,(int16_t)0,		&genericScale2),
+	/* 11 */	Parameter16_t('O',(int16_t)0,(int16_t)0,		&genericParam1),
+	/* 12 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,		&genericParam2),
+	/* 13 */	Parameter16_t('M',(int16_t)0,(int16_t)255,	&genericEffectMask1),
+	/* 14 */	Parameter16_t('N',(int16_t)0,(int16_t)255,	&genericEffectMask2),
 
 };
 
@@ -186,6 +188,7 @@ int blinker(unsigned long now, void* userData)
 	return 0;
 }
 #endif
+
 void dumpParameters()
 {
 	uint8_t line = 1;
@@ -211,7 +214,7 @@ void dumpParameters()
 	//effect->printParameter(Serial);
 	line = 6;
 	column =1;
-	for(int i=0;i<6;i++){
+	for(int i=0;i<7;i++){
 		Serial << ScreenPos(line,column)<<SystemParameterName[i];
 		column +=NAME_CELL_LENGTH;
 		Serial <<ScreenPos(line,column)<<parameterArray[i]<<endl;
@@ -235,7 +238,7 @@ void dumpParameters()
 	// }
 	// Serial <<ScreenPos(line++,0)<<clearLineRight<<paramString;
 	line ++;
-	Serial <<ScreenPos(line,1)<<clearLineRight<<">";
+	Serial <<ScreenPos(++line,1)<<clearLineRight<<">";
 }
 
 
@@ -249,10 +252,11 @@ elapsedMillis commandQueueTimer = 0;
 void setup()
 {
 	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
+	FastLED.clear(true);
 	FastLED.setBrightness( BRIGHTNESS );
 	FastLED.show();
 	Serial.begin(115200);
-	delay(200);
+	delay(100);
 	Serial <<"Startup"<<endl;
 	// tweak global parameter max for Programs and pallettes
 	parameterArray[0].maxValue = newMaxPrograms-1;
@@ -346,7 +350,7 @@ void loop()
 		#if 0 && DEBUG_LOOP
 		Serial << " PQueue" << taskQueue._itemsInQueue<<endl;
 		#endif
-		parametersInvalid = true;
+		parameterHasChanged = true;
 	}
 
 	//
@@ -363,13 +367,13 @@ void loop()
 		#if 0 & DEBUG_LOOP
 		Serial << "DQueue" << taskQueue._itemsInQueue<<endl;
 		#endif
-		parametersInvalid = true;
+		parameterHasChanged = true;
 	}
 	//
 	// switch palette Slot(2)
 	//
 	if(Palette.hasChanged()){
-		parametersInvalid = true;
+		parameterHasChanged = true;
 		Palette.syncValue();
 		#if DEBUG_LOOP
 		Serial << "Palette changed to "<<Palette.currentValue()<<endl;
@@ -385,7 +389,7 @@ void loop()
 		#endif
 		FastLED.setBrightness(Brightness.nextValue());
 		Brightness.syncValue();
-		parametersInvalid=true;
+		parameterHasChanged=true;
 	}
 
 	//
@@ -394,18 +398,34 @@ void loop()
 	if(MirrorParam.hasChanged()){
 		MirrorParam.syncValue();
 		display.setMirrorMode((displayMirror)MirrorParam.currentValue());
-		parametersInvalid=true;
+		parameterHasChanged=true;
+	}
+	//
+	// switch BlendParam
+	//
+	if(BlendParam.hasChanged()){
+		BlendParam.syncValue();
+		parameterHasChanged = true;
+	}
+
+	//
+	// switch resolution
+	//
+	if(ResolutionParam.hasChanged()){
+		ResolutionParam.syncValue();
+		display.setResolution((ResolutionParam.currentValue()==0)?lowRes:highRes);
+		parameterHasChanged=true;
 	}
 
 	/** check all remaining parameters */
 	{
 		bool t = false;
-		for(int i=5;i<parameterArraySize-1;++i){
+		for(int i=param_StartEffect;i<parameterArraySize-1;++i){
 			t = t || parameterArray[i].value->syncValue();
 		}
-		if(t || parametersInvalid){
+		if(t || parameterHasChanged){
 			dumpParameters();
-			parametersInvalid = false;
+			parameterHasChanged = false;
 			t= false;
 		}
 	}

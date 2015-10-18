@@ -77,6 +77,7 @@ void EffectWaterfall::frame(unsigned long now)
       frequencyStep =-frequencyStep;
     }
   }
+  display.flush();
 }
 
 void EffectWaterfall::stopEffect()

@@ -41,17 +41,19 @@ void EffectWhitney::frame(unsigned long now)
   //Serial <<clearLineRight<<"W:"<<display.displayWidth()<<" h:"<<display.displayHeight()<<endl;
   speed = (2*PI*numberOfPixels)/cycleLength->value->currentValue();
   double timer = (millisSinceStart / 1000.0)*speed;
-  //float crad = (min(width,height)/2) * 0.95;
-  //float crad = 1;   //(20/2)*0.95;
+  float minR=1000,maxR=0,maxL=0,minL=1000;
+  uint8_t minH=255,maxH=0;
   for (uint16_t i = 0; i < numberOfPixels; i++) {
-    float r = 1 - i/ ((float)numberOfPixels *1.0);
+    float r = 1 - (i/ ((float)numberOfPixels *1.0));
+//    maxR = maxR<r?r:maxR;
+//    minR = minR>r?r:minR;
     float a;
     a = timer * r;
-    //len = i*crad/(float) numberOfPixels;
-    //rad = max(1,len*0.25);
     float lScale = (lumenScale->value->currentValue()/50.0)-1.0;
     float hSpeed =((200-hueSpeed->value->currentValue()) -100);
     float lum = (sin(a)+lScale) / (1.0+lScale) ;
+    maxL = maxL<lum?lum:maxL;
+    minL = minL>lum?lum:minL;
     float hSpeedT = (100.0 + hSpeed);
     if(hSpeedT == 0.0){
       hSpeedT = 0.0;
@@ -60,9 +62,11 @@ void EffectWhitney::frame(unsigned long now)
     }
     float hueStep = 0.0;
     hueStep = (hueSpeed->value->currentValue() == 0) ? 0.0: (timer * hSpeedT);
-    float hue = (r + hueStep);// (256.0-hueSpeed->value->currentValue())/* *0.001 hueSpeed*/);
-    uint8_t h =((hue-int(hue))*255);
-
+    float hue = (r /*+ hueStep*/);// (256.0-hueSpeed->value->currentValue())/* *0.001 hueSpeed*/);
+    uint8_t h =(uint8_t)((hue+hueStep)*255.0);//((hue-int(hue))*255);
+    //Serial << h <<" ";
+    maxH = maxH<h?h:maxH;
+    minH = minH>h?h:minH;
     float x = (i%display.displayWidth());
     float y = (i/display.displayWidth());
     // if(i==0){
@@ -74,13 +78,24 @@ void EffectWhitney::frame(unsigned long now)
     // }
     CRGB c = ColorFromPalette(colorPalettes[Palette.currentValue()],h);
     CHSV hC = rgb2hsv(c);
-    float k = lum*255;
-    while(k>255){
-      k-=255;
-    }
+    uint8_t k = lum*255;
+    // while(k>255){
+    //   k-=255;
+    // }
+    //
 
-    hC.v= (k);
+    //maxL = maxL<hC.v?hC.v:maxL;
+    //minL = minL>hC.v?hC.v:minL;
+    hC.v*=lum;// (k);
+    //maxR = maxR<hC.v?hC.v:maxR;
+    //minR = minR>hC.v?hC.v:minR;
+
     display.setPixel(x,y,hC);
   }
+  // Serial <<"Hue: "<<minH<<" "<<maxH<<endl;
+  //Serial <<"L: "<<minL<<" "<<maxL<<endl;
+  //Serial <<"R: "<<minR<<" "<<maxR<<endl<<endl;
+
   frameCounter++;
+  display.flush();
 }

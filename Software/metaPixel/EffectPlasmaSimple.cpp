@@ -41,9 +41,7 @@ void EffectPlasmaSimple::frame(unsigned long now)
 	int32_t yHueDelta32 = ((int32_t)cos16( frame * (27/1) ) * (hueScale->value->currentValue() / w));
 	int32_t xHueDelta32 = -((int32_t)sin16( frame * (39/1) ) * (hueScale->value->currentValue() / h));
 	DrawOneFrame( frame / 0xffff, yHueDelta32 / 32768, xHueDelta32 / 32768);
-#if !USE_DOUBLE_BUFFER
-	FastLED.show();
-#endif
+  display.flush();
 	frame +=plasmaSpeed->value->currentValue();
 #if DEBUG_EFFECTS
 	Serial << "Took: "<<(millis()-lastCall)<<" millisec "<<frame<<endl;
