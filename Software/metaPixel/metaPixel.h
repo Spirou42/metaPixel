@@ -20,9 +20,6 @@
 #include "SPI.h"
 
 /** Feature Switsches **/
-#define USE_AUDIO_EFFECTS 0
-#define USE_TEENSY_AUDIO_LAYOUT 1
-#define USE_LEGACY_MENU (!USE_TEENSY_AUDIO_LAYOUT)
 #define USE_EFFECT_SCEDULER 1
 #define USE_SERIAL_COMMANDS 1
 #define USE_DOUBLE_BUFFER 1
@@ -37,12 +34,12 @@
 #define DISPLAY_HEIGHT  (MODULES_HEIGHT * MODULE_HEIGHT)
 
 /** TFT Configuration **/
-#define TFT_DC    15
 #define TFT_RST   2
-#define TFT_CS    20
-#define TFT_SCK   14
+#define TFT_DC    9
+#define TFT_CS    10
 #define TFT_MISO  12
-#define TFT_MOSI  7
+#define TFT_MOSI  11
+#define TFT_SCK   13
 
 /** Local Libraries **/
 #include "Types.h"
@@ -79,19 +76,6 @@
 #define DMXBase	          17
 #define DMXSpan           7
 
-/** Hardware  **/
-#if USE_LEGACY_MENU
-#define ENC_PULSE_PIN             6
-#define ENC_STEP_PIN              5
-#define ENC_DIR_PIN               4
-#define LC_DATA_PIN               3
-#define LC_CLK_PIN                2
-#define LC_CS_PIN                 1
-#endif
-
-#if !USE_TEENSY_AUDIO_LAYOUT
-#define LED_BLINK_PIN            13
-#endif
 #define LED_PIN                   4
 
 /** Audio configuration **/

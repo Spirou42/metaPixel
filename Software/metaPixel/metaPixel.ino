@@ -59,10 +59,6 @@ TeensyDmx DMX(Serial3, &rdmData, 30);
 /** the global task queue */
 Queue taskQueue;
 
-#if USE_LEGACY_MENU
-ballState_t currentState;
-#endif
-
 #if USE_ILI9341_DISPLAY
 ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO);
 #endif
@@ -160,9 +156,6 @@ EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&p
 EffectLine lineEffect = EffectLine(&parameterArray[param_V]);
 EffectWhitney whitneyEffect = EffectWhitney(&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V]);
 
-#if USE_AUDIO_EFFECTS
-EffectWaterfall waterfallEffect = EffectWaterfall();
-#endif
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
 effectProgramN_t effectProgramsN[] = {
@@ -173,9 +166,6 @@ effectProgramN_t effectProgramsN[] = {
 	{&lineEffect,65,"c0v5z2"},
 	{&fireEffect,60,"O70H150U70D60Z12000"},
 	{&whitneyEffect,67,"q0"},
-	#if USE_AUDIO_EFFECTS
-	{&waterfallEffect,100,NULL},
-	#endif
 };
 
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
@@ -186,15 +176,6 @@ uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 **
 **********************************************************/
 
-#if DEBUG_BLINK
-int blinker(unsigned long now, void* userData)
-{
-	static boolean state = HIGH;
-	digitalWrite(LED_BLINK_PIN,state);
-	state = !state;
-	return 0;
-}
-#endif
 int16_t TFT_LogoEnd = 0;
 
 void drawLogo()
@@ -203,20 +184,21 @@ void drawLogo()
 	tft.setCursor(25,15);
 	tft.setTextColor(ILI9341_GREEN);
 	tft<<"metaPixel";
-	tft.cursor_y+=10;
-	tft.drawFastHLine(tft.cursor_x,tft.cursor_y,tft.width(),ILI9341_GREEN);
+	tft.drawFastHLine(tft.getCursorX(),tft.getCursorY()+10,tft.width(),ILI9341_GREEN);
 	tft.setTextColor(ILI9341_YELLOW);
 	tft.setTextSize(2);
 	tft<<endl;
-	TFT_LogoEnd = 0;//tft.cursor_y;
+	TFT_LogoEnd =0; //tft.cursor_y;
 }
 
 void initializeTFT()
 {
 	tft.begin();
+	pinMode(3,OUTPUT);
 	tft.setRotation(3);
 	tft.fillScreen(ILI9341_BLACK);
 	tft.setTextWrap(true);
+	digitalWrite(3,LOW);
 	drawLogo();
 
 }
@@ -260,43 +242,43 @@ void dumpTFTParameters()
 	tft.setCursor(0,TFT_LogoEnd);
 	tft.setTextSize(2);
 	tft.setTextColor(ILI9341_YELLOW);
-	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK); tft<<"Effect: "<<effect->getName()<<endl;tft.cursor_y+=3;
-	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);tft<<"Parameter:"<<endl;tft.cursor_y+=4;
+	tft.fillRect(0,tft.getCursorY(),tft.width(),2*7,ILI9341_BLACK); tft<<"Effect: "<<effect->getName()<<endl;tft.setCursor(tft.getCursorX(),tft.getCursorY()+3);
+	tft.fillRect(0,tft.getCursorY(),tft.width(),2*7,ILI9341_BLACK);tft<<"Parameter:"<<endl;tft.setCursor(tft.getCursorX(),tft.getCursorY()+4);
 	size_t params = effect->numberOfParameters();
-	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+	tft.fillRect(0,tft.getCursorY(),tft.width(),2*7,ILI9341_BLACK);
 	for(size_t i=0;i<params;i++){
 		tft << effect->parameterNameAt(i);
-		column +=TFT_NAME_CELL_LENGTH*6*tft.textsize;
-		tft.setCursor(column,tft.cursor_y);
+		column +=TFT_NAME_CELL_LENGTH*6*tft.getTextSize();
+		tft.setCursor(column,tft.getCursorY());
 		tft << effect->parameterAt(i)->value->currentValue();
-		column +=6*5*tft.textsize;
-		tft.setCursor(column,tft.cursor_y);
+		column +=6*5*tft.getTextSize();
+		tft.setCursor(column,tft.getCursorY());
 		if(column > (tft.width()-40)){
-			tft<<endl;tft.cursor_y+=4;
-			tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+			tft<<endl;tft.setCursor(tft.getCursorX(),tft.getCursorY()+4);
+			tft.fillRect(0,tft.getCursorY(),tft.width(),2*7,ILI9341_BLACK);
 			column = 0;
-			tft.setCursor(column,tft.cursor_y);
+			tft.setCursor(column,tft.getCursorY());
 		}
 	}
 	if(column!=0){
-		tft<<endl;tft.setCursor(0,tft.cursor_y+6);
+		tft<<endl;tft.setCursor(0,tft.getCursorY()+6);
 	}else{
-		tft.setCursor(0,tft.cursor_y+6);
+		tft.setCursor(0,tft.getCursorY()+6);
 	}
 	column=0;
-	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+	tft.fillRect(0,tft.getCursorY(),tft.width(),2*7,ILI9341_BLACK);
 	for(int i=0;i<7;i++){
 		tft<< SystemParameterName[i];
-		column +=TFT_NAME_CELL_LENGTH*6*tft.textsize;
-		tft.setCursor(column,tft.cursor_y);
+		column +=TFT_NAME_CELL_LENGTH*6*tft.getTextSize();
+		tft.setCursor(column,tft.getCursorY());
 		tft<< parameterArray[i].value->currentValue();
-		column +=6*5*tft.textsize;
-		tft.setCursor(column,tft.cursor_y);
+		column +=6*5*tft.getTextSize();
+		tft.setCursor(column,tft.getCursorY());
 		if(column>(tft.width()-40)){
-			tft<<endl;tft.cursor_y+=4;
-			tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+			tft<<endl;tft.setCursor(tft.getCursorX(),tft.getCursorY()+4);
+			tft.fillRect(0,tft.getCursorY(),tft.width(),2*7,ILI9341_BLACK);
 			column = 0;
-			tft.setCursor(column,tft.cursor_y);		}
+			tft.setCursor(column,tft.getCursorY());		}
 	}
 
 }
@@ -384,32 +366,8 @@ void setup()
 	parameterArray[0].maxValue = newMaxPrograms-1;
 	parameterArray[2].maxValue = numberOfPalettes-1;
 
-
-	#if USE_DEBUG_BLINK
-	pinMode(LED_BLINK_PIN, INPUT);
-	#endif
-	#if USE_LEGACY_MENU
-	currentState = stateNone;
-	initEncoderUI();
-	#endif
-
-
-	/** Setup Audio **/
-	#if USE_AUDIO_EFFECTS
-	AudioMemory(20);
-	AudioShield.enable();
-	AudioShield.inputSelect(AUDIO_INPUT);
-	AudioShield.volume(0.5);
-	AudioShield.micGain(200);
-	analyzeFFT.averageTogether(255);
-	audioIn.setActive(false);
-	analyzeFFT.setActive(false);
-	#endif
-
-
-
 	/** Setup DMX **/
-//	DMX.setMode(TeensyDmx::Mode::DMX_IN);
+	DMX.setMode(TeensyDmx::Mode::DMX_IN);
 
 	TFTSerial << "Init Parameters"<<endl;
 //	tft<<"Init Parameters"<<endl;
@@ -447,11 +405,6 @@ void setup()
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
 	#endif
 
-	/** Legacy menu system **/
-	#if USE_LEGACY_MENU
-	encoderClickCallback = clickHandler;
-	lc.clearDisplay(0);
-	#endif
 
 	randomSeed(millis());
 
