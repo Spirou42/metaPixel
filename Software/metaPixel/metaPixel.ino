@@ -1,5 +1,5 @@
 #define FASTLED_INTERNAL
-#define FASTLED_ALLOW_INTERRUPTS 0
+#define FASTLED_ALLOW_INTERRUPTS 1
 /* #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -14,7 +14,8 @@
 #include <Arduino.h>
 #include "metaPixel.h"
 #include "Palettes.h"
-
+#include "SPI.h"
+#include "ILI9341_t3.h"
 
 /* program defined */
 
@@ -61,6 +62,12 @@ Queue taskQueue;
 #if USE_LEGACY_MENU
 ballState_t currentState;
 #endif
+
+#if USE_ILI9341_DISPLAY
+ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO);
+#endif
+
+tftSerial TFTSerial;
 
 /**********************************************************
 **
@@ -111,7 +118,7 @@ CRGBPalette16 colorPalettes[]={
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
 const char * SystemParameterName[]={
-	"Program","Delay","Pallete","Brightness","Mirror","Fade","Res"
+	"Program","Delay","Pallete","Bright","Mirror","Fade","Res"
 };
 /** All of the accessible parameters */
 Parameter16_t parameterArray[] = {
@@ -188,9 +195,117 @@ int blinker(unsigned long now, void* userData)
 	return 0;
 }
 #endif
+int16_t TFT_LogoEnd = 0;
+
+void drawLogo()
+{
+	tft.setTextSize(5);
+	tft.setCursor(25,15);
+	tft.setTextColor(ILI9341_GREEN);
+	tft<<"metaPixel";
+	tft.cursor_y+=10;
+	tft.drawFastHLine(tft.cursor_x,tft.cursor_y,tft.width(),ILI9341_GREEN);
+	tft.setTextColor(ILI9341_YELLOW);
+	tft.setTextSize(2);
+	tft<<endl;
+	TFT_LogoEnd = 0;//tft.cursor_y;
+}
+
+void initializeTFT()
+{
+	tft.begin();
+	tft.setRotation(3);
+	tft.fillScreen(ILI9341_BLACK);
+	tft.setTextWrap(true);
+	drawLogo();
+
+}
+bool runningTFT;
+unsigned long testText() {
+	runningTFT = true;
+  tft.fillScreen(ILI9341_BLACK);
+  unsigned long start = micros();
+  tft.setCursor(0, 0);
+  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(1);
+  tft.println("Hello World!");
+  tft.setTextColor(ILI9341_YELLOW); tft.setTextSize(2);
+  tft.println(1234.56);
+  tft.setTextColor(ILI9341_RED);    tft.setTextSize(3);
+  tft.println(0xDEADBEEF, HEX);
+  tft.println();
+  tft.setTextColor(ILI9341_GREEN);
+  tft.setTextSize(5);
+  tft.println("Groop");
+  tft.setTextSize(2);
+  tft.println("I implore thee,");
+  tft.setTextSize(1);
+  tft.println("my foonting turlingdromes.");
+  tft.println("And hooptiously drangle me");
+  tft.println("with crinkly bindlewurdles,");
+  tft.println("Or I will rend thee");
+  tft.println("in the gobberwarts");
+  tft.println("with my blurglecruncheon,");
+  tft.println("see if I don't!");
+	runningTFT = false;
+  return micros() - start;
+}
+void dumpTFTParameters()
+{
+	tft.setTextWrap(false);
+	uint16_t line = 1;
+	uint16_t column = 0;
+	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
+	Effect *effect = effectProgramsN[t].program;
+//	tft.fillRect(0,TFT_LogoEnd,tft.width(),tft.height()-TFT_LogoEnd,ILI9341_BLACK);
+	tft.setCursor(0,TFT_LogoEnd);
+	tft.setTextSize(2);
+	tft.setTextColor(ILI9341_YELLOW);
+	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK); tft<<"Effect: "<<effect->getName()<<endl;tft.cursor_y+=3;
+	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);tft<<"Parameter:"<<endl;tft.cursor_y+=4;
+	size_t params = effect->numberOfParameters();
+	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+	for(size_t i=0;i<params;i++){
+		tft << effect->parameterNameAt(i);
+		column +=TFT_NAME_CELL_LENGTH*6*tft.textsize;
+		tft.setCursor(column,tft.cursor_y);
+		tft << effect->parameterAt(i)->value->currentValue();
+		column +=6*5*tft.textsize;
+		tft.setCursor(column,tft.cursor_y);
+		if(column > (tft.width()-40)){
+			tft<<endl;tft.cursor_y+=4;
+			tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+			column = 0;
+			tft.setCursor(column,tft.cursor_y);
+		}
+	}
+	if(column!=0){
+		tft<<endl;tft.setCursor(0,tft.cursor_y+6);
+	}else{
+		tft.setCursor(0,tft.cursor_y+6);
+	}
+	column=0;
+	tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+	for(int i=0;i<7;i++){
+		tft<< SystemParameterName[i];
+		column +=TFT_NAME_CELL_LENGTH*6*tft.textsize;
+		tft.setCursor(column,tft.cursor_y);
+		tft<< parameterArray[i].value->currentValue();
+		column +=6*5*tft.textsize;
+		tft.setCursor(column,tft.cursor_y);
+		if(column>(tft.width()-40)){
+			tft<<endl;tft.cursor_y+=4;
+			tft.fillRect(0,tft.cursor_y,tft.width(),2*7,ILI9341_BLACK);
+			column = 0;
+			tft.setCursor(column,tft.cursor_y);		}
+	}
+
+}
 
 void dumpParameters()
 {
+	#if USE_ILI9341_DISPLAY
+	dumpTFTParameters();
+	#endif
 	uint8_t line = 1;
 	uint8_t column = 1;
 	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
@@ -251,16 +366,24 @@ void dumpParameters()
 elapsedMillis commandQueueTimer = 0;
 void setup()
 {
+	/** Setup TFT **/
+	#if USE_ILI9341_DISPLAY
+	initializeTFT();
+	#endif
+
 	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
 	FastLED.clear(true);
 	FastLED.setBrightness( BRIGHTNESS );
 	FastLED.show();
 	Serial.begin(115200);
 	delay(100);
-	Serial <<"Startup"<<endl;
+
+
+	TFTSerial <<"Startup"<<endl;
 	// tweak global parameter max for Programs and pallettes
 	parameterArray[0].maxValue = newMaxPrograms-1;
 	parameterArray[2].maxValue = numberOfPalettes-1;
+
 
 	#if USE_DEBUG_BLINK
 	pinMode(LED_BLINK_PIN, INPUT);
@@ -269,6 +392,7 @@ void setup()
 	currentState = stateNone;
 	initEncoderUI();
 	#endif
+
 
 	/** Setup Audio **/
 	#if USE_AUDIO_EFFECTS
@@ -282,9 +406,13 @@ void setup()
 	analyzeFFT.setActive(false);
 	#endif
 
+
+
 	/** Setup DMX **/
-	DMX.setMode(TeensyDmx::Mode::DMX_IN);
-	Serial << "Init Parameters"<<endl;
+//	DMX.setMode(TeensyDmx::Mode::DMX_IN);
+
+	TFTSerial << "Init Parameters"<<endl;
+//	tft<<"Init Parameters"<<endl;
 
 	/** initialize Effects **/
 	EffectProgram.initTo(START_PROG);
@@ -294,7 +422,8 @@ void setup()
 	Palette.initTo(0);
 
 	/** initialize Queued Task */
-	Serial << "Starting Tasks"<<endl;
+	TFTSerial << "Starting Tasks"<<endl;
+
 
 	/** Double buffering **/
 	#if USE_DOUBLE_BUFFER
@@ -313,7 +442,7 @@ void setup()
 
 
 	/** Command line interface **/
-	Serial << "Init Commandline Interface"<<endl;
+	TFTSerial << "Init Commandline Interface"<<endl;
 	#if USE_SERIAL_COMMANDS
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
 	#endif
@@ -326,11 +455,12 @@ void setup()
 
 	randomSeed(millis());
 
-	Serial<<"metaPixel initialized"<<endl;
-	Serial<<"Parameters: "<<parameterArraySize<<endl;
-	Serial<<"Programms: "<<newMaxPrograms<<endl;
-	Serial <<"Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
+	TFTSerial<<"metaPixel initialized"<<endl;
+	TFTSerial<<"Parameters: "<<parameterArraySize<<endl;
+	TFTSerial<<"Programms: "<<newMaxPrograms<<endl;
+	TFTSerial <<"Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
 	delay(3000);
+	tft.fillRect(0,TFT_LogoEnd,tft.width(),tft.height()-TFT_LogoEnd,ILI9341_BLACK);
 }
 
 void loop()
@@ -441,6 +571,7 @@ void loop()
 		Serial << clearLineRight;
 		Serial << clearDown;
 		commandQueueTimer = 0;
+//		dumpTFTParameters();
 	}
 	#if DEBUG_LOOP
 	{
@@ -459,6 +590,8 @@ void loop()
 **********************************************************/
 int backbufferBlender(unsigned long now, void* userdata)
 {
+	if(runningTFT)
+		return 0;
 	uint8_t frac = (BlendParam.currentValue()*1000)/Delay.currentValue();
 	static uint8_t lastFrac =0;
 	if(frac != lastFrac){

@@ -16,6 +16,8 @@
 #include <TeensyDmx.h>
 #include <AudioStream.h>
 #include <rdm.h>
+#include "ILI9341_t3.h"
+#include "SPI.h"
 
 /** Feature Switsches **/
 #define USE_AUDIO_EFFECTS 0
@@ -24,6 +26,7 @@
 #define USE_EFFECT_SCEDULER 1
 #define USE_SERIAL_COMMANDS 1
 #define USE_DOUBLE_BUFFER 1
+#define USE_ILI9341_DISPLAY 1
 
 /** display configuration **/
 #define MODULES_WIDTH   5												// number of modules in X
@@ -32,6 +35,14 @@
 #define MODULE_HEIGHT   5												// height of modules in pixels
 #define DISPLAY_WIDTH   (MODULES_WIDTH * MODULE_WIDTH)
 #define DISPLAY_HEIGHT  (MODULES_HEIGHT * MODULE_HEIGHT)
+
+/** TFT Configuration **/
+#define TFT_DC    15
+#define TFT_RST   2
+#define TFT_CS    20
+#define TFT_SCK   14
+#define TFT_MISO  12
+#define TFT_MOSI  7
 
 /** Local Libraries **/
 #include "Types.h"
@@ -100,6 +111,7 @@
 
 /** settings serial masks **/
 #define NAME_CELL_LENGTH      10
+#define TFT_NAME_CELL_LENGTH   8
 #define PARAMETER_CELL_LENGTH 20
 #define LINE_LENGTH           75
 /** exporting globals **/
@@ -145,4 +157,20 @@ extern CommandQueue commandQueue;
 extern bool parameterHasChanged;
 
 typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_A,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N,param_StartEffect=param_U } paramID;
+
+extern ILI9341_t3 tft;
+
+class tftSerial : public Print
+{
+public:
+	tftSerial(){};
+	size_t write(uint8_t c){
+		Serial.write(c);
+		#if USE_ILI9341_DISPLAY
+			tft.write(c);
+		#endif
+		return 1;
+	}
+};
+extern tftSerial TFTSerial;
 #endif

@@ -6,6 +6,7 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 #include "Parameter.h"
+
 #define SERIAL_BUFFER_LENGTH 512
 //** reads lines from Serial
 extern int serialReader(unsigned long now, void* userData);

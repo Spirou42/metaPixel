@@ -1,7 +1,7 @@
 [Eagle]
-Version="07 02 00"
+Version="07 04 00"
 Platform="Mac OS X"
-Serial="62191E841E-LSR-WLM-1EL"
+Serial="6E039A1D15-LSR-WLM-1EL"
 Globals="Globals"
 Desktop="Desktop"
 
@@ -346,12 +346,5 @@ UsedLibrary="/Applications/EAGLE-7.2.0/lbr/xilinx-xcv.lbr"
 UsedLibrary="/Applications/EAGLE-7.2.0/lbr/zetex.lbr"
 UsedLibrary="/Applications/EAGLE-7.2.0/lbr/zilog.lbr"
 
-[Win_1]
-Type="Control Panel"
-Loc="119 505 718 904"
-State=2
-Number=0
-
 [Desktop]
 Screen="2560 1440"
-Window="Win_1"

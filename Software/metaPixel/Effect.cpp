@@ -17,6 +17,9 @@ int effectRunner(unsigned long now, void* userdata)
 		lastP = t;
 		effect->startEffect();
 		Serial << clearHome;
+		#if USE_ILI9341_DISPLAY
+		tft.fillScreen(ILI9341_BLACK);
+		#endif
 		if(effectProgramsN[t].parameter){
 			commandProcessor((char*)effectProgramsN[t].parameter,true);
 		}
