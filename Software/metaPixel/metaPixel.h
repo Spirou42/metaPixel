@@ -40,6 +40,7 @@
 #define TFT_MISO  12
 #define TFT_MOSI  11
 #define TFT_SCK   13
+#define TFT_LED   A14
 
 /** Local Libraries **/
 #include "Types.h"
@@ -61,7 +62,6 @@
 #include "EffectPlasma.h"
 #include "EffectPlasmaSimple.h"
 #include "EffectLine.h"
-#include "EffectWaterfall.h"
 #include "EffectWhitney.h"
 
 
