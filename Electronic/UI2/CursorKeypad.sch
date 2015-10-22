@@ -7304,31 +7304,11 @@ Switch 3F - Through Hole with basic matt cover&lt;br&gt;
 <pinref part="C7" gate="G$1" pin="2"/>
 </segment>
 </net>
-<net name="PULSE" class="0">
-<segment>
-<wire x1="91.44" y1="139.7" x2="106.68" y2="139.7" width="0.1524" layer="91"/>
-<label x="106.68" y="139.7" size="1.778" layer="95" xref="yes"/>
-<pinref part="IC1" gate="A" pin="O"/>
-</segment>
-<segment>
-<wire x1="91.44" y1="76.2" x2="106.68" y2="76.2" width="0.1524" layer="91"/>
-<label x="106.68" y="76.2" size="1.778" layer="95" xref="yes"/>
-<pinref part="IC1" gate="B" pin="O"/>
-</segment>
-<segment>
-<wire x1="205.74" y1="76.2" x2="220.98" y2="76.2" width="0.1524" layer="91"/>
-<label x="220.98" y="76.2" size="1.778" layer="95" xref="yes"/>
-<pinref part="IC1" gate="D" pin="O"/>
-</segment>
+<net name="P_DOWN" class="0">
 <segment>
 <wire x1="205.74" y1="139.7" x2="220.98" y2="139.7" width="0.1524" layer="91"/>
 <label x="220.98" y="139.7" size="1.778" layer="95" xref="yes"/>
 <pinref part="IC1" gate="E" pin="O"/>
-</segment>
-<segment>
-<wire x1="129.54" y1="27.94" x2="144.78" y2="27.94" width="0.1524" layer="91"/>
-<label x="144.78" y="27.94" size="1.778" layer="95" xref="yes"/>
-<pinref part="IC1" gate="C" pin="O"/>
 </segment>
 </net>
 <net name="K" class="0">
@@ -7342,37 +7322,7 @@ Switch 3F - Through Hole with basic matt cover&lt;br&gt;
 <pinref part="IC1" gate="A" pin="I"/>
 </segment>
 </net>
-<net name="KEY" class="0">
-<segment>
-<wire x1="43.18" y1="139.7" x2="30.48" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="41.91" y1="139.7" x2="43.18" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="R5" gate="G$1" pin="1"/>
-<pinref part="R8" gate="G$1" pin="1"/>
-<wire x1="43.18" y1="139.7" x2="48.26" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="144.78" x2="43.18" y2="139.7" width="0.1524" layer="91"/>
-<junction x="43.18" y="139.7"/>
-<label x="30.48" y="139.7" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-<segment>
-<wire x1="43.18" y1="76.2" x2="30.48" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="41.91" y1="76.2" x2="43.18" y2="76.2" width="0.1524" layer="91"/>
-<pinref part="R1" gate="G$1" pin="1"/>
-<pinref part="R2" gate="G$1" pin="1"/>
-<wire x1="43.18" y1="76.2" x2="48.26" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="81.28" x2="43.18" y2="76.2" width="0.1524" layer="91"/>
-<junction x="43.18" y="76.2"/>
-<label x="30.48" y="76.2" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-<segment>
-<wire x1="157.48" y1="76.2" x2="144.78" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="156.21" y1="76.2" x2="157.48" y2="76.2" width="0.1524" layer="91"/>
-<pinref part="R3" gate="G$1" pin="1"/>
-<pinref part="R4" gate="G$1" pin="1"/>
-<wire x1="157.48" y1="76.2" x2="162.56" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="157.48" y1="81.28" x2="157.48" y2="76.2" width="0.1524" layer="91"/>
-<junction x="157.48" y="76.2"/>
-<label x="144.78" y="76.2" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
+<net name="KEY_DOWN" class="0">
 <segment>
 <wire x1="157.48" y1="139.7" x2="144.78" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="156.21" y1="139.7" x2="157.48" y2="139.7" width="0.1524" layer="91"/>
@@ -7382,16 +7332,6 @@ Switch 3F - Through Hole with basic matt cover&lt;br&gt;
 <wire x1="157.48" y1="144.78" x2="157.48" y2="139.7" width="0.1524" layer="91"/>
 <junction x="157.48" y="139.7"/>
 <label x="144.78" y="139.7" size="1.778" layer="95" rot="R180" xref="yes"/>
-</segment>
-<segment>
-<wire x1="81.28" y1="27.94" x2="68.58" y2="27.94" width="0.1524" layer="91"/>
-<wire x1="80.01" y1="27.94" x2="81.28" y2="27.94" width="0.1524" layer="91"/>
-<pinref part="R9" gate="G$1" pin="1"/>
-<pinref part="R10" gate="G$1" pin="1"/>
-<wire x1="81.28" y1="27.94" x2="86.36" y2="27.94" width="0.1524" layer="91"/>
-<wire x1="81.28" y1="33.02" x2="81.28" y2="27.94" width="0.1524" layer="91"/>
-<junction x="81.28" y="27.94"/>
-<label x="68.58" y="27.94" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="K1" class="0">
@@ -7436,6 +7376,82 @@ Switch 3F - Through Hole with basic matt cover&lt;br&gt;
 <pinref part="R9" gate="G$1" pin="2"/>
 <pinref part="C7" gate="G$1" pin="1"/>
 <pinref part="IC1" gate="C" pin="I"/>
+</segment>
+</net>
+<net name="KEY_LEFT" class="0">
+<segment>
+<wire x1="43.18" y1="139.7" x2="30.48" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="41.91" y1="139.7" x2="43.18" y2="139.7" width="0.1524" layer="91"/>
+<pinref part="R5" gate="G$1" pin="1"/>
+<pinref part="R8" gate="G$1" pin="1"/>
+<wire x1="43.18" y1="139.7" x2="48.26" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="144.78" x2="43.18" y2="139.7" width="0.1524" layer="91"/>
+<junction x="43.18" y="139.7"/>
+<label x="30.48" y="139.7" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="KEY_RIGHT" class="0">
+<segment>
+<wire x1="43.18" y1="76.2" x2="30.48" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="41.91" y1="76.2" x2="43.18" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="R1" gate="G$1" pin="1"/>
+<pinref part="R2" gate="G$1" pin="1"/>
+<wire x1="43.18" y1="76.2" x2="48.26" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="81.28" x2="43.18" y2="76.2" width="0.1524" layer="91"/>
+<junction x="43.18" y="76.2"/>
+<label x="30.48" y="76.2" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="KEY_CENTER" class="0">
+<segment>
+<wire x1="81.28" y1="27.94" x2="68.58" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="80.01" y1="27.94" x2="81.28" y2="27.94" width="0.1524" layer="91"/>
+<pinref part="R9" gate="G$1" pin="1"/>
+<pinref part="R10" gate="G$1" pin="1"/>
+<wire x1="81.28" y1="27.94" x2="86.36" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="33.02" x2="81.28" y2="27.94" width="0.1524" layer="91"/>
+<junction x="81.28" y="27.94"/>
+<label x="68.58" y="27.94" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="KEY_UP" class="0">
+<segment>
+<wire x1="157.48" y1="76.2" x2="144.78" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="156.21" y1="76.2" x2="157.48" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="R3" gate="G$1" pin="1"/>
+<pinref part="R4" gate="G$1" pin="1"/>
+<wire x1="157.48" y1="76.2" x2="162.56" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="81.28" x2="157.48" y2="76.2" width="0.1524" layer="91"/>
+<junction x="157.48" y="76.2"/>
+<label x="144.78" y="76.2" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="P_LEFT" class="0">
+<segment>
+<wire x1="91.44" y1="139.7" x2="106.68" y2="139.7" width="0.1524" layer="91"/>
+<label x="106.68" y="139.7" size="1.778" layer="95" xref="yes"/>
+<pinref part="IC1" gate="A" pin="O"/>
+</segment>
+</net>
+<net name="P_RIGHT" class="0">
+<segment>
+<wire x1="91.44" y1="76.2" x2="106.68" y2="76.2" width="0.1524" layer="91"/>
+<label x="106.68" y="76.2" size="1.778" layer="95" xref="yes"/>
+<pinref part="IC1" gate="B" pin="O"/>
+</segment>
+</net>
+<net name="P_CENTER" class="0">
+<segment>
+<wire x1="129.54" y1="27.94" x2="144.78" y2="27.94" width="0.1524" layer="91"/>
+<label x="144.78" y="27.94" size="1.778" layer="95" xref="yes"/>
+<pinref part="IC1" gate="C" pin="O"/>
+</segment>
+</net>
+<net name="P_UP" class="0">
+<segment>
+<wire x1="205.74" y1="76.2" x2="220.98" y2="76.2" width="0.1524" layer="91"/>
+<label x="220.98" y="76.2" size="1.778" layer="95" xref="yes"/>
+<pinref part="IC1" gate="D" pin="O"/>
 </segment>
 </net>
 </nets>

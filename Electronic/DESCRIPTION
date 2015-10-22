@@ -1,0 +1,11 @@
+<h1>metaPixel Hardware</h1>
+<ul>
+<li> metaPixel LED controller</li>
+Teensy 3.1 base WS2812 LED driver 
+<ol>
+<li>USB Serial</li>
+<li>DMX</lI>
+<li>Display & Keypad port</li>
+</ol>
+<li>Keypad</li>
+</ul>
