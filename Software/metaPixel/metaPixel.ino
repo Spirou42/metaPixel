@@ -194,11 +194,11 @@ void drawLogo()
 void initializeTFT()
 {
 	tft.begin();
-	pinMode(3,OUTPUT);
+
 	tft.setRotation(3);
 	tft.fillScreen(ILI9341_BLACK);
 	tft.setTextWrap(true);
-	digitalWrite(3,LOW);
+	analogWrite(TFT_LED,100);
 	drawLogo();
 
 }
