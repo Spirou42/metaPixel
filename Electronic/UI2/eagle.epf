@@ -296,13 +296,9 @@ UsedLibrary="/Applications/EAGLE-7.4.1/lbr/xilinx-xc9.lbr"
 UsedLibrary="/Applications/EAGLE-7.4.1/lbr/xilinx-xcv.lbr"
 UsedLibrary="/Applications/EAGLE-7.4.1/lbr/zetex.lbr"
 UsedLibrary="/Applications/EAGLE-7.4.1/lbr/zilog.lbr"
-
-[Win_1]
-Type="Control Panel"
-Loc="916 23 1749 507"
-State=2
-Number=0
+UsedLibrary="/Volumes/Storehouse/Lagerplatz/Documents/eagle/lbr/SparkFun-Eagle-Libraries-master/SparkFun-Capacitors.lbr"
+UsedLibrary="/Volumes/Storehouse/Lagerplatz/Documents/eagle/lbr/Aldar.lbr"
+UsedLibrary="/Volumes/Storehouse/Lagerplatz/Documents/eagle/lbr/2.2\"tft.lbr"
 
 [Desktop]
 Screen="2560 1440"
-Window="Win_1"
