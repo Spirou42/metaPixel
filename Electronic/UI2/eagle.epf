@@ -209,6 +209,14 @@ UsedLibrary="/Applications/EAGLE-7.4.1/lbr/xilinx-xc9.lbr"
 UsedLibrary="/Applications/EAGLE-7.4.1/lbr/xilinx-xcv.lbr"
 UsedLibrary="/Applications/EAGLE-7.4.1/lbr/zetex.lbr"
 UsedLibrary="/Applications/EAGLE-7.4.1/lbr/zilog.lbr"
+UsedLibrary="/Users/spirou/Documents/eagle/lbr/alps.lbr"
+
+[Win_1]
+Type="Control Panel"
+Loc="0 -22 599 377"
+State=2
+Number=0
 
 [Desktop]
-Screen="1920 1200"
+Screen="2560 1440"
+Window="Win_1"
