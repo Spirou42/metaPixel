@@ -5853,12 +5853,12 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="SV5" gate="G$1" pin="7"/>
 <wire x1="220.98" y1="111.76" x2="205.74" y2="111.76" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="111.76" x2="233.68" y2="111.76" width="0.1524" layer="91"/>
-<label x="233.68" y="111.76" size="1.4224" layer="95" xref="yes"/>
+<label x="233.68" y="111.76" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="SV3" gate="G$1" pin="1"/>
 <wire x1="294.64" y1="124.46" x2="307.34" y2="124.46" width="0.1524" layer="91"/>
-<label x="307.34" y="124.46" size="1.4224" layer="95" xref="yes"/>
+<label x="307.34" y="124.46" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="IC3" gate="P" pin="VCC"/>
@@ -5928,12 +5928,12 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="SV5" gate="G$1" pin="9"/>
 <wire x1="220.98" y1="109.22" x2="205.74" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="109.22" x2="233.68" y2="109.22" width="0.1524" layer="91"/>
-<label x="233.68" y="109.22" size="1.4224" layer="95" xref="yes"/>
+<label x="233.68" y="109.22" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="SV3" gate="G$1" pin="2"/>
 <wire x1="279.4" y1="124.46" x2="266.7" y2="124.46" width="0.1524" layer="91"/>
-<label x="266.7" y="124.46" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="266.7" y="124.46" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="IC1" gate="P" pin="GND"/>
@@ -5972,7 +5972,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="SV4" gate="G$1" pin="2"/>
 <wire x1="167.64" y1="109.22" x2="152.4" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="109.22" x2="137.16" y2="109.22" width="0.1524" layer="91"/>
-<label x="137.16" y="109.22" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="137.16" y="109.22" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="K1" class="0">
@@ -6046,7 +6046,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="SV5" gate="G$1" pin="1"/>
 <wire x1="220.98" y1="119.38" x2="205.74" y2="119.38" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="119.38" x2="233.68" y2="119.38" width="0.1524" layer="91"/>
-<label x="233.68" y="119.38" size="1.4224" layer="95" xref="yes"/>
+<label x="233.68" y="119.38" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ENC_2" class="0">
@@ -6065,7 +6065,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="SV5" gate="G$1" pin="3"/>
 <wire x1="220.98" y1="116.84" x2="205.74" y2="116.84" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="116.84" x2="233.68" y2="116.84" width="0.1524" layer="91"/>
-<label x="233.68" y="116.84" size="1.4224" layer="95" xref="yes"/>
+<label x="233.68" y="116.84" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ENC1" class="0">
@@ -6130,7 +6130,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <wire x1="137.16" y1="111.76" x2="167.64" y2="111.76" width="0.1524" layer="91"/>
 <pinref part="SV4" gate="G$1" pin="4"/>
 <wire x1="167.64" y1="111.76" x2="152.4" y2="111.76" width="0.1524" layer="91"/>
-<label x="137.16" y="111.76" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="137.16" y="111.76" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="K_3" class="0">
@@ -6148,7 +6148,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="SV4" gate="G$1" pin="5"/>
 <wire x1="152.4" y1="114.3" x2="167.64" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="114.3" x2="137.16" y2="114.3" width="0.1524" layer="91"/>
-<label x="137.16" y="114.3" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="137.16" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="K_4" class="0">
@@ -6166,7 +6166,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <wire x1="137.16" y1="116.84" x2="167.64" y2="116.84" width="0.1524" layer="91"/>
 <pinref part="SV4" gate="G$1" pin="8"/>
 <wire x1="167.64" y1="116.84" x2="152.4" y2="116.84" width="0.1524" layer="91"/>
-<label x="137.16" y="116.84" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="137.16" y="116.84" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="K_5" class="0">
@@ -6184,14 +6184,14 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="SV4" gate="G$1" pin="9"/>
 <wire x1="152.4" y1="119.38" x2="167.64" y2="119.38" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="119.38" x2="137.16" y2="119.38" width="0.1524" layer="91"/>
-<label x="137.16" y="119.38" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="137.16" y="119.38" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="KEY_1" class="0">
 <segment>
 <pinref part="SV3" gate="G$1" pin="4"/>
 <wire x1="266.7" y1="127" x2="279.4" y2="127" width="0.1524" layer="91"/>
-<label x="266.7" y="127" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="266.7" y="127" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <wire x1="88.9" y1="215.9" x2="104.14" y2="215.9" width="0.1524" layer="91"/>
@@ -6203,7 +6203,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <segment>
 <pinref part="SV3" gate="G$1" pin="6"/>
 <wire x1="279.4" y1="129.54" x2="266.7" y2="129.54" width="0.1524" layer="91"/>
-<label x="266.7" y="129.54" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="266.7" y="129.54" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <wire x1="88.9" y1="154.94" x2="104.14" y2="154.94" width="0.1524" layer="91"/>
@@ -6215,7 +6215,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <segment>
 <pinref part="SV3" gate="G$1" pin="8"/>
 <wire x1="266.7" y1="132.08" x2="279.4" y2="132.08" width="0.1524" layer="91"/>
-<label x="266.7" y="132.08" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="266.7" y="132.08" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <wire x1="88.9" y1="93.98" x2="104.14" y2="93.98" width="0.1524" layer="91"/>
@@ -6227,7 +6227,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <segment>
 <pinref part="SV3" gate="G$1" pin="10"/>
 <wire x1="279.4" y1="134.62" x2="266.7" y2="134.62" width="0.1524" layer="91"/>
-<label x="266.7" y="134.62" size="1.4224" layer="95" rot="R180" xref="yes"/>
+<label x="266.7" y="134.62" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <wire x1="88.9" y1="33.02" x2="104.14" y2="33.02" width="0.1524" layer="91"/>
@@ -6239,7 +6239,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <segment>
 <pinref part="SV3" gate="G$1" pin="9"/>
 <wire x1="294.64" y1="134.62" x2="307.34" y2="134.62" width="0.1524" layer="91"/>
-<label x="307.34" y="134.62" size="1.4224" layer="95" xref="yes"/>
+<label x="307.34" y="134.62" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <wire x1="210.82" y1="35.56" x2="226.06" y2="35.56" width="0.1524" layer="91"/>
@@ -6251,7 +6251,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <segment>
 <pinref part="SV3" gate="G$1" pin="7"/>
 <wire x1="294.64" y1="132.08" x2="307.34" y2="132.08" width="0.1524" layer="91"/>
-<label x="307.34" y="132.08" size="1.4224" layer="95" xref="yes"/>
+<label x="307.34" y="132.08" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <wire x1="248.92" y1="182.88" x2="254" y2="182.88" width="0.1524" layer="91"/>
@@ -6269,7 +6269,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <segment>
 <pinref part="SV3" gate="G$1" pin="5"/>
 <wire x1="294.64" y1="129.54" x2="307.34" y2="129.54" width="0.1524" layer="91"/>
-<label x="307.34" y="129.54" size="1.4224" layer="95" xref="yes"/>
+<label x="307.34" y="129.54" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <wire x1="299.72" y1="198.12" x2="287.02" y2="198.12" width="0.1524" layer="91"/>

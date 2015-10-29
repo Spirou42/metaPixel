@@ -142,10 +142,11 @@ Great range of tactile switches, with and without LED's. Will add more as needed
 <wire x1="5.05" y1="5.05" x2="5.05" y2="-5.05" width="0.127" layer="21"/>
 <circle x="0" y="0" radius="4.8" width="0.127" layer="21"/>
 <circle x="0" y="0" radius="5.5" width="0.127" layer="21"/>
-<pad name="P$2" x="-5.08" y="3.81" drill="0.9" shape="square"/>
-<pad name="P$1" x="5.08" y="3.81" drill="0.9" shape="square"/>
-<pad name="P$3" x="5.08" y="-3.81" drill="0.9" shape="square"/>
-<pad name="P$4" x="-5.08" y="-3.81" drill="0.9" shape="square"/>
+<pad name="P$2" x="-5.08" y="3.81" drill="0.9" diameter="1.6764" shape="square"/>
+<pad name="P$1" x="5.08" y="3.81" drill="0.9" diameter="1.6764" shape="square"/>
+<pad name="P$3" x="5.08" y="-3.81" drill="0.9" diameter="1.6764" shape="square"/>
+<pad name="P$4" x="-5.08" y="-3.81" drill="0.9" diameter="1.6764" shape="square"/>
+<text x="0" y="0" size="1.27" layer="21" align="bottom-center">&gt;NAME</text>
 </package>
 </packages>
 <symbols>
