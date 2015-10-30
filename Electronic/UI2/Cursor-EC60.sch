@@ -343,9 +343,9 @@ Switch 3F - Through Hole with basic matt cover&lt;br&gt;
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0.3" drill="0">
+<class number="0" name="default" width="0.4064" drill="0">
 </class>
-<class number="1" name="Supply" width="0.762" drill="0">
+<class number="1" name="Supply" width="0.6096" drill="0">
 </class>
 </classes>
 <parts>
