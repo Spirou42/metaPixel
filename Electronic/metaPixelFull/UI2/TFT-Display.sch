@@ -79,6 +79,8 @@
 <layer number="254" name="cooling" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
+<description>&lt;h1&gt;QVGA TFT Display&lt;/h1&gt;
+With 4 channel switch debouncer and encoder conditioning</description>
 <libraries>
 <library name="transistor-pnp">
 <description>&lt;b&gt;PNP Transistors&lt;/b&gt;&lt;p&gt;
@@ -7424,7 +7426,7 @@ Source: AVX .. aphvc.pdf</description>
 <part name="Q1" library="transistor-pnp" deviceset="2N3906" device=""/>
 <part name="R1" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
 <part name="R2" library="resistor" deviceset="R-EU_" device="0204/7" value="100"/>
-<part name="SV1" library="con-harting-ml" deviceset="ML20" device="L" value="HOST"/>
+<part name="HOST" library="con-harting-ml" deviceset="ML20" device="L"/>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="FRAME2" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="U$1" library="2.2&quot;tft" deviceset="2.2_TFT_LCD" device=""/>
@@ -7454,7 +7456,7 @@ Source: AVX .. aphvc.pdf</description>
 <part name="R18" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
 <part name="R19" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
 <part name="R20" library="resistor" deviceset="R-EU_" device="0204/7" value="3k3"/>
-<part name="SV3" library="con-harting-ml" deviceset="ML10" device="L"/>
+<part name="KEYBOARD" library="con-harting-ml" deviceset="ML10" device="L"/>
 <part name="C7" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="C8" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="C10" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
@@ -7467,7 +7469,7 @@ Source: AVX .. aphvc.pdf</description>
 <instance part="Q1" gate="G$1" x="223.52" y="66.04"/>
 <instance part="R1" gate="G$1" x="203.2" y="73.66" rot="R270"/>
 <instance part="R2" gate="G$1" x="190.5" y="66.04"/>
-<instance part="SV1" gate="1" x="63.5" y="73.66"/>
+<instance part="HOST" gate="1" x="63.5" y="73.66"/>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
 <instance part="FRAME2" gate="G$1" x="0" y="0"/>
 <instance part="U$1" gate="G$1" x="132.08" y="132.08"/>
@@ -7487,7 +7489,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="GND" class="1">
 <segment>
-<pinref part="SV1" gate="1" pin="1"/>
+<pinref part="HOST" gate="1" pin="1"/>
 <wire x1="78.74" y1="60.96" x2="71.12" y2="60.96" width="0.1524" layer="91"/>
 <label x="78.74" y="60.96" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7499,14 +7501,14 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="+5" class="1">
 <segment>
-<pinref part="SV1" gate="1" pin="3"/>
+<pinref part="HOST" gate="1" pin="3"/>
 <wire x1="71.12" y1="63.5" x2="78.74" y2="63.5" width="0.1524" layer="91"/>
 <label x="78.74" y="63.5" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="LCD_LED" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="5"/>
+<pinref part="HOST" gate="1" pin="5"/>
 <wire x1="71.12" y1="66.04" x2="78.74" y2="66.04" width="0.1524" layer="91"/>
 <label x="78.74" y="66.04" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7518,7 +7520,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="!LCD_CS" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="7"/>
+<pinref part="HOST" gate="1" pin="7"/>
 <wire x1="71.12" y1="68.58" x2="78.74" y2="68.58" width="0.1524" layer="91"/>
 <label x="78.74" y="68.58" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7530,7 +7532,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="MISO" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="9"/>
+<pinref part="HOST" gate="1" pin="9"/>
 <wire x1="71.12" y1="71.12" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
 <label x="78.74" y="71.12" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7547,7 +7549,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="+3.3V" class="1">
 <segment>
-<pinref part="SV1" gate="1" pin="13"/>
+<pinref part="HOST" gate="1" pin="13"/>
 <wire x1="71.12" y1="76.2" x2="78.74" y2="76.2" width="0.1524" layer="91"/>
 <label x="78.74" y="76.2" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7568,7 +7570,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="!LCD_RST" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="2"/>
+<pinref part="HOST" gate="1" pin="2"/>
 <wire x1="55.88" y1="60.96" x2="48.26" y2="60.96" width="0.1524" layer="91"/>
 <label x="48.26" y="60.96" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -7580,7 +7582,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="MOSI" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="4"/>
+<pinref part="HOST" gate="1" pin="4"/>
 <wire x1="48.26" y1="63.5" x2="55.88" y2="63.5" width="0.1524" layer="91"/>
 <label x="48.26" y="63.5" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -7597,7 +7599,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="SCLK" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="6"/>
+<pinref part="HOST" gate="1" pin="6"/>
 <wire x1="55.88" y1="66.04" x2="48.26" y2="66.04" width="0.1524" layer="91"/>
 <label x="48.26" y="66.04" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -7614,7 +7616,7 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="LCD_DC" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="8"/>
+<pinref part="HOST" gate="1" pin="8"/>
 <wire x1="55.88" y1="68.58" x2="48.26" y2="68.58" width="0.1524" layer="91"/>
 <label x="48.26" y="68.58" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -7626,49 +7628,42 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="KEY_1" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="10"/>
+<pinref part="HOST" gate="1" pin="10"/>
 <wire x1="55.88" y1="71.12" x2="48.26" y2="71.12" width="0.1524" layer="91"/>
 <label x="48.26" y="71.12" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="KEY_2" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="12"/>
+<pinref part="HOST" gate="1" pin="12"/>
 <wire x1="55.88" y1="73.66" x2="48.26" y2="73.66" width="0.1524" layer="91"/>
 <label x="48.26" y="73.66" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="KEY_3" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="14"/>
+<pinref part="HOST" gate="1" pin="14"/>
 <wire x1="55.88" y1="76.2" x2="48.26" y2="76.2" width="0.1524" layer="91"/>
 <label x="48.26" y="76.2" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="KEY_4" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="16"/>
+<pinref part="HOST" gate="1" pin="16"/>
 <wire x1="55.88" y1="78.74" x2="48.26" y2="78.74" width="0.1524" layer="91"/>
 <label x="48.26" y="78.74" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="KEY_5" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="18"/>
+<pinref part="HOST" gate="1" pin="18"/>
 <wire x1="55.88" y1="81.28" x2="48.26" y2="81.28" width="0.1524" layer="91"/>
 <label x="48.26" y="81.28" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="ENC_STEP" class="0">
-<segment>
-<pinref part="SV1" gate="1" pin="20"/>
-<wire x1="55.88" y1="83.82" x2="48.26" y2="83.82" width="0.1524" layer="91"/>
-<label x="48.26" y="83.82" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
 <net name="!MEM_CS" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="11"/>
+<pinref part="HOST" gate="1" pin="11"/>
 <wire x1="71.12" y1="73.66" x2="78.74" y2="73.66" width="0.1524" layer="91"/>
 <label x="78.74" y="73.66" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7680,23 +7675,23 @@ Source: AVX .. aphvc.pdf</description>
 </net>
 <net name="N$19" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="15"/>
+<pinref part="HOST" gate="1" pin="15"/>
 <wire x1="71.12" y1="78.74" x2="78.74" y2="78.74" width="0.1524" layer="91"/>
 <label x="78.74" y="78.74" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$20" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="17"/>
+<pinref part="HOST" gate="1" pin="17"/>
 <wire x1="71.12" y1="81.28" x2="78.74" y2="81.28" width="0.1524" layer="91"/>
 <label x="78.74" y="81.28" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ENC_DIR" class="0">
 <segment>
-<pinref part="SV1" gate="1" pin="19"/>
-<wire x1="71.12" y1="83.82" x2="78.74" y2="83.82" width="0.1524" layer="91"/>
-<label x="78.74" y="83.82" size="1.27" layer="95" xref="yes"/>
+<pinref part="HOST" gate="1" pin="20"/>
+<wire x1="55.88" y1="83.82" x2="48.26" y2="83.82" width="0.1524" layer="91"/>
+<label x="48.26" y="83.82" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="BG_LED" class="0">
@@ -7709,6 +7704,13 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="Q1" gate="G$1" pin="C"/>
 <wire x1="226.06" y1="60.96" x2="226.06" y2="53.34" width="0.1524" layer="91"/>
 <label x="226.06" y="53.34" size="1.4224" layer="95" rot="R270" xref="yes"/>
+</segment>
+</net>
+<net name="ENC_STEP" class="0">
+<segment>
+<pinref part="HOST" gate="1" pin="19"/>
+<wire x1="71.12" y1="83.82" x2="78.74" y2="83.82" width="0.1524" layer="91"/>
+<label x="78.74" y="83.82" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>
@@ -7747,7 +7749,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <instance part="R18" gate="G$1" x="185.42" y="218.44" rot="R90"/>
 <instance part="R19" gate="G$1" x="185.42" y="165.1" rot="R90"/>
 <instance part="R20" gate="G$1" x="259.08" y="218.44" rot="R270"/>
-<instance part="SV3" gate="G$1" x="203.2" y="119.38"/>
+<instance part="KEYBOARD" gate="G$1" x="203.2" y="119.38"/>
 <instance part="IC1" gate="B" x="78.74" y="154.94"/>
 <instance part="IC1" gate="D" x="78.74" y="33.02"/>
 <instance part="IC1" gate="E" x="200.66" y="35.56"/>
@@ -7803,7 +7805,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="C6" gate="G$1" pin="2"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="2"/>
+<pinref part="KEYBOARD" gate="G$1" pin="2"/>
 <wire x1="195.58" y1="114.3" x2="182.88" y2="114.3" width="0.1524" layer="91"/>
 <label x="182.88" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -7840,7 +7842,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="27.94" y="215.9" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="4"/>
+<pinref part="KEYBOARD" gate="G$1" pin="4"/>
 <wire x1="182.88" y1="116.84" x2="195.58" y2="116.84" width="0.1524" layer="91"/>
 <label x="182.88" y="116.84" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -7912,7 +7914,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="167.64" y="193.04" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="7"/>
+<pinref part="KEYBOARD" gate="G$1" pin="7"/>
 <wire x1="210.82" y1="121.92" x2="223.52" y2="121.92" width="0.1524" layer="91"/>
 <label x="223.52" y="121.92" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7929,7 +7931,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="167.64" y="187.96" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="5"/>
+<pinref part="KEYBOARD" gate="G$1" pin="5"/>
 <wire x1="210.82" y1="119.38" x2="223.52" y2="119.38" width="0.1524" layer="91"/>
 <label x="223.52" y="119.38" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -7992,7 +7994,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="27.94" y="154.94" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="6"/>
+<pinref part="KEYBOARD" gate="G$1" pin="6"/>
 <wire x1="195.58" y1="119.38" x2="182.88" y2="119.38" width="0.1524" layer="91"/>
 <label x="182.88" y="119.38" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -8008,7 +8010,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="27.94" y="93.98" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="8"/>
+<pinref part="KEYBOARD" gate="G$1" pin="8"/>
 <wire x1="182.88" y1="121.92" x2="195.58" y2="121.92" width="0.1524" layer="91"/>
 <label x="182.88" y="121.92" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -8024,7 +8026,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="27.94" y="33.02" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="10"/>
+<pinref part="KEYBOARD" gate="G$1" pin="10"/>
 <wire x1="195.58" y1="124.46" x2="182.88" y2="124.46" width="0.1524" layer="91"/>
 <label x="182.88" y="124.46" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -8040,7 +8042,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="149.86" y="35.56" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<pinref part="SV3" gate="G$1" pin="9"/>
+<pinref part="KEYBOARD" gate="G$1" pin="9"/>
 <wire x1="210.82" y1="124.46" x2="223.52" y2="124.46" width="0.1524" layer="91"/>
 <label x="223.52" y="124.46" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -8102,7 +8104,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 </net>
 <net name="+3.3V" class="1">
 <segment>
-<pinref part="SV3" gate="G$1" pin="1"/>
+<pinref part="KEYBOARD" gate="G$1" pin="1"/>
 <wire x1="210.82" y1="114.3" x2="223.52" y2="114.3" width="0.1524" layer="91"/>
 <label x="223.52" y="114.3" size="1.27" layer="95" xref="yes"/>
 </segment>

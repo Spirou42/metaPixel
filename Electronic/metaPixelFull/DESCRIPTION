@@ -1,0 +1,13 @@
+<H1>metaPixel Controller</h1>
+Features:
+<ul>
+<li>Teensy 3.2</li>
+<li>USB-Serial</li>
+<li>DMX</li>
+<li>UI-Interface</li>
+  <ul>
+    <li>QVGA TFT Display</li>
+    <li>5 cursor keys</li>
+    <li>rotary encoder</li>
+  </ul>
+</ul>

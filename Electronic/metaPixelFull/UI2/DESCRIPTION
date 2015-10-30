@@ -1,6 +1,6 @@
 <h1>UI Board 2</h1>
 <ul>
-<li>SPI based display Board for small tft displays</li>
-<li>Cursor Pad (5 switches) with debounce </li>
-<li>Cursor Pad (4 switches) with debounce & Rottary encoder + switch
+<li>SPI QVGA TFT display<br>with key debouncer and encoder conditioning</li>
+<li>hollow shaft rotatry encoder</li>
+<li>Cursor Pad (5 switches) </li>
 </ul>
