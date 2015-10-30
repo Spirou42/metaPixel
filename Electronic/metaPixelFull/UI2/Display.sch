@@ -7415,9 +7415,9 @@ Source: AVX .. aphvc.pdf</description>
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0" drill="0">
+<class number="0" name="default" width="0.2032" drill="0.3048">
 </class>
-<class number="1" name="Supply" width="0.762" drill="0">
+<class number="1" name="Supply" width="0.4064" drill="0.3048">
 </class>
 </classes>
 <parts>
@@ -7485,7 +7485,7 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="203.2" y1="66.04" x2="203.2" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="GND" class="0">
+<net name="GND" class="1">
 <segment>
 <pinref part="SV1" gate="1" pin="1"/>
 <wire x1="78.74" y1="60.96" x2="71.12" y2="60.96" width="0.1524" layer="91"/>
@@ -7497,7 +7497,7 @@ Source: AVX .. aphvc.pdf</description>
 <label x="93.98" y="139.7" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="+5" class="0">
+<net name="+5" class="1">
 <segment>
 <pinref part="SV1" gate="1" pin="3"/>
 <wire x1="71.12" y1="63.5" x2="78.74" y2="63.5" width="0.1524" layer="91"/>
@@ -7545,7 +7545,7 @@ Source: AVX .. aphvc.pdf</description>
 <pinref part="U$1" gate="G$1" pin="SD_MISO"/>
 </segment>
 </net>
-<net name="+3.3V" class="0">
+<net name="+3.3V" class="1">
 <segment>
 <pinref part="SV1" gate="1" pin="13"/>
 <wire x1="71.12" y1="76.2" x2="78.74" y2="76.2" width="0.1524" layer="91"/>
@@ -7761,7 +7761,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <busses>
 </busses>
 <nets>
-<net name="GND" class="0">
+<net name="GND" class="1">
 <segment>
 <wire x1="58.42" y1="200.66" x2="58.42" y2="195.58" width="0.1524" layer="91"/>
 <wire x1="58.42" y1="195.58" x2="29.21" y2="195.58" width="0.1524" layer="91"/>
@@ -8100,7 +8100,7 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="IC3" gate="A" pin="Q"/>
 </segment>
 </net>
-<net name="+3.3V" class="0">
+<net name="+3.3V" class="1">
 <segment>
 <pinref part="SV3" gate="G$1" pin="1"/>
 <wire x1="210.82" y1="114.3" x2="223.52" y2="114.3" width="0.1524" layer="91"/>
