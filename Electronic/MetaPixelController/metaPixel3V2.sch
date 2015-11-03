@@ -1019,18 +1019,6 @@ Low profile connectors, straight&lt;p&gt;
 <label x="114.3" y="-15.24" size="1.4224" layer="95"/>
 </segment>
 </net>
-<net name="N$1" class="0">
-<segment>
-<pinref part="IC1" gate="A" pin="A2"/>
-<wire x1="83.82" y1="-17.78" x2="68.58" y2="-17.78" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$2" class="0">
-<segment>
-<pinref part="IC1" gate="A" pin="A3"/>
-<wire x1="83.82" y1="-20.32" x2="68.58" y2="-20.32" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="LCD_DC" class="0">
 <segment>
 <wire x1="134.62" y1="45.72" x2="119.38" y2="45.72" width="0.1524" layer="91"/>

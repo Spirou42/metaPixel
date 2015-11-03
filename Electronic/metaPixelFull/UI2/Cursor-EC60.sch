@@ -532,6 +532,11 @@ an ALPS EC60A/B</text>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="113,1,130.071,89.431,FRAME2,,,,,"/>
+<approved hash="113,1,198.357,143.641,JP1,,,,,"/>
+<approved hash="113,1,198.357,161.421,JP2,,,,,"/>
+</errors>
 </schematic>
 </drawing>
 <compatibility>

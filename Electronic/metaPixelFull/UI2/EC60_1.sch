@@ -824,6 +824,13 @@ DIN A4, landscape with location and doc. field</description>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="106,1,55.88,53.34,+3.3V,,,,,"/>
+<approved hash="113,1,48.26,59.8847,SV1,,,,,"/>
+<approved hash="113,1,130.071,89.431,FRAME1,,,,,"/>
+<approved hash="113,1,27.7029,87.4988,JP1,,,,,"/>
+<approved hash="113,1,83.5829,87.4988,JP2,,,,,"/>
+</errors>
 </schematic>
 </drawing>
 </eagle>
