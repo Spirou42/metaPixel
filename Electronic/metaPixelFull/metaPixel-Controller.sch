@@ -10805,7 +10805,7 @@ Low profile connectors, straight&lt;p&gt;
 <part name="R7" library="resistor" deviceset="R-EU_" device="0207/10" value="4k7"/>
 <part name="IC3" library="74xx-eu" deviceset="74*245" device="N" technology="HCT"/>
 <part name="FRAME1" library="frames" deviceset="A3L-LOC" device="" value="Main"/>
-<part name="U$1" library="Teensy_3_and_LC_Series_Boards_v1.0" deviceset="TEENSY_3.1_OUTER_ROW" device=""/>
+<part name="IC2" library="Teensy_3_and_LC_Series_Boards_v1.0" deviceset="TEENSY_3.1_OUTER_ROW" device="" value="TEENSY_3.1"/>
 <part name="DMX" library="frames" deviceset="A3L-LOC" device="" value="P"/>
 <part name="C1" library="resistor" deviceset="C-EU" device="025-030X050" value="0.1µ"/>
 <part name="C2" library="resistor" deviceset="C-EU" device="025-030X050" value="0.1µ"/>
@@ -10827,7 +10827,7 @@ Low profile connectors, straight&lt;p&gt;
 <instances>
 <instance part="IC3" gate="A" x="238.76" y="177.8"/>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
-<instance part="U$1" gate="G$1" x="119.38" y="165.1"/>
+<instance part="IC2" gate="G$1" x="119.38" y="165.1"/>
 <instance part="IC3" gate="P" x="342.9" y="124.46"/>
 <instance part="C2" gate="G$1" x="337.82" y="121.92" rot="R180"/>
 <instance part="DC1" gate="G$1" x="91.44" y="55.88"/>
@@ -10866,10 +10866,10 @@ Low profile connectors, straight&lt;p&gt;
 <junction x="66.04" y="53.34"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="GND"/>
+<pinref part="IC2" gate="G$1" pin="GND"/>
 <wire x1="142.24" y1="185.42" x2="152.4" y2="185.42" width="0.1524" layer="91"/>
 <label x="162.56" y="185.42" size="1.27" layer="95" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="AGND"/>
+<pinref part="IC2" gate="G$1" pin="AGND"/>
 <wire x1="152.4" y1="185.42" x2="162.56" y2="185.42" width="0.1524" layer="91"/>
 <wire x1="142.24" y1="172.72" x2="152.4" y2="172.72" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="172.72" x2="152.4" y2="185.42" width="0.1524" layer="91"/>
@@ -10907,7 +10907,7 @@ Low profile connectors, straight&lt;p&gt;
 <junction x="66.04" y="58.42"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="VIN"/>
+<pinref part="IC2" gate="G$1" pin="VIN"/>
 <wire x1="142.24" y1="193.04" x2="162.56" y2="193.04" width="0.1524" layer="91"/>
 <label x="162.56" y="193.04" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -10937,7 +10937,7 @@ Low profile connectors, straight&lt;p&gt;
 <label x="208.28" y="190.5" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="4/CAN-RX-PWM"/>
+<pinref part="IC2" gate="G$1" pin="4/CAN-RX-PWM"/>
 <wire x1="96.52" y1="182.88" x2="78.74" y2="182.88" width="0.1524" layer="91"/>
 <label x="78.74" y="182.88" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -10958,7 +10958,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="+3.3V" class="1">
 <segment>
-<pinref part="U$1" gate="G$1" pin="3.3V"/>
+<pinref part="IC2" gate="G$1" pin="3.3V"/>
 <wire x1="142.24" y1="190.5" x2="162.56" y2="190.5" width="0.1524" layer="91"/>
 <label x="162.56" y="190.5" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -10970,14 +10970,14 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="DMX_IN" class="1">
 <segment>
-<pinref part="U$1" gate="G$1" pin="0/RX1/T"/>
+<pinref part="IC2" gate="G$1" pin="0/RX1/T"/>
 <wire x1="96.52" y1="193.04" x2="78.74" y2="193.04" width="0.1524" layer="91"/>
 <label x="78.74" y="193.04" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="!LCD_RST" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="2"/>
+<pinref part="IC2" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="187.96" x2="78.74" y2="187.96" width="0.1524" layer="91"/>
 <label x="78.74" y="187.96" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -10989,7 +10989,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="LCD_DC" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="9/RX2/PWM"/>
+<pinref part="IC2" gate="G$1" pin="9/RX2/PWM"/>
 <wire x1="96.52" y1="170.18" x2="78.74" y2="170.18" width="0.1524" layer="91"/>
 <label x="78.74" y="170.18" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11001,7 +11001,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="!LCD_CS" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="10/TX2/PWM"/>
+<pinref part="IC2" gate="G$1" pin="10/TX2/PWM"/>
 <wire x1="96.52" y1="167.64" x2="78.74" y2="167.64" width="0.1524" layer="91"/>
 <label x="78.74" y="167.64" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11013,7 +11013,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="MOSI" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="11/MOSI"/>
+<pinref part="IC2" gate="G$1" pin="11/MOSI"/>
 <wire x1="96.52" y1="165.1" x2="78.74" y2="165.1" width="0.1524" layer="91"/>
 <label x="78.74" y="165.1" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11025,7 +11025,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="MISO" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="12/MISO"/>
+<pinref part="IC2" gate="G$1" pin="12/MISO"/>
 <wire x1="96.52" y1="162.56" x2="78.74" y2="162.56" width="0.1524" layer="91"/>
 <label x="78.74" y="162.56" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11037,7 +11037,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="SCLK" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="13/SCK/LED"/>
+<pinref part="IC2" gate="G$1" pin="13/SCK/LED"/>
 <wire x1="96.52" y1="160.02" x2="78.74" y2="160.02" width="0.1524" layer="91"/>
 <label x="78.74" y="160.02" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11049,7 +11049,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="LCD_LED" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="A14/DAC"/>
+<pinref part="IC2" gate="G$1" pin="A14/DAC"/>
 <wire x1="142.24" y1="167.64" x2="162.56" y2="167.64" width="0.1524" layer="91"/>
 <label x="162.56" y="167.64" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -11061,7 +11061,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="!SD_CS" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="21/A7/PWM"/>
+<pinref part="IC2" gate="G$1" pin="21/A7/PWM"/>
 <wire x1="96.52" y1="139.7" x2="78.74" y2="139.7" width="0.1524" layer="91"/>
 <label x="78.74" y="139.7" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11073,7 +11073,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="KEY_1" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="14/A0"/>
+<pinref part="IC2" gate="G$1" pin="14/A0"/>
 <wire x1="96.52" y1="157.48" x2="78.74" y2="157.48" width="0.1524" layer="91"/>
 <label x="78.74" y="157.48" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11085,7 +11085,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="KEY_2" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="15/A1/T"/>
+<pinref part="IC2" gate="G$1" pin="15/A1/T"/>
 <wire x1="78.74" y1="154.94" x2="96.52" y2="154.94" width="0.1524" layer="91"/>
 <label x="78.74" y="154.94" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11097,7 +11097,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="KEY_3" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="16/A2/T"/>
+<pinref part="IC2" gate="G$1" pin="16/A2/T"/>
 <wire x1="96.52" y1="152.4" x2="78.74" y2="152.4" width="0.1524" layer="91"/>
 <label x="78.74" y="152.4" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11109,7 +11109,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="KEY_4" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="17/A3/T"/>
+<pinref part="IC2" gate="G$1" pin="17/A3/T"/>
 <wire x1="78.74" y1="149.86" x2="96.52" y2="149.86" width="0.1524" layer="91"/>
 <label x="78.74" y="149.86" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11121,7 +11121,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="KEY_5" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="18/A4/T/SDA0"/>
+<pinref part="IC2" gate="G$1" pin="18/A4/T/SDA0"/>
 <wire x1="96.52" y1="147.32" x2="78.74" y2="147.32" width="0.1524" layer="91"/>
 <label x="78.74" y="147.32" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11133,7 +11133,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="ENC_STEP" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="19/A5/T/SCL0"/>
+<pinref part="IC2" gate="G$1" pin="19/A5/T/SCL0"/>
 <wire x1="78.74" y1="144.78" x2="96.52" y2="144.78" width="0.1524" layer="91"/>
 <label x="78.74" y="144.78" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11145,7 +11145,7 @@ Low profile connectors, straight&lt;p&gt;
 </net>
 <net name="ENC_DIR" class="0">
 <segment>
-<pinref part="U$1" gate="G$1" pin="20/A6/PWM"/>
+<pinref part="IC2" gate="G$1" pin="20/A6/PWM"/>
 <wire x1="96.52" y1="142.24" x2="78.74" y2="142.24" width="0.1524" layer="91"/>
 <label x="78.74" y="142.24" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -11367,10 +11367,10 @@ Low profile connectors, straight&lt;p&gt;
 <errors>
 <approved hash="104,2,167.64,114.3,IC1P,VCC,+5V_EXT,,,"/>
 <approved hash="104,2,167.64,99.06,IC1P,GND,GND_EXT,,,"/>
-<approved hash="104,1,142.24,172.72,U$1,AGND,GND,,,"/>
-<approved hash="104,1,142.24,190.5,U$1,3.3V,+3.3V,,,"/>
-<approved hash="204,1,142.24,187.96,U$1,VBAT,,,,"/>
-<approved hash="104,1,142.24,193.04,U$1,VIN,VCC,,,"/>
+<approved hash="104,1,142.24,172.72,IC2,AGND,GND,,,"/>
+<approved hash="104,1,142.24,190.5,IC2,3.3V,+3.3V,,,"/>
+<approved hash="204,1,142.24,187.96,IC2,VBAT,,,,"/>
+<approved hash="104,1,142.24,193.04,IC2,VIN,VCC,,,"/>
 <approved hash="106,1,238.76,116.84,N$14,,,,,"/>
 <approved hash="106,1,238.76,114.3,N$15,,,,,"/>
 </errors>
