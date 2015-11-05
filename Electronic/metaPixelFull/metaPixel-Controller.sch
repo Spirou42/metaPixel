@@ -10813,7 +10813,7 @@ Low profile connectors, straight&lt;p&gt;
 <part name="SUPPLY1" library="supply2" deviceset="GND" device=""/>
 <part name="SUPPLY2" library="supply2" deviceset="VCC" device=""/>
 <part name="POWER" library="RP025xx" deviceset="RP025-02" device=""/>
-<part name="SV1" library="con-harting-ml" deviceset="ML20" device="L" value="HOST"/>
+<part name="SV1" library="con-harting-ml" deviceset="ML20" device="L" value="DISPLAY"/>
 <part name="DMX_1" library="RP025xx" deviceset="RP025-03" device=""/>
 <part name="DMX_2" library="RP025xx" deviceset="RP025-03" device=""/>
 <part name="LED" library="RP025xx" deviceset="RP025-02" device=""/>
@@ -10867,13 +10867,8 @@ Low profile connectors, straight&lt;p&gt;
 </segment>
 <segment>
 <pinref part="IC2" gate="G$1" pin="GND"/>
-<wire x1="142.24" y1="185.42" x2="152.4" y2="185.42" width="0.1524" layer="91"/>
 <label x="162.56" y="185.42" size="1.27" layer="95" xref="yes"/>
-<pinref part="IC2" gate="G$1" pin="AGND"/>
-<wire x1="152.4" y1="185.42" x2="162.56" y2="185.42" width="0.1524" layer="91"/>
-<wire x1="142.24" y1="172.72" x2="152.4" y2="172.72" width="0.1524" layer="91"/>
-<wire x1="152.4" y1="172.72" x2="152.4" y2="185.42" width="0.1524" layer="91"/>
-<junction x="152.4" y="185.42"/>
+<wire x1="142.24" y1="185.42" x2="162.56" y2="185.42" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="SV1" gate="1" pin="1"/>
@@ -10917,7 +10912,7 @@ Low profile connectors, straight&lt;p&gt;
 <label x="254" y="99.06" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="LED_OUT" class="0">
+<net name="LED_OUT" class="1">
 <segment>
 <pinref part="IC3" gate="A" pin="B1"/>
 <label x="254" y="190.5" size="1.778" layer="95"/>
@@ -11155,20 +11150,6 @@ Low profile connectors, straight&lt;p&gt;
 <label x="210.82" y="119.38" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$14" class="0">
-<segment>
-<pinref part="SV1" gate="1" pin="17"/>
-<wire x1="254" y1="116.84" x2="238.76" y2="116.84" width="0.1524" layer="91"/>
-<label x="254" y="116.84" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="N$15" class="0">
-<segment>
-<pinref part="SV1" gate="1" pin="15"/>
-<wire x1="238.76" y1="114.3" x2="254" y2="114.3" width="0.1524" layer="91"/>
-<label x="254" y="114.3" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
 </nets>
 </sheet>
 <sheet>
@@ -11367,12 +11348,10 @@ Low profile connectors, straight&lt;p&gt;
 <errors>
 <approved hash="104,2,167.64,114.3,IC1P,VCC,+5V_EXT,,,"/>
 <approved hash="104,2,167.64,99.06,IC1P,GND,GND_EXT,,,"/>
-<approved hash="104,1,142.24,172.72,IC2,AGND,GND,,,"/>
+<approved hash="204,1,142.24,172.72,IC2,AGND,,,,"/>
 <approved hash="104,1,142.24,190.5,IC2,3.3V,+3.3V,,,"/>
 <approved hash="204,1,142.24,187.96,IC2,VBAT,,,,"/>
 <approved hash="104,1,142.24,193.04,IC2,VIN,VCC,,,"/>
-<approved hash="106,1,238.76,116.84,N$14,,,,,"/>
-<approved hash="106,1,238.76,114.3,N$15,,,,,"/>
 </errors>
 </schematic>
 </drawing>
