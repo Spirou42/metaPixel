@@ -39,7 +39,7 @@ The LED carrier rests on top of four pillars which also contain some of the magn
 Four magnets in the corners of the box holds the cover and grid in place.
 ![metaPixelWholeBox][metaPixelWholeBox]
 
-And here is 
+
 
 
 

@@ -13,7 +13,7 @@ The metaPixel Software uses the Arduino build environment, Teensyduino to add Te
 a simple task switching library. 
 2. [Streaming](http://arduiniana.org/libraries/streaming/)  
 C++ Stream operators for the Arduino serial class
-3. [FastLED](http://fastled.io)  
+3. [FastLED](http://fastled.io)  actually you have to use my [Version of FastLED](https://github.com/Spirou42/FastLED) 
 LED Driver Library with nice and helpful features. 
 
 ## Overview

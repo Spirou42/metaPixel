@@ -69,14 +69,15 @@ First Try mit dem EC60A outline</description>
 <circle x="0" y="0" radius="31.45" width="0.3" layer="21"/>
 <hole x="0" y="26.5" drill="3.1"/>
 <hole x="0" y="-26.5" drill="3.1"/>
-<hole x="-15.9" y="27.54" drill="3.1"/>
-<hole x="-22.486" y="-22.486" drill="3.1"/>
-<hole x="27.54" y="-15.9" drill="3.1"/>
-<pad name="A" x="29.141" y="11.095" drill="0.8" diameter="1.6764"/>
-<pad name="C" x="30.198" y="8.829" drill="0.8" diameter="1.6764"/>
-<pad name="B" x="31.254" y="6.564" drill="0.8" diameter="1.6764"/>
+<hole x="-15.9" y="27.54" drill="3.5"/>
+<hole x="-22.486" y="-22.486" drill="3.5"/>
+<hole x="27.54" y="-15.9" drill="3.5"/>
+<pad name="A" x="29.141" y="11.095" drill="1" diameter="1.778"/>
+<pad name="C" x="30.198" y="8.829" drill="1" diameter="1.778"/>
+<pad name="B" x="31.254" y="6.564" drill="1" diameter="1.778"/>
 <hole x="30.219" y="-9.239" drill="1.7"/>
 <circle x="0" y="0" radius="21.4" width="0.3" layer="21"/>
+<text x="0" y="0" size="1.27" layer="21" align="bottom-center">&gt;NAME</text>
 </package>
 </packages>
 <symbols>

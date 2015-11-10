@@ -8,24 +8,24 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="yes" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -34,8 +34,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -43,16 +43,16 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -4677,6 +4677,29 @@ DIN A3, landscape with location and doc. field</description>
 <text x="35.56" y="-27.94" size="1.5" layer="21" font="vector" rot="MR0">2.2 TFT SPI 240x320</text>
 <text x="0" y="10.795" size="1.27" layer="21" font="vector">&gt;NAME</text>
 </package>
+<package name="2.2_TFT_LCD_LEDSEE">
+<wire x1="-33.6" y1="20.05" x2="33.6" y2="20.05" width="0.127" layer="21"/>
+<wire x1="33.6" y1="20.05" x2="33.6" y2="-20.05" width="0.127" layer="21"/>
+<wire x1="33.6" y1="-20.05" x2="-33.6" y2="-20.05" width="0.127" layer="21"/>
+<wire x1="-33.6" y1="-20.05" x2="-33.6" y2="20.05" width="0.127" layer="21"/>
+<hole x="-30.6" y="17.05" drill="3.2"/>
+<hole x="30.6" y="17.05" drill="3.2"/>
+<hole x="30.6" y="-17.05" drill="3.2"/>
+<hole x="-30.6" y="-17.05" drill="3.2"/>
+<pad name="P$1_DC" x="-31.6" y="0" drill="0.8"/>
+<pad name="P$2_RESET" x="-31.6" y="2.54" drill="0.8"/>
+<pad name="P$3_CS" x="-31.6" y="5.08" drill="0.8"/>
+<pad name="P$4_GND" x="-31.6" y="7.62" drill="0.8"/>
+<pad name="P$5_VCC" x="-31.6" y="10.16" drill="0.8" shape="square"/>
+<pad name="P$6_MOSI" x="-31.6" y="-2.54" drill="0.8"/>
+<pad name="P$7_SCK" x="-31.6" y="-5.08" drill="0.8"/>
+<pad name="P$8_LED" x="-31.6" y="-7.62" drill="0.8"/>
+<pad name="P$9_MISO" x="-31.6" y="-10.16" drill="0.8"/>
+<pad name="P$1_SD_MOSI" x="31.6" y="1.27" drill="0.8"/>
+<pad name="P$2_SD_CS" x="31.6" y="3.81" drill="0.8" shape="square"/>
+<pad name="P$3_SD_MISO" x="31.6" y="-1.27" drill="0.8"/>
+<pad name="P$4_SD_SCK" x="31.6" y="-3.81" drill="0.8"/>
+</package>
 </packages>
 <symbols>
 <symbol name="2.2_TFT_LCD">
@@ -4722,6 +4745,26 @@ DIN A3, landscape with location and doc. field</description>
 <connect gate="G$1" pin="SD_MOSI" pad="SD_MOSI"/>
 <connect gate="G$1" pin="SD_SCK" pad="SD_SCK"/>
 <connect gate="G$1" pin="VCC" pad="VCC"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="NEW" package="2.2_TFT_LCD_LEDSEE">
+<connects>
+<connect gate="G$1" pin="CS" pad="P$3_CS"/>
+<connect gate="G$1" pin="DC" pad="P$1_DC"/>
+<connect gate="G$1" pin="GND" pad="P$4_GND"/>
+<connect gate="G$1" pin="LED" pad="P$8_LED"/>
+<connect gate="G$1" pin="MISO" pad="P$9_MISO"/>
+<connect gate="G$1" pin="MOSI" pad="P$6_MOSI"/>
+<connect gate="G$1" pin="RST" pad="P$2_RESET"/>
+<connect gate="G$1" pin="SCK" pad="P$7_SCK"/>
+<connect gate="G$1" pin="SD_CS" pad="P$2_SD_CS"/>
+<connect gate="G$1" pin="SD_MISO" pad="P$3_SD_MISO"/>
+<connect gate="G$1" pin="SD_MOSI" pad="P$1_SD_MOSI"/>
+<connect gate="G$1" pin="SD_SCK" pad="P$4_SD_SCK"/>
+<connect gate="G$1" pin="VCC" pad="P$5_VCC"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -7429,7 +7472,7 @@ Source: AVX .. aphvc.pdf</description>
 <part name="HOST" library="con-harting-ml" deviceset="ML20" device="L"/>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="FRAME2" library="frames" deviceset="A4L-LOC" device=""/>
-<part name="U$1" library="2.2&quot;tft" deviceset="2.2_TFT_LCD" device=""/>
+<part name="U$1" library="2.2&quot;tft" deviceset="2.2_TFT_LCD" device="NEW" value="2.2_TFT_LCDNEW"/>
 <part name="C9" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="R14" library="resistor" deviceset="R-EU_" device="0204/7" value="15k"/>
 <part name="R15" library="resistor" deviceset="R-EU_" device="0204/7" value="82k"/>
