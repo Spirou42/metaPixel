@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.4.1">
+<eagle version="7.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -8,24 +8,24 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="yes" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="yes" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -34,8 +34,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -43,16 +43,16 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -7256,20 +7256,6 @@ Source: AVX .. aphvc.pdf</description>
 <pin name="GND" x="0" y="-7.62" visible="pad" length="middle" direction="pwr" rot="R90"/>
 <pin name="VCC" x="0" y="7.62" visible="pad" length="middle" direction="pwr" rot="R270"/>
 </symbol>
-<symbol name="7474">
-<wire x1="-7.62" y1="-7.62" x2="7.62" y2="-7.62" width="0.4064" layer="94"/>
-<wire x1="7.62" y1="-7.62" x2="7.62" y2="7.62" width="0.4064" layer="94"/>
-<wire x1="7.62" y1="7.62" x2="-7.62" y2="7.62" width="0.4064" layer="94"/>
-<wire x1="-7.62" y1="7.62" x2="-7.62" y2="-7.62" width="0.4064" layer="94"/>
-<text x="-7.62" y="8.255" size="1.778" layer="95">&gt;NAME</text>
-<text x="-7.62" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="CLR" x="-12.7" y="-5.08" length="middle" direction="in" function="dot"/>
-<pin name="D" x="-12.7" y="2.54" length="middle" direction="in"/>
-<pin name="CLK" x="-12.7" y="-2.54" length="middle" direction="in" function="clk"/>
-<pin name="PRE" x="-12.7" y="5.08" length="middle" direction="in" function="dot"/>
-<pin name="Q" x="12.7" y="5.08" length="middle" direction="out" rot="R180"/>
-<pin name="!Q" x="12.7" y="-5.08" length="middle" direction="out" rot="R180"/>
-</symbol>
 </symbols>
 <devicesets>
 <deviceset name="74*14" prefix="IC">
@@ -7364,94 +7350,6 @@ Source: AVX .. aphvc.pdf</description>
 </device>
 </devices>
 </deviceset>
-<deviceset name="74*74" prefix="IC">
-<description>Dual D type positive edge triggered &lt;b&gt;FLIP FLOP&lt;/b&gt;, preset and clear</description>
-<gates>
-<gate name="A" symbol="7474" x="20.32" y="0" swaplevel="1"/>
-<gate name="B" symbol="7474" x="20.32" y="-22.86" swaplevel="1"/>
-<gate name="P" symbol="PWRN" x="-5.08" y="0" addlevel="request"/>
-</gates>
-<devices>
-<device name="N" package="DIL14">
-<connects>
-<connect gate="A" pin="!Q" pad="6"/>
-<connect gate="A" pin="CLK" pad="3"/>
-<connect gate="A" pin="CLR" pad="1"/>
-<connect gate="A" pin="D" pad="2"/>
-<connect gate="A" pin="PRE" pad="4"/>
-<connect gate="A" pin="Q" pad="5"/>
-<connect gate="B" pin="!Q" pad="8"/>
-<connect gate="B" pin="CLK" pad="11"/>
-<connect gate="B" pin="CLR" pad="13"/>
-<connect gate="B" pin="D" pad="12"/>
-<connect gate="B" pin="PRE" pad="10"/>
-<connect gate="B" pin="Q" pad="9"/>
-<connect gate="P" pin="GND" pad="7"/>
-<connect gate="P" pin="VCC" pad="14"/>
-</connects>
-<technologies>
-<technology name="AC"/>
-<technology name="ACT"/>
-<technology name="HC"/>
-<technology name="HCT"/>
-<technology name="LS"/>
-<technology name="S"/>
-</technologies>
-</device>
-<device name="D" package="SO14">
-<connects>
-<connect gate="A" pin="!Q" pad="6"/>
-<connect gate="A" pin="CLK" pad="3"/>
-<connect gate="A" pin="CLR" pad="1"/>
-<connect gate="A" pin="D" pad="2"/>
-<connect gate="A" pin="PRE" pad="4"/>
-<connect gate="A" pin="Q" pad="5"/>
-<connect gate="B" pin="!Q" pad="8"/>
-<connect gate="B" pin="CLK" pad="11"/>
-<connect gate="B" pin="CLR" pad="13"/>
-<connect gate="B" pin="D" pad="12"/>
-<connect gate="B" pin="PRE" pad="10"/>
-<connect gate="B" pin="Q" pad="9"/>
-<connect gate="P" pin="GND" pad="7"/>
-<connect gate="P" pin="VCC" pad="14"/>
-</connects>
-<technologies>
-<technology name="AC"/>
-<technology name="ACT"/>
-<technology name="HC"/>
-<technology name="HCT"/>
-<technology name="LS"/>
-<technology name="S"/>
-</technologies>
-</device>
-<device name="FK" package="LCC20">
-<connects>
-<connect gate="A" pin="!Q" pad="9"/>
-<connect gate="A" pin="CLK" pad="4"/>
-<connect gate="A" pin="CLR" pad="2"/>
-<connect gate="A" pin="D" pad="3"/>
-<connect gate="A" pin="PRE" pad="6"/>
-<connect gate="A" pin="Q" pad="8"/>
-<connect gate="B" pin="!Q" pad="12"/>
-<connect gate="B" pin="CLK" pad="16"/>
-<connect gate="B" pin="CLR" pad="19"/>
-<connect gate="B" pin="D" pad="18"/>
-<connect gate="B" pin="PRE" pad="14"/>
-<connect gate="B" pin="Q" pad="13"/>
-<connect gate="P" pin="GND" pad="10"/>
-<connect gate="P" pin="VCC" pad="20"/>
-</connects>
-<technologies>
-<technology name="AC"/>
-<technology name="ACT"/>
-<technology name="HC"/>
-<technology name="HCT"/>
-<technology name="LS"/>
-<technology name="S"/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 </devicesets>
 </library>
 </libraries>
@@ -7495,14 +7393,11 @@ Source: AVX .. aphvc.pdf</description>
 <part name="C5" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="C6" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="IC2" library="74xx-eu" deviceset="74*14" device="N" technology="HCT"/>
-<part name="IC3" library="74xx-eu" deviceset="74*74" device="N" technology="HCT" value="74HCT74N"/>
 <part name="R18" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
 <part name="R19" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
-<part name="R20" library="resistor" deviceset="R-EU_" device="0204/7" value="3k3"/>
 <part name="KEYBOARD" library="con-harting-ml" deviceset="ML10" device="L"/>
 <part name="C7" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="C8" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
-<part name="C10" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 </parts>
 <sheets>
 <sheet>
@@ -7732,7 +7627,7 @@ Source: AVX .. aphvc.pdf</description>
 <label x="78.74" y="81.28" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="ENC_DIR" class="0">
+<net name="ENC_B" class="0">
 <segment>
 <pinref part="HOST" gate="1" pin="20"/>
 <wire x1="55.88" y1="83.82" x2="48.26" y2="83.82" width="0.1524" layer="91"/>
@@ -7751,7 +7646,7 @@ Source: AVX .. aphvc.pdf</description>
 <label x="226.06" y="53.34" size="1.4224" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
-<net name="ENC_STEP" class="0">
+<net name="ENC_A" class="0">
 <segment>
 <pinref part="HOST" gate="1" pin="19"/>
 <wire x1="71.12" y1="83.82" x2="78.74" y2="83.82" width="0.1524" layer="91"/>
@@ -7786,24 +7681,20 @@ Simple RC Schmitt-Trigger debouncer</description>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="R16" gate="G$1" x="195.58" y="208.28"/>
 <instance part="R17" gate="G$1" x="195.58" y="175.26"/>
-<instance part="C5" gate="G$1" x="205.74" y="200.66"/>
+<instance part="C5" gate="G$1" x="205.74" y="223.52" rot="MR180"/>
 <instance part="C6" gate="G$1" x="205.74" y="167.64"/>
-<instance part="IC2" gate="A" x="238.76" y="182.88"/>
-<instance part="IC2" gate="B" x="238.76" y="200.66"/>
-<instance part="IC3" gate="A" x="274.32" y="193.04"/>
+<instance part="IC2" gate="A" x="220.98" y="175.26"/>
+<instance part="IC2" gate="B" x="223.52" y="208.28"/>
 <instance part="R18" gate="G$1" x="185.42" y="218.44" rot="R90"/>
 <instance part="R19" gate="G$1" x="185.42" y="165.1" rot="R90"/>
-<instance part="R20" gate="G$1" x="259.08" y="218.44" rot="R270"/>
 <instance part="KEYBOARD" gate="G$1" x="203.2" y="119.38"/>
 <instance part="IC1" gate="B" x="78.74" y="154.94"/>
 <instance part="IC1" gate="D" x="78.74" y="33.02"/>
 <instance part="IC1" gate="E" x="200.66" y="35.56"/>
 <instance part="IC1" gate="P" x="337.82" y="81.28"/>
 <instance part="IC2" gate="P" x="314.96" y="81.28"/>
-<instance part="IC3" gate="P" x="294.64" y="81.28"/>
-<instance part="C7" gate="G$1" x="284.48" y="81.28"/>
+<instance part="C7" gate="G$1" x="327.66" y="81.28"/>
 <instance part="C8" gate="G$1" x="304.8" y="81.28"/>
-<instance part="C10" gate="G$1" x="327.66" y="81.28"/>
 </instances>
 <busses>
 </busses>
@@ -7840,8 +7731,8 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="C4" gate="G$1" pin="2"/>
 </segment>
 <segment>
-<wire x1="205.74" y1="195.58" x2="205.74" y2="190.5" width="0.1524" layer="91"/>
-<label x="205.74" y="190.5" size="1.778" layer="95" rot="R270" xref="yes"/>
+<wire x1="205.74" y1="228.6" x2="205.74" y2="231.14" width="0.1524" layer="91"/>
+<label x="205.74" y="231.14" size="1.778" layer="95" rot="R90" xref="yes"/>
 <pinref part="C5" gate="G$1" pin="2"/>
 </segment>
 <segment>
@@ -7861,24 +7752,17 @@ Simple RC Schmitt-Trigger debouncer</description>
 <wire x1="337.82" y1="71.12" x2="327.66" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="327.66" y1="71.12" x2="314.96" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="314.96" y1="71.12" x2="314.96" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="IC3" gate="P" pin="GND"/>
 <wire x1="314.96" y1="71.12" x2="304.8" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="304.8" y1="71.12" x2="294.64" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="294.64" y1="71.12" x2="294.64" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="294.64" y1="71.12" x2="284.48" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="304.8" y1="71.12" x2="327.66" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="C7" gate="G$1" pin="2"/>
-<wire x1="284.48" y1="71.12" x2="281.94" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="284.48" y1="76.2" x2="284.48" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="71.12" x2="327.66" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="76.2" x2="327.66" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="C8" gate="G$1" pin="2"/>
 <wire x1="304.8" y1="71.12" x2="304.8" y2="76.2" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="2"/>
-<wire x1="327.66" y1="71.12" x2="327.66" y2="76.2" width="0.1524" layer="91"/>
-<label x="281.94" y="71.12" size="1.4224" layer="95" rot="R180" xref="yes"/>
-<junction x="284.48" y="71.12"/>
-<junction x="294.64" y="71.12"/>
+<label x="327.66" y="63.5" size="1.4224" layer="95" rot="R270" xref="yes"/>
+<junction x="327.66" y="71.12"/>
 <junction x="304.8" y="71.12"/>
 <junction x="314.96" y="71.12"/>
-<junction x="327.66" y="71.12"/>
 </segment>
 </net>
 <net name="K_1" class="0">
@@ -7989,10 +7873,8 @@ Simple RC Schmitt-Trigger debouncer</description>
 <net name="ENC1" class="0">
 <segment>
 <wire x1="200.66" y1="208.28" x2="205.74" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="205.74" y1="208.28" x2="223.52" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="205.74" y1="203.2" x2="205.74" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="223.52" y1="208.28" x2="223.52" y2="200.66" width="0.1524" layer="91"/>
-<wire x1="223.52" y1="200.66" x2="228.6" y2="200.66" width="0.1524" layer="91"/>
+<wire x1="205.74" y1="208.28" x2="213.36" y2="208.28" width="0.1524" layer="91"/>
+<wire x1="205.74" y1="220.98" x2="205.74" y2="208.28" width="0.1524" layer="91"/>
 <junction x="205.74" y="208.28"/>
 <pinref part="R16" gate="G$1" pin="2"/>
 <pinref part="C5" gate="G$1" pin="1"/>
@@ -8002,35 +7884,12 @@ Simple RC Schmitt-Trigger debouncer</description>
 <net name="ENC2" class="0">
 <segment>
 <wire x1="200.66" y1="175.26" x2="205.74" y2="175.26" width="0.1524" layer="91"/>
-<wire x1="205.74" y1="175.26" x2="223.52" y2="175.26" width="0.1524" layer="91"/>
+<wire x1="205.74" y1="175.26" x2="210.82" y2="175.26" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="170.18" x2="205.74" y2="175.26" width="0.1524" layer="91"/>
-<wire x1="223.52" y1="175.26" x2="223.52" y2="182.88" width="0.1524" layer="91"/>
-<wire x1="223.52" y1="182.88" x2="228.6" y2="182.88" width="0.1524" layer="91"/>
 <junction x="205.74" y="175.26"/>
 <pinref part="R17" gate="G$1" pin="2"/>
 <pinref part="C6" gate="G$1" pin="1"/>
 <pinref part="IC2" gate="A" pin="I"/>
-</segment>
-</net>
-<net name="N$1" class="0">
-<segment>
-<wire x1="248.92" y1="200.66" x2="254" y2="200.66" width="0.1524" layer="91"/>
-<wire x1="254" y1="200.66" x2="254" y2="195.58" width="0.1524" layer="91"/>
-<wire x1="254" y1="195.58" x2="261.62" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="IC2" gate="B" pin="O"/>
-<pinref part="IC3" gate="A" pin="D"/>
-</segment>
-</net>
-<net name="N$3" class="0">
-<segment>
-<wire x1="261.62" y1="187.96" x2="259.08" y2="187.96" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="187.96" x2="259.08" y2="198.12" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="198.12" x2="259.08" y2="213.36" width="0.1524" layer="91"/>
-<wire x1="261.62" y1="198.12" x2="259.08" y2="198.12" width="0.1524" layer="91"/>
-<junction x="259.08" y="198.12"/>
-<pinref part="IC3" gate="A" pin="CLR"/>
-<pinref part="R20" gate="G$1" pin="2"/>
-<pinref part="IC3" gate="A" pin="PRE"/>
 </segment>
 </net>
 <net name="K_2" class="0">
@@ -8132,26 +7991,6 @@ Simple RC Schmitt-Trigger debouncer</description>
 <pinref part="IC1" gate="E" pin="O"/>
 </segment>
 </net>
-<net name="ENC_STEP" class="0">
-<segment>
-<wire x1="248.92" y1="182.88" x2="254" y2="182.88" width="0.1524" layer="91"/>
-<wire x1="254" y1="182.88" x2="254" y2="190.5" width="0.1524" layer="91"/>
-<wire x1="254" y1="190.5" x2="261.62" y2="190.5" width="0.1524" layer="91"/>
-<wire x1="254" y1="182.88" x2="254" y2="180.34" width="0.1524" layer="91"/>
-<wire x1="254" y1="180.34" x2="299.72" y2="180.34" width="0.1524" layer="91"/>
-<junction x="254" y="182.88"/>
-<label x="299.72" y="180.34" size="1.778" layer="95" xref="yes"/>
-<pinref part="IC2" gate="A" pin="O"/>
-<pinref part="IC3" gate="A" pin="CLK"/>
-</segment>
-</net>
-<net name="ENC_DIR" class="0">
-<segment>
-<wire x1="299.72" y1="198.12" x2="287.02" y2="198.12" width="0.1524" layer="91"/>
-<label x="299.72" y="198.12" size="1.778" layer="95" xref="yes"/>
-<pinref part="IC3" gate="A" pin="Q"/>
-</segment>
-</net>
 <net name="+3.3V" class="1">
 <segment>
 <pinref part="KEYBOARD" gate="G$1" pin="1"/>
@@ -8159,23 +7998,14 @@ Simple RC Schmitt-Trigger debouncer</description>
 <label x="223.52" y="114.3" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
-<wire x1="185.42" y1="223.52" x2="185.42" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="185.42" y1="226.06" x2="241.3" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="241.3" y1="226.06" x2="241.3" y2="228.6" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="223.52" x2="259.08" y2="226.06" width="0.1524" layer="91"/>
-<wire x1="259.08" y1="226.06" x2="241.3" y2="226.06" width="0.1524" layer="91"/>
-<junction x="241.3" y="226.06"/>
-<label x="241.3" y="228.6" size="1.778" layer="95" rot="R90" xref="yes"/>
+<wire x1="185.42" y1="223.52" x2="185.42" y2="228.6" width="0.1524" layer="91"/>
+<label x="185.42" y="228.6" size="1.778" layer="95" rot="R90" xref="yes"/>
 <pinref part="R18" gate="G$1" pin="2"/>
-<pinref part="R20" gate="G$1" pin="1"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="P" pin="VCC"/>
-<wire x1="281.94" y1="91.44" x2="284.48" y2="91.44" width="0.1524" layer="91"/>
-<wire x1="284.48" y1="91.44" x2="294.64" y2="91.44" width="0.1524" layer="91"/>
-<wire x1="294.64" y1="91.44" x2="294.64" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="96.52" x2="327.66" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="P" pin="VCC"/>
-<wire x1="294.64" y1="91.44" x2="304.8" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="91.44" x2="304.8" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="304.8" y1="91.44" x2="314.96" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="314.96" y1="91.44" x2="314.96" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="P" pin="VCC"/>
@@ -8183,17 +8013,13 @@ Simple RC Schmitt-Trigger debouncer</description>
 <wire x1="327.66" y1="91.44" x2="337.82" y2="91.44" width="0.1524" layer="91"/>
 <wire x1="337.82" y1="91.44" x2="337.82" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="C7" gate="G$1" pin="1"/>
-<wire x1="284.48" y1="83.82" x2="284.48" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="83.82" x2="327.66" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="304.8" y1="83.82" x2="304.8" y2="91.44" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="1"/>
-<wire x1="327.66" y1="83.82" x2="327.66" y2="91.44" width="0.1524" layer="91"/>
-<label x="281.94" y="91.44" size="1.4224" layer="95" rot="R180" xref="yes"/>
-<junction x="327.66" y="91.44"/>
+<label x="327.66" y="96.52" size="1.4224" layer="95" rot="R90" xref="yes"/>
 <junction x="314.96" y="91.44"/>
 <junction x="304.8" y="91.44"/>
-<junction x="294.64" y="91.44"/>
-<junction x="284.48" y="91.44"/>
+<junction x="327.66" y="91.44"/>
 </segment>
 <segment>
 <wire x1="162.56" y1="55.88" x2="162.56" y2="50.8" width="0.1524" layer="91"/>
@@ -8224,6 +8050,20 @@ Simple RC Schmitt-Trigger debouncer</description>
 <wire x1="185.42" y1="160.02" x2="185.42" y2="154.94" width="0.1524" layer="91"/>
 <label x="185.42" y="154.94" size="1.778" layer="95" rot="R270" xref="yes"/>
 <pinref part="R19" gate="G$1" pin="1"/>
+</segment>
+</net>
+<net name="ENC_A" class="0">
+<segment>
+<label x="238.76" y="208.28" size="1.778" layer="95" xref="yes"/>
+<pinref part="IC2" gate="B" pin="O"/>
+<wire x1="238.76" y1="208.28" x2="233.68" y2="208.28" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="ENC_B" class="0">
+<segment>
+<wire x1="231.14" y1="175.26" x2="238.76" y2="175.26" width="0.1524" layer="91"/>
+<label x="238.76" y="175.26" size="1.778" layer="95" xref="yes"/>
+<pinref part="IC2" gate="A" pin="O"/>
 </segment>
 </net>
 </nets>
