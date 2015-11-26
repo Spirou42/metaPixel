@@ -5,3 +5,5 @@
 *.s##
 *.brd.lck
 *.sch.lck
+
+*.lck
