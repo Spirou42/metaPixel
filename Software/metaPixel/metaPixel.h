@@ -44,10 +44,6 @@
 
 /** Local Libraries **/
 #include "Types.h"
-#if USE_LEGACY_MENU
-#include "Menu.h"
-#include "Encoder.h"
-#endif
 
 #include "metaModule.h"
 #include "metaDisplay.h"
