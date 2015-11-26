@@ -13,6 +13,7 @@
 #include "Palettes.h"
 #include "font_Arial.h"
 #include "GraphicTests.h"
+#include "UIHelpers.h"
 
 /** TFT Configuration **/
 #define TFT_RST   2
@@ -56,27 +57,27 @@ void initializeTFT()
 	tft.setLuminance(180);
 	//tft.setFont(Arial_16);
 }
-Adafruit_GFX_Button UpButton = Adafruit_GFX_Button();
-Adafruit_GFX_Button DownButton = Adafruit_GFX_Button();
-Adafruit_GFX_Button CenterButton = Adafruit_GFX_Button();
-Adafruit_GFX_Button LeftButton = Adafruit_GFX_Button();
-Adafruit_GFX_Button RightButton = Adafruit_GFX_Button();
+metaButton UpButton = metaButton();
+metaButton DownButton = metaButton();
+metaButton CenterButton = metaButton();
+metaButton LeftButton = metaButton();
+metaButton RightButton = metaButton();
 
 void initMask()
 {
-	UpButton.initButton((ILI9341_t3*)&tft,160,45,100,50,
+	UpButton.initButton(&tft,160,45,100,50,
 	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"UP",2);
 
-	DownButton.initButton((ILI9341_t3*)&tft,160,tft.height()-45,100,50,
+	DownButton.initButton(&tft,160,tft.height()-45,100,50,
 	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Down",2);
 
-	CenterButton.initButton((ILI9341_t3*)&tft,160,tft.height()/2,100,50,
+	CenterButton.initButton(&tft,160,tft.height()/2,100,50,
 	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Center",2);
 
-	LeftButton.initButton((ILI9341_t3*)&tft,50,tft.height()/2,100,50,
+	LeftButton.initButton(&tft,50,tft.height()/2,100,50,
 	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Left",2);
 
-	RightButton.initButton((ILI9341_t3*)&tft,270,tft.height()/2,100,50,
+	RightButton.initButton(&tft,270,tft.height()/2,100,50,
 	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Right",2);
 
 }
@@ -226,7 +227,7 @@ void loop() {
 			Serial << evnt << endl;
 			if(evnt->getType() == UserEvent::EventType::EventTypeKey){
 				UserEvent::ButtonData data = evnt->getData().buttonData;
-				Adafruit_GFX_Button *someButton = NULL;
+				metaButton *someButton = NULL;
 				effectHandler k = NULL;
 				switch(data.id){
 					case UserEvent::ButtonID::UpButton: someButton = &UpButton; k = effectMoiree; break;
