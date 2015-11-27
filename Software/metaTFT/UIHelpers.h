@@ -5,7 +5,10 @@
 #ifndef __UIHELPERS_H__
 #define __UIHELPERS_H__
 #include "Arduino.h"
+#include <vector>
 #include "metaTFTDisplay.h"
+
+using namespace std;
 
 class metaButton
 {
@@ -68,6 +71,8 @@ public:
   void setOpaque(boolean f){_opaque = f;};
   boolean getOpaque(){return _opaque;};
 
+  void addSubview(metaView* ptr){_subViews.push_back(ptr);};
+
   void setNeedsRedraw(){_needsRedraw = true;};
 
 
@@ -81,6 +86,7 @@ protected:
   boolean _opaque;                           // draws background color
   boolean _drawsOutline;
   boolean _needsRedraw;
+  vector<metaView*> _subViews;
 };
 
 class metaLabel : public metaView

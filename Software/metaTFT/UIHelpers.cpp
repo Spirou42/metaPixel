@@ -4,7 +4,6 @@
 
 #include "UIHelpers.h"
 #include "metaTFTDisplay.h"
-
 void metaButton::initButton(metaTFT *gfx,
 	int16_t x, int16_t y, uint8_t w, uint8_t h,
 	uint16_t outline, uint16_t fill, uint16_t textcolor,

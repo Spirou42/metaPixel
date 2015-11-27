@@ -1,9 +1,12 @@
 #define FASTLED_INTERNAL
+#include <stack>
+#include <vector>
+
 #include "SPI.h"
 #include "ILI9341_t3.h"
 #include "Streaming.h"
-#include "metaTFTDisplay.h"
 
+#include "metaTFTDisplay.h"
 #include "Switch.h"
 #include "UserEvent.h"
 #include "Switches.h"
@@ -27,6 +30,8 @@
 
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
 UserEventQueue eventQueue = UserEventQueue();
+using namespace std;
+vector<int> blubber;
 
 CRGBPalette16 palettes[] = {
 	(CRGBPalette16)RainbowColors_p,
@@ -92,6 +97,13 @@ void setup() {
 	enableSwitches();
 	enableEncoders();
 	initMask();
+	for(int i=0;i<100;i++){
+		blubber.push_back(i);
+	}
+
+	for(int i=0;i<100;i++){
+		Serial << "Number: "<<blubber[i]<<endl;
+	}
 }
 elapsedMillis displayTimer ;
 
@@ -195,7 +207,7 @@ void adjustBrightness()
 				tft.setLuminance(tft.getLuminance()+steps);
 				//tft.fillScreen(ILI9341_BLACK);
 				tft.setCursor(20,80);
-					tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);	
+					tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);
 				tft << "Brightness: "<<tft.getLuminance();
 				Serial <<"Brightness: "<<tft.getLuminance()<<"    "<<endl;
 			}
