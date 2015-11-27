@@ -176,6 +176,7 @@ void adjustBrightness()
 	static elapsedMillis lastAdjust = elapsedMillis(0);
 	tft.fillScreen(ILI9341_BLACK);
 	tft.setCursor(20,80);
+	tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);
 	tft << "Brightness: "<<tft.getLuminance();
 
 	lastAdjust =0;
@@ -194,6 +195,7 @@ void adjustBrightness()
 				tft.setLuminance(tft.getLuminance()+steps);
 				//tft.fillScreen(ILI9341_BLACK);
 				tft.setCursor(20,80);
+					tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);	
 				tft << "Brightness: "<<tft.getLuminance();
 				Serial <<"Brightness: "<<tft.getLuminance()<<"    "<<endl;
 			}
