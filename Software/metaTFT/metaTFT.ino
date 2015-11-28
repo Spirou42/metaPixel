@@ -97,13 +97,13 @@ void setup() {
 	enableSwitches();
 	enableEncoders();
 	initMask();
-	for(int i=0;i<100;i++){
-		blubber.push_back(i);
-	}
-
-	for(int i=0;i<100;i++){
-		Serial << "Number: "<<blubber[i]<<endl;
-	}
+	// for(int i=0;i<100;i++){
+	// 	blubber.push_back(i);
+	// }
+	//
+	// for(auto i=begin(blubber);i!=end(blubber);i++){
+	// 	Serial << "Number: "<<*i<<endl;
+	// }
 }
 elapsedMillis displayTimer ;
 
@@ -124,8 +124,9 @@ void drawMask(){
 void drawText()
 {
 	const char * name = paletteNames[currentPalette];
-	int16_t x=(tft.width()/2- tft.stringWidth(name)/2), y= (tft.height()/2 - tft.stringHeight(name)/2);
-	tft.fillRect(x,y,tft.stringWidth(name),tft.stringHeight(name),ILI9341_BLACK);
+	GCSize stringSize = tft.stringSize(name);
+	int16_t x=(tft.width()/2- stringSize.w/2), y= (tft.height()/2 - stringSize.h/2);
+	tft.fillRect(x,y,stringSize.w,stringSize.h,ILI9341_BLACK);
 	tft.setCursor(x,y);
 	tft << name<<endl;
 
@@ -221,6 +222,40 @@ void resetDisplay()
 	tft.start();
 }
 
+void testViews()
+{
+	tft.fillScreen(ILI9341_BLACK);
+	metaView k = metaView();
+	Serial <<"TFT: "<<tft.width()<<", "<<tft.height()<<endl;
+	k.initView(&tft,10,10,tft.width()-20,tft.height()-20);
+	k.setBackgroundColor(ILI9341_BLUE);
+	k.setOutlineColor(ILI9341_RED);
+	k.setCornerRadius(10);
+	k.setDrawsOutline(true);
+	k.setOpaque(true);
+	String label("Hurga");
+	metaLabel l = metaLabel(&label);
+	l.initView(&tft,10,10,30,30);
+	l.setBackgroundColor(ILI9341_ORANGE);
+	l.setOutlineColor(ILI9341_GREEN);
+	l.setCornerRadius(5);
+	l.setDrawsOutline(true);
+	l.setOpaque(false);
+	l.setTextSize(3);
+	l.setTextColor(ILI9341_BLACK);
+
+	k.addSubview(&l);
+	k.redraw();
+	delay(800);
+	GCPoint t = GCPoint(2,1);
+	for(int i=0;i<100;i++){
+		l.setOrigin(l.getOrigin()+t);
+		k.redraw();
+		delay(80);
+	}
+	l.removeFromSuperview();
+}
+
 void loop() {
 	// put your main code here, to run repeatedly:
 	if(firstTime>1000 && !skipMask){
@@ -245,7 +280,7 @@ void loop() {
 				effectHandler k = NULL;
 				switch(data.id){
 					case UserEvent::ButtonID::UpButton: someButton = &UpButton; k = effectMoiree; break;
-					case UserEvent::ButtonID::CenterButton: someButton = &CenterButton;k=resetDisplay;break;
+					case UserEvent::ButtonID::CenterButton: someButton = &CenterButton;k=testViews;break;
 					case UserEvent::ButtonID::DownButton: someButton = &DownButton; k = testThings; break;
 					case UserEvent::ButtonID::LeftButton: someButton = &LeftButton; k=scrollLeft; break;
 					case UserEvent::ButtonID::RightButton: someButton = &RightButton; k=scrollRight; break;

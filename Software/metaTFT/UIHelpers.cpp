@@ -50,25 +50,126 @@ bool metaButton::contains(int16_t x, int16_t y)
 	return true;
 }
 
-void metaView::redraw()
+/*** metaView **/
+void metaView::initView(metaTFT* tft, GCRect frame)
 {
-  if(_opaque){
-    if(_cornerRadius==0){
-      _gfx->fillRect(_x,_y,_w,_h,_backgroundColor);
-    }else{
-      _gfx->fillRoundRect(_x,_y,_w,_h,_cornerRadius,_backgroundColor);
-    }
-  }
-  if(_drawsOutline){
-    if(_cornerRadius==0){
-      _gfx->drawRect(_x,_y,_w,_h,_outlineColor);
-    }else{
-      _gfx->drawRoundRect(_x,_y,_w,_h,_cornerRadius,_outlineColor);
-    }
-  }
+	_frame = frame;
+	_gc = GraphicsContext(tft);
+	_needsRedraw = true;
+	_needsLayout = true;
 }
 
+void metaView::initView(metaTFT* tft, GCPoint origin, GCSize size)
+{
+	initView(tft,GCRect(origin,size));
+}
+
+void metaView::initView(metaTFT* tft, int16_t x, int16_t y, int16_t w, int16_t h)
+{
+	initView(tft,GCRect(x,y,w,h));
+}
+
+const vector<metaView*>::iterator metaView::findSubview(metaView* subView){
+	vector<metaView*>::iterator start = _subViews.begin();
+	while(start != _subViews.end()){
+		if(*start == subView){
+			return start;
+		}
+		start ++;
+	}
+	return start;
+}
+void metaView::removeFromSuperview(){
+	if(_superView){
+		_superView->removeSubview(this);
+	}
+//	_superView = NULL;
+}
+
+void metaView::removeSubview(metaView* subView)
+{
+	const vector<metaView*>::iterator subIter = findSubview(subView);
+	if(_subViews.end() != subIter){
+		_subViews.erase(subIter);
+		subView->_superView = NULL;
+		subView->_gc._base = GCPoint(0,0);
+	}
+}
+void metaView::addSubview(metaView* ptr){
+	_subViews.push_back(ptr);
+	ptr->_superView = this;
+	ptr->_gc._base = _frame.origin+_gc._base;
+}
+
+
+boolean metaView::childNeedsLayout(){
+	vector<metaView*>::iterator iter = _subViews.begin();
+	while(iter != _subViews.end()){
+		if((*iter++)->_needsLayout){
+			return true;
+		}
+	}
+	return false;
+}
+
+void metaView::redraw(){
+	vector<metaView*>::iterator redrawIter = _subViews.begin();
+	boolean cnl = childNeedsLayout();
+	if(_needsRedraw || cnl){
+		//Serial << "Redraw: "<<_needsRedraw<<" "<<cnl<<endl;
+		_gc.setFillColor(_backgroundColor);
+		_gc.setStrokeColor(_outlineColor);
+  	if(_cornerRadius==0){
+    	_gc.fillRect(_frame);
+  	}else{
+    	_gc.fillRoundRect(_frame,_cornerRadius);
+  	}
+  	if(_drawsOutline){
+    	if(_cornerRadius==0){
+      	_gc.drawRect(_frame);
+    	}else{
+      	_gc.drawRoundRect(_frame,_cornerRadius);
+    	}
+  	}
+		while(redrawIter!=_subViews.end()){
+//			Serial << "RedrawChild: "<<endl;
+			(*redrawIter)->_needsRedraw = true;
+			(*redrawIter)->redraw();
+			(*redrawIter)->resetFlags();
+			redrawIter++;
+		}
+	}else{
+		if(_subViews.size()){
+//			Serial << "Refresh children"<<endl;
+			while(redrawIter!=_subViews.end()){
+				if((*redrawIter)->_needsRedraw){
+					(*redrawIter)->redraw();
+					(*redrawIter)->resetFlags();
+				}
+				redrawIter++;
+			}
+		}
+	}
+}
+
+/** metaLabel **/
+GCSize metaLabel::intrinsicSize(){
+	GCSize s=GCSize();
+	s = _gc.stringSize(_label->c_str());
+	return s;
+}
 void metaLabel::redraw()
 {
+	//Serial << "Label Redraw"<<endl;
   metaView::redraw();
+	if(!_allignmentMask){
+		_gc.setCursor(_frame.origin+_textPosition);
+	}else{
+		GCPoint tp=GCPoint();
+		GCSize strSize = _gc.stringSize(_label->c_str());
+
+	}
+	_gc._display->setTextColor(_textColor,_backgroundColor);
+	_gc._display->setTextSize(_textSize);
+	_gc << *_label<<endl;
 }

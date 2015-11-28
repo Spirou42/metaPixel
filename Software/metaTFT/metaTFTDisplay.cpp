@@ -105,41 +105,34 @@ metaTFT::charDimentions metaTFT::fontCharDimentions(unsigned int c)
   return k;
 }
 
-uint16_t metaTFT::stringWidth(const char * str)
-{
+GCSize metaTFT::stringSize(const char* str){
+  GCSize s=GCSize();
   if(!font){
-    return strlen(str)*6 * textsize;
+    s.w = strlen(str)*6 * textsize;
+    s.h = 7*textsize;
   }else{
     size_t i=0;
     uint32_t width = 0;
+    uint32_t height = 0;
     //uint32_t height= 0;
     while(str[i]!= 0x00){
       charDimentions k = fontCharDimentions(str[i]);
       width += k.width;
+      height=(height < k.height)?k.height:height;
       ++i;
-//      height +=k.height;
     }
-    return width;
+    s.w = width;
+    s.h = height;
   }
-  return 0;
+  return s;
+}
+
+uint16_t metaTFT::stringWidth(const char * str)
+{
+  return stringSize(str).w;
 }
 uint16_t metaTFT::stringHeight(const char * str){
-  if(!font){
-    return 7*textsize;
-  }else{
-    size_t i=0;
-//    uint32_t width = 0;
-    uint32_t height= 0;
-    while(str[i]!= 0x00){
-      charDimentions k = fontCharDimentions(str[i]);
-      ++i;
-//      width += k.width;
-      height= (height < k.height)?k.height:height;
-    }
-    return height;
-
-  }
-  return 0;
+  return stringSize(str).h;
 }
 
 
@@ -154,4 +147,14 @@ void metaTFT::drawLogo()
   this->setTextSize(2);
   *this<<endl;
   TFT_LogoEnd =0; //tft.cursor_y;
+}
+
+GraphicsContext::GraphicsContext(const GraphicsContext &gc){
+	_base = gc._base;
+	_display = gc._display;
+	_fillColor = gc._fillColor;
+	_strokeColor = gc._strokeColor;
+}
+size_t GraphicsContext::write(uint8_t c){
+  return _display->write(c);
 }
