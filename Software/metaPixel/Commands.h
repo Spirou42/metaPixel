@@ -5,7 +5,10 @@
 
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
+#include "Arduino.h"
 #include "Parameter.h"
+#include "Streaming.h"
+#include "VT100Stream.h"
 
 #define SERIAL_BUFFER_LENGTH 512
 //** reads lines from Serial

@@ -6,6 +6,7 @@
 #include "SPI.h"
 #include "ILI9341_t3.h"
 #include "Streaming.h"
+#include "FastLED.h"
 
 #include "metaTFTDisplay.h"
 #include "Switch.h"
@@ -20,6 +21,9 @@
 #include "UIHelpers.h"
 #include "font_Montserrat_Regular.h"
 
+
+
+
 /** TFT Configuration **/
 #define TFT_RST   2
 #define TFT_DC    9
@@ -29,6 +33,17 @@
 #define TFT_SCK   13
 #define TFT_LED   6
 //A14 || 6
+
+/** FastLed**/
+#define COLOR_ORDER       GRB
+#define CHIPSET           WS2812
+#define COLOR_CORRECTION  0xffeeff
+#define BRIGHTNESS        160
+
+#define LED_PIN                   4
+#define NUM_LEDS 60
+CRGB  leds[NUM_LEDS];
+
 
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
 UserEventQueue eventQueue = UserEventQueue();
@@ -64,6 +79,14 @@ void initializeTFT()
 	//tft.setLuminance(180);
 	//tft.setFont(Arial_16);
 }
+
+void initializeLEDs()
+{
+	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
+	FastLED.clear(true);
+	FastLED.setBrightness( BRIGHTNESS );
+	FastLED.show();
+}
 metaButton UpButton = metaButton();
 metaButton DownButton = metaButton();
 metaButton CenterButton = metaButton();
@@ -91,13 +114,14 @@ void initMask()
 elapsedMillis firstTime = elapsedMillis(0);
 
 void setup() {
+	initializeLEDs();
 	Serial.begin(115200);
 	Serial << "Start"<<endl;
 	pinMode(TFT_LED,OUTPUT);
 	digitalWriteFast(TFT_LED,1);
 	Serial << "Init"<<endl;
 	initializeTFT();
-	//
+
 
 	enableSwitches();
 	enableEncoders();

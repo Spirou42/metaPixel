@@ -3,11 +3,9 @@
 */
 #ifndef __PARAMETER_H__
 #define __PARAMETER_H__
+#include "Arduino.h"
 #include <Streaming.h>
-#define FASTLED_INTERNAL
-#include <FastLED.h>
-#include "VT100Stream.h"
-//#include "Arduino.h"
+
 /**
 AnimationValue creates a simple, interrupt changable 16 bit value.
 The value can be animated between two limits.
@@ -97,7 +95,9 @@ public:
 			distanceToGo = this->_value - this->_targetValue;
 			currentDirection = true;
 		}
-		pValue = scale16(distanceToGo,frac);
+		pValue = ((uint32_t)(distanceToGo) * (uint32_t)(frac))/65536;
+//		pValue = scale16(distanceToGo,frac);
+
 		if(currentDirection){
 			this->_tempValue = _value - pValue;
 		}else{
@@ -170,15 +170,15 @@ public:
 
 
 /**
-Parameter16_t is contains an AnimationValue and
+Parameter16_t enriches an AnimationValue with a simple char mnemonic and a min- and max- value.
 */
 class Parameter16_t{
 public:
-	char code;					// char, naming the parameter
-	int16_t minValue;							// min value of the parameter
-	int16_t maxValue;							// max value of the parameter
+	char code;								// char, naming the parameter
+	int16_t minValue;					// min value of the parameter
+	int16_t maxValue;					// max value of the parameter
 	AnimationValue *value;
-	Parameter16_t():code(0x00),minValue(int16_t()),maxValue(int16_t()),value(NULL){};
+	Parameter16_t():code(0x00),minValue(),maxValue(),value(NULL){};
 	Parameter16_t(char c, int16_t minVal, int16_t maxVal,AnimationValue* val): code(c),minValue(minVal),maxValue(maxVal),value(val){};
 	int16_t clampValue(int16_t v){
 		if(v<minValue){
@@ -235,8 +235,5 @@ public:
 		return obj;
 	};
 };
-
-//extern parameter_t pixelParameters[];
-//extern uint8_t numetaModuleParams;
 
 #endif
