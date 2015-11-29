@@ -1,6 +1,7 @@
 #define FASTLED_INTERNAL
 #include <stack>
 #include <vector>
+#include "Math.h"
 
 #include "SPI.h"
 #include "ILI9341_t3.h"
@@ -17,6 +18,7 @@
 #include "font_Arial.h"
 #include "GraphicTests.h"
 #include "UIHelpers.h"
+#include "font_Montserrat_Regular.h"
 
 /** TFT Configuration **/
 #define TFT_RST   2
@@ -25,7 +27,7 @@
 #define TFT_MISO  12
 #define TFT_MOSI  11
 #define TFT_SCK   13
-#define TFT_LED   A14
+#define TFT_LED   6
 //A14 || 6
 
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
@@ -59,7 +61,7 @@ void initializeTFT()
 {
 	//tft.setLuminance(10);
 	tft.start();
-	tft.setLuminance(180);
+	//tft.setLuminance(180);
 	//tft.setFont(Arial_16);
 }
 metaButton UpButton = metaButton();
@@ -84,16 +86,19 @@ void initMask()
 
 	RightButton.initButton(&tft,270,tft.height()/2,100,50,
 	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Right",2);
-
 }
 
 elapsedMillis firstTime = elapsedMillis(0);
 
 void setup() {
-	//delay(1000);
-	initializeTFT();
-	pinMode(TFT_LED,OUTPUT);
 	Serial.begin(115200);
+	Serial << "Start"<<endl;
+	pinMode(TFT_LED,OUTPUT);
+	digitalWriteFast(TFT_LED,1);
+	Serial << "Init"<<endl;
+	initializeTFT();
+	//
+
 	enableSwitches();
 	enableEncoders();
 	initMask();
@@ -110,6 +115,8 @@ elapsedMillis displayTimer ;
 
 void drawMask(){
 	tft.fillScreen(ILI9341_BLACK);
+	tft.setFontAdafruit();
+	tft.setTextSize(2);
 	UpButton.drawButton();
 	DownButton.drawButton();
 	CenterButton.drawButton();
@@ -186,31 +193,69 @@ void scrollRight()
 
 void adjustBrightness()
 {
-	static elapsedMillis lastAdjust = elapsedMillis(0);
+	int8_t uValue = log(256-tft.getLuminance())*10;
 	tft.fillScreen(ILI9341_BLACK);
-	tft.setCursor(20,80);
-	tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);
-	tft << "Brightness: "<<tft.getLuminance();
+	String labelStr = String(" Brightness ");
+	String valueStr = String("-55 ");
+	String blubberStr = String ("-UU ");
+	metaValue bla = metaValue();
+	bla.initValue(&tft,GCRect(180,tft.height()/2-25,138,80), &labelStr, &valueStr);
+	GCPoint bp = bla.getOrigin();
+	bp.x = tft.width()/2.0 - bla.getSize().w/2.0;
+	bla.setOrigin(bp);
+	bla.redraw();
+
+
+	static elapsedMillis lastAdjust = elapsedMillis(0);
+
+	// tft.setCursor(20,80);
+	// tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);
+	// tft << "Brightness: "<<tft.getLuminance();
 
 	lastAdjust =0;
 	do{
 		if(eventQueue.length()){
+			int8_t kValue = uValue;
 			UserEvent *evnt = eventQueue.popEvent();
 			if(evnt->getType()==UserEvent::EventType::EventTypeKey){
 				UserEvent::ButtonData data = evnt->getData().buttonData;
 				if(data.id==UserEvent::ButtonID::CenterButton){
 					break;
 				}
+				if(data.id == UserEvent::ButtonID::UpButton){
+					uValue = 55;
+					lastAdjust=0;
+				}
+				if(data.id == UserEvent::ButtonID::DownButton &&
+					(data.state == UserEvent::ButtonState::ButtonClick ||
+						data.state == UserEvent::ButtonState::ButtonLongClick)){
+					uValue = 0;
+					lastAdjust=0;
+				}
+
 			}else if(evnt->getType() ==UserEvent::EventType::EventTypeEncoder){
 				UserEvent::EncoderData data = evnt->getData().encoderData;
 				int8_t steps = data.absSteps;
+				uValue +=steps;
 				lastAdjust=0;
-				tft.setLuminance(tft.getLuminance()+steps);
-				//tft.fillScreen(ILI9341_BLACK);
-				tft.setCursor(20,80);
-					tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);
-				tft << "Brightness: "<<tft.getLuminance();
-				Serial <<"Brightness: "<<tft.getLuminance()<<"    "<<endl;
+			}
+			if(uValue > 55){
+				uValue = 55;
+			}else if(uValue <0){
+				uValue = 0;
+			}
+			if(uValue != kValue){
+				uint8_t k= exp(uValue/10.0);
+				k = 256 -k;
+				tft.setLuminance(k);
+				valueStr.remove(0);
+				valueStr += String(uValue);
+				bla.valueUpdate();
+				bla.redraw();
+			//  tft.setCursor(20,20);
+			//  tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);
+			//  tft << "Brightness: "<<tft.getLuminance();
+				//Serial <<"Brightness: "<<tft.getLuminance()<<"    "<<endl;
 			}
 		}
 	}while(lastAdjust<5000);
@@ -270,7 +315,7 @@ void loop() {
 	// 	Serial <<eventQueue.length()<<endl;
 	// }
 
-	if(displayTimer > 500){
+	if(displayTimer > 100){
 		while(eventQueue.length()){
 			UserEvent *evnt = eventQueue.popEvent();
 			Serial << evnt << endl;
@@ -280,7 +325,7 @@ void loop() {
 				effectHandler k = NULL;
 				switch(data.id){
 					case UserEvent::ButtonID::UpButton: someButton = &UpButton; k = effectMoiree; break;
-					case UserEvent::ButtonID::CenterButton: someButton = &CenterButton;k=testViews;break;
+					case UserEvent::ButtonID::CenterButton: someButton = &CenterButton;break;
 					case UserEvent::ButtonID::DownButton: someButton = &DownButton; k = testThings; break;
 					case UserEvent::ButtonID::LeftButton: someButton = &LeftButton; k=scrollLeft; break;
 					case UserEvent::ButtonID::RightButton: someButton = &RightButton; k=scrollRight; break;

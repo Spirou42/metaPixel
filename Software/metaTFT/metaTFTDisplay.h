@@ -25,6 +25,9 @@ typedef struct _GCSize{
   _GCSize():w(0),h(0){};
   _GCSize(const _GCSize & k){w=k.w;h=k.h;};
   _GCSize(int16_t w, int16_t h):w(w),h(h){};
+  _GCSize operator+=(_GCSize &s){w+=s.w;h+=s.h; return *this;};
+  _GCSize operator+(_GCSize &p){_GCSize r; r.w=p.w+w;r.h=p.h+h;return r;}
+  _GCSize operator+=(int t){w+=t;h+=t; return *this;};
 }GCSize;
 
 typedef struct _GCRect{
@@ -39,8 +42,8 @@ typedef struct _GCRect{
 /** my display */
 class metaTFT : public ILI9341_t3 {
 public:
-  metaTFT(uint8_t _CS, uint8_t _DC, uint8_t _RST = 255, uint8_t _MOSI=11, uint8_t _SCLK=13, uint8_t _MISO=12, uint8_t bkg_pin=A14,uint8_t rotation = 3,boolean hasAnalogBackLg=false):
-  ILI9341_t3(_CS, _DC, _RST, _MOSI, _SCLK, _MISO),_backlight_pin(bkg_pin),defaultRotation(rotation),_isBacklightAnalog(hasAnalogBackLg),_luminance(80){};
+  metaTFT(uint8_t _CS, uint8_t _DC, uint8_t _RST = 255, uint8_t _MOSI=11, uint8_t _SCLK=13, uint8_t _MISO=12, uint8_t bkg_pin=A14,uint8_t rotation = 3):
+  ILI9341_t3(_CS, _DC, _RST, _MOSI, _SCLK, _MISO),_backlight_pin(bkg_pin),defaultRotation(rotation),_luminance(80){updateBacklight();};
   void start();
 
   void setLuminance(uint8_t val){_luminance = val;updateBacklight();};
@@ -54,7 +57,6 @@ protected:
   int16_t   TFT_LogoEnd = 0;
   uint8_t _backlight_pin;
   uint8_t defaultRotation ;
-  boolean _isBacklightAnalog;
 
   uint8_t _luminance ;                    //< valaue for backlight
 
@@ -73,6 +75,7 @@ protected:
 class GraphicsContext : public Print{
   friend class metaView;
   friend class metaLabel;
+  friend class metaValue;
 public:
   GraphicsContext(metaTFT* display):_base(GCPoint(0,0)),_display(display),_fillColor(ILI9341_BLACK),_strokeColor(ILI9341_GREEN){};
   GraphicsContext(const GraphicsContext &gc);
@@ -141,7 +144,7 @@ public:
 
   void setTextSize(uint8_t s){_display->setTextSize(s);};
 
-  void setFont(ILI9341_t3_font_t* font){_display->setFont(*font);};
+  void setFont(const ILI9341_t3_font_t* font){if(font){_display->setFont(*font);}else{_display->setFontAdafruit();}};
 
   GCSize stringSize(const char* str){return _display->stringSize(str);};
 	virtual size_t write(uint8_t);

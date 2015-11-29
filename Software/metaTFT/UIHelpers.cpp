@@ -4,6 +4,7 @@
 
 #include "UIHelpers.h"
 #include "metaTFTDisplay.h"
+#include "font_Arial.h"
 void metaButton::initButton(metaTFT *gfx,
 	int16_t x, int16_t y, uint8_t w, uint8_t h,
 	uint16_t outline, uint16_t fill, uint16_t textcolor,
@@ -100,7 +101,17 @@ void metaView::addSubview(metaView* ptr){
 	ptr->_superView = this;
 	ptr->_gc._base = _frame.origin+_gc._base;
 }
-
+void metaView::setOrigin(GCPoint p){
+	_frame.origin = p;
+	vector<metaView*>::iterator iter = _subViews.begin();
+	while(iter != _subViews.end()){
+		metaView * ptr = *iter;
+		ptr->_gc._base = _frame.origin+_gc._base;
+		ptr->setNeedsLayout();
+		iter++;
+	}
+	_needsLayout=true;
+};
 
 boolean metaView::childNeedsLayout(){
 	vector<metaView*>::iterator iter = _subViews.begin();
@@ -138,6 +149,7 @@ void metaView::redraw(){
 			(*redrawIter)->resetFlags();
 			redrawIter++;
 		}
+		resetFlags();
 	}else{
 		if(_subViews.size()){
 //			Serial << "Refresh children"<<endl;
@@ -155,6 +167,8 @@ void metaView::redraw(){
 /** metaLabel **/
 GCSize metaLabel::intrinsicSize(){
 	GCSize s=GCSize();
+	_gc.setFont(_font);
+	_gc.setTextSize(_textSize);
 	s = _gc.stringSize(_label->c_str());
 	return s;
 }
@@ -162,14 +176,82 @@ void metaLabel::redraw()
 {
 	//Serial << "Label Redraw"<<endl;
   metaView::redraw();
-	if(!_allignmentMask){
-		_gc.setCursor(_frame.origin+_textPosition);
-	}else{
-		GCPoint tp=GCPoint();
-		GCSize strSize = _gc.stringSize(_label->c_str());
+	GCPoint tp=_textPosition;
 
+	if(_allignmentMask){
+		GCSize is = intrinsicSize();
+		if((_allignmentMask & HALLIGN_LEFT))
+			{
+				tp.x = 0;
+			}
+		if((_allignmentMask & HALLIGN_RIGHT))
+			{
+				tp.x = _frame.size.w - is.w;
+			}
+		if((_allignmentMask & HALLIGN_CENTER))
+			{
+				tp.x = _frame.size.w/2 - is.w/2;
+			}
+		if((_allignmentMask & VALLIGN_TOP))
+			{
+				tp.y = 0;
+			}
+		if((_allignmentMask & VALLIGN_BOTTOM))
+			{
+				tp.y = _frame.size.h - is.h;
+			}
+		if((_allignmentMask & VALLIGN_CENTER))
+			{
+				tp.y = _frame.size.h/2 - is.h/2;
+			}
 	}
-	_gc._display->setTextColor(_textColor,_backgroundColor);
-	_gc._display->setTextSize(_textSize);
+	_gc.setCursor(_frame.origin+tp);
+	_gc.setFont(_font);
+	_gc.setTextColor(_textColor,_backgroundColor);
+	_gc.setTextSize(_textSize);
 	_gc << *_label<<endl;
+}
+
+
+void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *value){
+	metaView::initView(tft, frame);
+	_label =label;
+	_value = value;
+	setBackgroundColor(ILI9341_BLACK);
+	setOutlineColor(ILI9341_YELLOW);
+	setCornerRadius(8);
+	setDrawsOutline(true);
+	_labelView.initView(_gc._display,0,0,100,100);
+	_labelView.setFont(Arial_14);
+	_labelView.setLabel(label);
+	_labelView.setBackgroundColor(_backgroundColor);
+	_labelView.setTextColor(_labelColor);
+	_labelView.sizeToFit();
+	GCSize ls = _labelView.getSize();
+	GCPoint lo =_labelView.getOrigin();
+	lo.x = 18;
+	lo.y =  -ls.h/2 +2;
+	_labelView.setOrigin(lo);
+
+	_valueView.initView(_gc._display,0,0,10,10);
+	_valueView.setFont(Arial_40);
+	_valueView.setLabel(value);
+	_valueView.setBackgroundColor(_backgroundColor);
+	_valueView.setTextColor(_valueColor);
+	_valueView.sizeToFit();
+	_valueView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
+	_valueView.setTextPosition(1,1);
+
+	GCSize s= _valueView.getSize();
+	s+=4;
+	_valueView.setSize(s);
+
+	GCPoint valOr = GCPoint();
+	valOr.x =getSize().w/2 - s.w/2;
+	valOr.y = getSize().h/2 - s.h/2;
+	_valueView.setOrigin(valOr);
+//	value->remove(0);
+
+	addSubview(&_labelView);
+	addSubview(&_valueView);
 }

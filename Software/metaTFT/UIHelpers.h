@@ -60,13 +60,13 @@ class metaView
 
 public:
   metaView(void):_gc(NULL),_frame(),_outlineColor(0),_backgroundColor(0),_cornerRadius(0),_opaque(true),
-  _drawsOutline(false),_needsRedraw(false),_needsLayout(false) {};
+  _drawsOutline(true),_needsRedraw(false),_needsLayout(false) {};
   metaView(GCRect frame):_gc(NULL),_frame(frame),_outlineColor(0),_backgroundColor(0),_opaque(true),
   _drawsOutline(false),_needsRedraw(true),_needsLayout(true){};
 
-  void initView(metaTFT* tft, GCRect frame);
-  void initView(metaTFT* tft, GCPoint origin, GCSize size);
-  void initView(metaTFT* tft, int16_t x, int16_t y, int16_t w, int16_t h);
+  virtual void initView(metaTFT* tft, GCRect frame);
+  virtual void initView(metaTFT* tft, GCPoint origin, GCSize size);
+  virtual void initView(metaTFT* tft, int16_t x, int16_t y, int16_t w, int16_t h);
 
   void setOutlineColor(uint16_t c){_outlineColor = c;_needsRedraw = true;};
   uint16_t getOutlineColor(){return _outlineColor;};
@@ -87,7 +87,7 @@ public:
   void setSize(int16_t w, int16_t h){setSize(GCSize(w,h));};
   GCSize getSize(){return _frame.size;};
 
-  void setOrigin(GCPoint p){_frame.origin = p;_needsLayout=true;};
+  void setOrigin(GCPoint p);
   void setOrigin(int16_t x, int16_t y){setOrigin(GCPoint(x,y));};
   GCPoint getOrigin(){return _frame.origin;};
 
@@ -118,31 +118,34 @@ protected:
 };
 
 /** @todo: rework */
-#define HALLIGN_LEFT    (1<<1);
-#define HALLIGN_CENTER  (1<<2);
-#define HALLIGN_RIGHT   (1<<3);
-#define VALLIGN_TOP     (1<<4);
-#define VALLIGN_CENTER  (1<<5);
-#define VALLIGN_BOTTOM  (1<<6);
+#define HALLIGN_LEFT    (1<<1)
+#define HALLIGN_CENTER  (1<<2)
+#define HALLIGN_RIGHT   (1<<3)
+#define VALLIGN_TOP     (1<<4)
+#define VALLIGN_CENTER  (1<<5)
+#define VALLIGN_BOTTOM  (1<<6)
 
 class metaLabel : public metaView
 {
 public:
-  metaLabel(void):metaView(),_textColor(ILI9341_GREEN),_allignmentMask(),_textPosition(),_textSize(3),_font(NULL),_label(NULL){};
-  metaLabel(const String* label,uint16_t textColor=ILI9341_GREEN):metaView(),_textColor(textColor),_allignmentMask(),_textPosition(),_textSize(3),_font(NULL),_label(label){};
-  void setFont(const ILI9341_t3_font_t &f){_font = &f;_needsRedraw=true;};
+  metaLabel(void):metaView(),_textColor(ILI9341_GREEN),_allignmentMask(),_textPosition(),_textSize(3),_font(NULL),_label(NULL){_drawsOutline=false; _opaque=false;};
+  metaLabel(const String* label,uint16_t textColor=ILI9341_GREEN):metaView(),_textColor(textColor),_allignmentMask(),_textPosition(),_textSize(3),_font(NULL),_label(label){_drawsOutline=false;_opaque=false;};
+  void setFont(const ILI9341_t3_font_t &f){_font = &f;_needsRedraw=true;_gc.setFont(_font);};
   const ILI9341_t3_font_t *getFont(){return _font;};
 
   void setTextColor(uint16_t tc){_textColor=tc;_needsRedraw=true;};
   uint16_t getTextColor(){return _textColor;};
 
-  void setTextSize(uint8_t s){_textSize = s;_needsRedraw=true;};
+  void setTextSize(uint8_t s){_textSize = s;_needsRedraw=true;_gc.setTextSize(s);};
   uint8_t getTextSize(){return _textSize;};
 
+  GCPoint getTextPosition(){return _textPosition;};
+  void setTextPosition(GCPoint p){_textPosition = p;};
+  void setTextPosition(int16_t x, int16_t y){setTextPosition(GCPoint(x,y));};
   void setLabel(String* label){_label = label;_needsRedraw=true;};
 
   void setAllignmentMask(uint8_t mask){_allignmentMask = mask;};
-
+  void sizeToFit(){GCSize is = intrinsicSize(); setSize(is);};
   virtual void redraw();
   virtual GCSize intrinsicSize();
 protected:
@@ -152,5 +155,26 @@ protected:
   uint8_t _textSize;          // used if font == NULL
   const ILI9341_t3_font_t *_font;   //
   const String *_label;
+};
+
+class metaValue : public metaView
+{
+public:
+  metaValue():metaView(),_label(),_value(),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN){};
+  metaValue(String* label, String* value):metaView(),_label(label),_value(value),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN){};
+  void initValue(metaTFT* tft, GCRect frame, String* label, String* value);
+  void setLabel(String* label){_label = label; setNeedsRedraw();};
+  void setValue(String* value){_value = value; setNeedsRedraw();};
+
+  void setLabelColor(uint16_t c){_labelColor = c;_outlineColor=c; _labelView.setTextColor(c);setNeedsRedraw();}
+  void setValueColor(uint16_t c){_valueColor = c;_valueView.setTextColor(c); setNeedsRedraw();};
+  void valueUpdate(){_valueView.setNeedsRedraw();};
+protected:
+  String * _label;
+  String * _value;
+  uint16_t _labelColor;
+  uint16_t _valueColor;
+  metaLabel _labelView;
+  metaLabel _valueView;
 };
 #endif

@@ -5,32 +5,23 @@
 #include "Streaming.h"
 void metaTFT::start()
 {
-  if(_isBacklightAnalog){
-    analogWrite(_backlight_pin,255);
-  }else{
-    pinMode(_backlight_pin,OUTPUT);
-    digitalWrite(_backlight_pin,_luminance);
-  }
   this->begin();
   //delay(1000);
   this->setRotation(defaultRotation);
   this->fillScreen(ILI9341_BLACK);
   this->setTextWrap(true);
+  this->updateBacklight();
   drawLogo();
 
-  if(_isBacklightAnalog){
-    analogWrite(_backlight_pin,_luminance);
-  }else{
-   pinMode(_backlight_pin,OUTPUT);
-    analogWrite(_backlight_pin,_luminance);
-  }
-  delay(2000);
+  delay(800);
 }
 
 void metaTFT::updateBacklight()
 {
-  if(_isBacklightAnalog){
-    analogWrite(_backlight_pin,_luminance);
+  if(_luminance==255){
+    Serial << "Ping"<<endl;
+    pinMode(_backlight_pin,OUTPUT);
+    digitalWriteFast(_backlight_pin,1);
   }else{
     analogWrite(_backlight_pin,_luminance);
   }
