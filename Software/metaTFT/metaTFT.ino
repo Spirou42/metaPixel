@@ -20,7 +20,7 @@
 #include "font_Arial.h"
 #include "GraphicTests.h"
 #include "UIHelpers.h"
-#include "font_Montserrat_Regular.h"
+//#include "font_Montserrat_Regular.h"
 #include "LEDEffects.h"
 #include "metaTFT.h"
 
@@ -98,16 +98,16 @@ metaValue RightButton(&rightButtonPair.label, &rightButtonPair.value);
 void initMask()
 {
 	UpButton.initValue(&tft,GCRect(160,45,100,50),Arial_16);
-	DownButton.initValue(&tft,GCRect(160,tft.height()-45,100,50),Arial_16);
+/*	DownButton.initValue(&tft,GCRect(160,tft.height()-45,100,50),Arial_16);
 	CenterButton.initValue(&tft,GCRect(160,tft.height()/2,100,50),Arial_16);
 	LeftButton.initValue(&tft,GCRect(50,tft.height()/2,100,50),Arial_16);
-	RightButton.initValue(&tft,GCRect(270,tft.height()/2,100,50),Arial_16);
+	RightButton.initValue(&tft,GCRect(270,tft.height()/2,100,50),Arial_16);*/
 	MaskView.initView(&tft,GCRect(0,0,tft.width(),tft.height()));
 	MaskView.addSubview(&UpButton);
-	MaskView.addSubview(&DownButton);
-	MaskView.addSubview(&LeftButton);
-	MaskView.addSubview(&RightButton);
-	MaskView.addSubview(&CenterButton);
+	// MaskView.addSubview(&DownButton);
+	// MaskView.addSubview(&LeftButton);
+	// MaskView.addSubview(&RightButton);
+	// MaskView.addSubview(&CenterButton);
 	MaskView.setOpaque(false);
 }
 
@@ -117,8 +117,10 @@ elapsedMillis displayTimer ;
 elapsedMillis ledTimer;
 
 void drawMask(){
+	tft.fillScreen(ILI9341_BLACK);
+	MaskView.setNeedsRedraw();
 	MaskView.redraw();
-	// tft.fillScreen(ILI9341_BLACK);
+	//
 	// tft.setFontAdafruit();
 	// tft.setTextSize(2);
 	// UpButton.drawButton();
@@ -226,6 +228,7 @@ void adjustBrightness()
 	lastAdjust =0;
 
 	do{
+		Serial <<"2"<<endl;
 		taskQueue.Run(millis());
 		if(eventQueue.length()){
 			int8_t kValue = uValue;

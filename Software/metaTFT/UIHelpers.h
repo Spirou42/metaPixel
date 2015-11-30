@@ -131,7 +131,7 @@ class metaLabel : public metaView
 public:
   metaLabel(void):metaView(),_textColor(ILI9341_GREEN),_allignmentMask(),_textPosition(),_textSize(3),_font(NULL),_label(NULL){_drawsOutline=false; _opaque=false;};
   metaLabel(const String* label,uint16_t textColor=ILI9341_GREEN):metaView(),_textColor(textColor),_allignmentMask(),_textPosition(),_textSize(3),_font(NULL),_label(label){_drawsOutline=false;_opaque=false;};
-  void setFont(const ILI9341_t3_font_t &f){_font = &f;_needsRedraw=true;_gc.setFont(_font);};
+  void setFont(const ILI9341_t3_font_t *f){_font = f;_needsRedraw=true;_gc.setFont(_font);};
   const ILI9341_t3_font_t *getFont(){return _font;};
 
   void setTextColor(uint16_t tc){_textColor=tc;_needsRedraw=true;};

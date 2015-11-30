@@ -143,7 +143,7 @@ void metaView::redraw(){
     	}
   	}
 		while(redrawIter!=_subViews.end()){
-//			Serial << "RedrawChild: "<<endl;
+			Serial << "RedrawChild: "<<endl;
 			(*redrawIter)->_needsRedraw = true;
 			(*redrawIter)->redraw();
 			(*redrawIter)->resetFlags();
@@ -207,6 +207,7 @@ void metaLabel::redraw()
 	}
 	_gc.setCursor(_frame.origin+tp);
 	_gc.setFont(_font);
+	Serial << "[Label] ("<<*_label<<") "<<(int)_font<<","<<_textColor<<","<<_backgroundColor<<endl;
 	_gc.setTextColor(_textColor,_backgroundColor);
 	_gc.setTextSize(_textSize);
 	_gc << *_label<<endl;
@@ -218,29 +219,35 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, ILI9341_t3_font_t valueFon
 	setOutlineColor(ILI9341_YELLOW);
 	setCornerRadius(8);
 	setDrawsOutline(true);
-	_labelView.initView(_gc._display,0,0,100,100);
+
+	_labelView.initView(tft,0,0,100,100);
 	_labelView.setLabel(_label);
-	_labelView.setFont(labelFont);
-	_labelView.setBackgroundColor(_backgroundColor);
+	_labelView.setFont(NULL);
+	_labelView.setTextSize(2);
+	_labelView.setBackgroundColor(ILI9341_WHITE/*_backgroundColor*/);
 	_labelView.setTextColor(_labelColor);
 	_labelView.setTextColor(ILI9341_RED);
+	_labelView.setOutlineColor(ILI9341_RED);
+	_labelView.setDrawsOutline(true);
 	_labelView.sizeToFit();
 
+	Serial << "labelColor: "<<_labelColor<<endl;
 	GCSize ls = _labelView.getSize();
 	GCPoint lo =_labelView.getOrigin();
 	lo.x = 18;
 	lo.y =  -ls.h/2 +2;
 	_labelView.setOrigin(lo);
 
-	_valueView.initView(_gc._display,0,0,10,10);
+	_valueView.initView(tft,0,0,120,120);
 	_valueView.setLabel(_value);
-	_valueView.setFont(valueFont);
-	_valueView.setBackgroundColor(_backgroundColor);
+	_valueView.setTextSize(3);
+	_valueView.setFont(NULL);
+	_valueView.setBackgroundColor(ILI9341_RED /*_backgroundColor*/);
 	_valueView.setTextColor(_valueColor);
 	_valueView.sizeToFit();
 	_valueView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
 	_valueView.setTextPosition(1,1);
-
+	_valueView.setNeedsRedraw();
 	GCSize s= _valueView.getSize();
 	s+=4;
 	_valueView.setSize(s);
@@ -249,10 +256,13 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, ILI9341_t3_font_t valueFon
 	valOr.x =getSize().w/2 - s.w/2;
 	valOr.y = getSize().h/2 - s.h/2;
 	_valueView.setOrigin(valOr);
+	Serial << "ValuePos "<<valOr.x<<", "<<valOr.y<<"("<<s.w<<","<<s.h<<")"<<endl;
 //	value->remove(0);
 
 	addSubview(&_labelView);
+	Serial << "Label Added"<<endl;
 	addSubview(&_valueView);
+	Serial << "Value Added"<<endl;
 
 }
 void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *value, ILI9341_t3_font_t valueFont, ILI9341_t3_font_t labelFont){
