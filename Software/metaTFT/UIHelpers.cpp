@@ -212,21 +212,20 @@ void metaLabel::redraw()
 	_gc << *_label<<endl;
 }
 
-
-void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *value){
+void metaValue::initValue(metaTFT* tft, GCRect frame, ILI9341_t3_font_t valueFont, ILI9341_t3_font_t labelFont){
 	metaView::initView(tft, frame);
-	_label =label;
-	_value = value;
 	setBackgroundColor(ILI9341_BLACK);
 	setOutlineColor(ILI9341_YELLOW);
 	setCornerRadius(8);
 	setDrawsOutline(true);
 	_labelView.initView(_gc._display,0,0,100,100);
-	_labelView.setFont(Arial_14);
-	_labelView.setLabel(label);
+	_labelView.setLabel(_label);
+	_labelView.setFont(labelFont);
 	_labelView.setBackgroundColor(_backgroundColor);
 	_labelView.setTextColor(_labelColor);
+	_labelView.setTextColor(ILI9341_RED);
 	_labelView.sizeToFit();
+
 	GCSize ls = _labelView.getSize();
 	GCPoint lo =_labelView.getOrigin();
 	lo.x = 18;
@@ -234,8 +233,8 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *val
 	_labelView.setOrigin(lo);
 
 	_valueView.initView(_gc._display,0,0,10,10);
-	_valueView.setFont(Arial_40);
-	_valueView.setLabel(value);
+	_valueView.setLabel(_value);
+	_valueView.setFont(valueFont);
 	_valueView.setBackgroundColor(_backgroundColor);
 	_valueView.setTextColor(_valueColor);
 	_valueView.sizeToFit();
@@ -254,4 +253,10 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *val
 
 	addSubview(&_labelView);
 	addSubview(&_valueView);
+
+}
+void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *value, ILI9341_t3_font_t valueFont, ILI9341_t3_font_t labelFont){
+	_label = label;
+	_value = value;
+	initValue(tft,frame, valueFont, labelFont);
 }

@@ -70,28 +70,45 @@ void initializeLEDs()
 	FastLED.setBrightness( LED_BRIGHTNESS );
 	FastLED.show();
 }
-metaButton UpButton = metaButton();
-metaButton DownButton = metaButton();
-metaButton CenterButton = metaButton();
-metaButton LeftButton = metaButton();
-metaButton RightButton = metaButton();
+
+typedef struct _valuePair{
+	String label,value;
+	_valuePair(String l, String v):label(l),value(v){};
+	_valuePair(const char* l, const char* v):label(l),value(v){};
+}valuePair;
+
+valuePair upButtonPair("Up", "Palettes");
+valuePair downButtonPair("Down", "Test");
+valuePair centerButtonPair("Effect","");
+valuePair leftButtonPair("Left","");
+valuePair rightButtonPair("Right","");
+
+metaView  MaskView;
+metaValue UpButton(&upButtonPair.label,&upButtonPair.value);
+metaValue DownButton(&downButtonPair.label,&downButtonPair.value);
+metaValue CenterButton(&centerButtonPair.label, &centerButtonPair.value);
+metaValue LeftButton(&leftButtonPair.label, &leftButtonPair.value);
+metaValue RightButton(&rightButtonPair.label, &rightButtonPair.value);
+// metaButton UpButton = metaButton();
+// metaButton DownButton = metaButton();
+// metaButton CenterButton = metaButton();
+// metaButton LeftButton = metaButton();
+// metaButton RightButton = metaButton();
 
 void initMask()
 {
-	UpButton.initButton(&tft,160,45,100,50,
-	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"UP",2);
-
-	DownButton.initButton(&tft,160,tft.height()-45,100,50,
-	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Down",2);
-
-	CenterButton.initButton(&tft,160,tft.height()/2,100,50,
-	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Center",2);
-
-	LeftButton.initButton(&tft,50,tft.height()/2,100,50,
-	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Left",2);
-
-	RightButton.initButton(&tft,270,tft.height()/2,100,50,
-	ILI9341_YELLOW,ILI9341_BLACK,ILI9341_GREEN,"Right",2);
+	UpButton.initValue(&tft,GCRect(160,45,100,50),Arial_16);
+	DownButton.initValue(&tft,GCRect(160,tft.height()-45,100,50),Arial_16);
+	CenterButton.initValue(&tft,GCRect(160,tft.height()/2,100,50),Arial_16);
+	LeftButton.initValue(&tft,GCRect(50,tft.height()/2,100,50),Arial_16);
+	RightButton.initValue(&tft,GCRect(270,tft.height()/2,100,50),Arial_16);
+	MaskView.initView(&tft,GCRect(0,0,tft.width(),tft.height()));
+	MaskView.addSubview(&UpButton);
+	MaskView.addSubview(&DownButton);
+	MaskView.addSubview(&LeftButton);
+	MaskView.addSubview(&RightButton);
+	MaskView.addSubview(&CenterButton);
+	MaskView.setOpaque(false);
 }
 
 elapsedMillis firstTime = elapsedMillis(0);
@@ -100,14 +117,15 @@ elapsedMillis displayTimer ;
 elapsedMillis ledTimer;
 
 void drawMask(){
-	tft.fillScreen(ILI9341_BLACK);
-	tft.setFontAdafruit();
-	tft.setTextSize(2);
-	UpButton.drawButton();
-	DownButton.drawButton();
-	CenterButton.drawButton();
-	LeftButton.drawButton();
-	RightButton.drawButton();
+	MaskView.redraw();
+	// tft.fillScreen(ILI9341_BLACK);
+	// tft.setFontAdafruit();
+	// tft.setTextSize(2);
+	// UpButton.drawButton();
+	// DownButton.drawButton();
+	// CenterButton.drawButton();
+	// LeftButton.drawButton();
+	// RightButton.drawButton();
 }
 
 #define lineDelay 0
@@ -302,7 +320,7 @@ void processMainEventLoop()
 		Serial << evnt << endl;
 		if(evnt->getType() == UserEvent::EventType::EventTypeKey){
 			UserEvent::ButtonData data = evnt->getData().buttonData;
-			metaButton *someButton = NULL;
+			metaValue *someButton = NULL;
 			effectHandler k = NULL;
 			switch(data.id){
 				case UserEvent::ButtonID::UpButton: someButton = &UpButton; k = effectMoiree; break;
@@ -312,14 +330,14 @@ void processMainEventLoop()
 				case UserEvent::ButtonID::RightButton: someButton = &RightButton; k=scrollRight; break;
 				default: break;
 			}
-			boolean someState = false;
-			switch(data.state){
-				case UserEvent::ButtonState::ButtonDown: someState = true; break;
-				case UserEvent::ButtonState::ButtonUp: someState = false; break;
-				default: break;
-			}
-			if(someButton)
-				someButton->drawButton(someState);
+			// boolean someState = false;
+			// switch(data.state){
+			// 	case UserEvent::ButtonState::ButtonDown: someState = true; break;
+			// 	case UserEvent::ButtonState::ButtonUp: someState = false; break;
+			// 	default: break;
+			// }
+			// if(someButton)
+			// 	someButton->drawButton(someState);
 
 			//		Serial << evnt<<", "<<_HEX((long unsigned int)k)<<endl;
 			if((NULL != k)){

@@ -7,6 +7,7 @@
 #include "Arduino.h"
 #include <vector>
 #include "metaTFTDisplay.h"
+#include "font_Arial.h"
 
 using namespace std;
 
@@ -162,7 +163,8 @@ class metaValue : public metaView
 public:
   metaValue():metaView(),_label(),_value(),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN){};
   metaValue(String* label, String* value):metaView(),_label(label),_value(value),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN){};
-  void initValue(metaTFT* tft, GCRect frame, String* label, String* value);
+  void initValue(metaTFT* tft, GCRect frame, String* label, String* value, ILI9341_t3_font_t valueFont=Arial_40, ILI9341_t3_font_t labelFont=Arial_14);
+  void initValue(metaTFT* tft, GCRect frame, ILI9341_t3_font_t valueFont=Arial_40, ILI9341_t3_font_t labelFont=Arial_14);
   void setLabel(String* label){_label = label; setNeedsRedraw();};
   void setValue(String* value){_value = value; setNeedsRedraw();};
 
