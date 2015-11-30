@@ -2,8 +2,8 @@
 * definition for metaPixel TFT interface
 */
 
-#ifndef __METATFT_H__
-#define __METATFT_H__
+#ifndef __METATFTDISPLAY_H__
+#define __METATFTDISPLAY_H__
 #define FASTLED_INTERNAL
 #include "SPI.h"
 #include "ILI9341_t3.h"

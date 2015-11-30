@@ -2,10 +2,15 @@
 */
 
 #include "Arduino.h"
+#include "Streaming.h"
 #include "metaTFT.h"
 #include "LEDEffects.h"
 
-SimplePatternList simplePatterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
+SimplePatternList patterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
+const char* patternNames[]={"Rainbow","Rainbow glitter", "Confetti", "Sinelon", "Juggle", "BPM"};
+uint8_t currentPatternNumber = 0; // Index number of which pattern is current
+size_t numberOfPatterns = ARRAY_SIZE(patterns);
+uint8_t gHue = 0;
 
 void rainbow()
 {
@@ -13,18 +18,18 @@ void rainbow()
   fill_rainbow( leds, NUM_LEDS, gHue, 7);
 }
 
-void rainbowWithGlitter()
-{
-  // built-in FastLED rainbow, plus some random sparkly glitter
-  rainbow();
-  addGlitter(80);
-}
-
 void addGlitter( fract8 chanceOfGlitter)
 {
   if( random8() < chanceOfGlitter) {
     leds[ random16(NUM_LEDS) ] += CRGB::White;
   }
+}
+
+void rainbowWithGlitter()
+{
+  // built-in FastLED rainbow, plus some random sparkly glitter
+  rainbow();
+  addGlitter(80);
 }
 
 void confetti()
@@ -62,4 +67,11 @@ void juggle() {
     leds[beatsin16(i+7,0,NUM_LEDS)] |= CHSV(dothue, 200, 255);
     dothue += 32;
   }
+}
+
+void nextPattern()
+{
+  // add one to the current pattern number, and wrap around at the end
+  currentPatternNumber = (currentPatternNumber + 1) % numberOfPatterns;
+  Serial << "Pattern: "<<currentPatternNumber<<" "<<patternNames[currentPatternNumber]<<endl;
 }

@@ -3,6 +3,7 @@
 
 #ifndef __METATFT_H__
 #define __METATFT_H__
+#define FASTLED_INTERNAL
 /** TFT Configuration **/
 #define TFT_RST   2
 #define TFT_DC    9
@@ -17,10 +18,11 @@
 #define COLOR_ORDER       GRB
 #define CHIPSET           WS2812
 #define COLOR_CORRECTION  0xffeeff
-#define BRIGHTNESS        160
+#define LED_BRIGHTNESS    30
 
-#define LED_PIN                   4
+#define LED_PIN           4
 #define NUM_LEDS 60
 #include <FastLED.h>
 extern CRGB leds[];
+
 #endif

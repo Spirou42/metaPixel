@@ -5,6 +5,7 @@
 
 #include "SPI.h"
 #include "ILI9341_t3.h"
+#include "Queue.h"
 #include "Streaming.h"
 #include "FastLED.h"
 
@@ -20,12 +21,10 @@
 #include "GraphicTests.h"
 #include "UIHelpers.h"
 #include "font_Montserrat_Regular.h"
+#include "LEDEffects.h"
 #include "metaTFT.h"
 
-
-
 CRGB  leds[NUM_LEDS];
-
 
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
 UserEventQueue eventQueue = UserEventQueue();
@@ -54,6 +53,8 @@ size_t numberOfPalettes = sizeof(palettes) / sizeof(CRGBPalette16);
 
 int8_t currentPalette = 0;
 //ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO);
+Queue taskQueue;
+
 void initializeTFT()
 {
 	//tft.setLuminance(10);
@@ -66,7 +67,7 @@ void initializeLEDs()
 {
 	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
 	FastLED.clear(true);
-	FastLED.setBrightness( BRIGHTNESS );
+	FastLED.setBrightness( LED_BRIGHTNESS );
 	FastLED.show();
 }
 metaButton UpButton = metaButton();
@@ -95,29 +96,8 @@ void initMask()
 
 elapsedMillis firstTime = elapsedMillis(0);
 
-void setup() {
-	initializeLEDs();
-	Serial.begin(115200);
-	Serial << "Start"<<endl;
-	pinMode(TFT_LED,OUTPUT);
-	digitalWriteFast(TFT_LED,1);
-	Serial << "Init"<<endl;
-	initializeTFT();
-
-
-	enableSwitches();
-	enableEncoders();
-	initMask();
-	// for(int i=0;i<100;i++){
-	// 	blubber.push_back(i);
-	// }
-	//
-	// for(auto i=begin(blubber);i!=end(blubber);i++){
-	// 	Serial << "Number: "<<*i<<endl;
-	// }
-}
 elapsedMillis displayTimer ;
-
+elapsedMillis ledTimer;
 
 void drawMask(){
 	tft.fillScreen(ILI9341_BLACK);
@@ -196,6 +176,16 @@ void scrollRight()
 	Serial << "Offset: "<<offset<<endl;
 }
 
+int processLEDEffects(unsigned long now,void* data)
+{
+	if(ledTimer > (1000/FRAMES_PER_SECOND)){
+		patterns[currentPatternNumber]();
+		FastLED.show();
+		EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
+		EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+	}
+	return 0;
+}
 
 void adjustBrightness()
 {
@@ -209,17 +199,16 @@ void adjustBrightness()
 	GCPoint bp = bla.getOrigin();
 	bp.x = tft.width()/2.0 - bla.getSize().w/2.0;
 	bla.setOrigin(bp);
+	valueStr.remove(0);
+	valueStr+=String()+uValue;
 	bla.redraw();
-
 
 	static elapsedMillis lastAdjust = elapsedMillis(0);
 
-	// tft.setCursor(20,80);
-	// tft.fillRect(20,80,16*6*tft.getTextSize(),7*tft.getTextSize(),ILI9341_BLUE);
-	// tft << "Brightness: "<<tft.getLuminance();
-
 	lastAdjust =0;
+
 	do{
+		taskQueue.Run(millis());
 		if(eventQueue.length()){
 			int8_t kValue = uValue;
 			UserEvent *evnt = eventQueue.popEvent();
@@ -306,6 +295,78 @@ void testViews()
 	}
 	l.removeFromSuperview();
 }
+void processMainEventLoop()
+{
+	while(eventQueue.length()){
+		UserEvent *evnt = eventQueue.popEvent();
+		Serial << evnt << endl;
+		if(evnt->getType() == UserEvent::EventType::EventTypeKey){
+			UserEvent::ButtonData data = evnt->getData().buttonData;
+			metaButton *someButton = NULL;
+			effectHandler k = NULL;
+			switch(data.id){
+				case UserEvent::ButtonID::UpButton: someButton = &UpButton; k = effectMoiree; break;
+				case UserEvent::ButtonID::CenterButton: someButton = &CenterButton;break;
+				case UserEvent::ButtonID::DownButton: someButton = &DownButton; k = testThings; break;
+				case UserEvent::ButtonID::LeftButton: someButton = &LeftButton; k=scrollLeft; break;
+				case UserEvent::ButtonID::RightButton: someButton = &RightButton; k=scrollRight; break;
+				default: break;
+			}
+			boolean someState = false;
+			switch(data.state){
+				case UserEvent::ButtonState::ButtonDown: someState = true; break;
+				case UserEvent::ButtonState::ButtonUp: someState = false; break;
+				default: break;
+			}
+			if(someButton)
+				someButton->drawButton(someState);
+
+			//		Serial << evnt<<", "<<_HEX((long unsigned int)k)<<endl;
+			if((NULL != k)){
+				switch(data.state){
+					case UserEvent::ButtonState::ButtonClick:
+					case UserEvent::ButtonState::ButtonLongClick:
+					case UserEvent::ButtonState::ButtonDoubleClick:
+					k();
+
+					drawMask();
+					k=0;
+					break;
+					default: break;
+
+				}
+			}
+		}else{
+			adjustBrightness();
+			drawMask();
+		}
+		delete evnt;
+	}
+}
+
+void setup() {
+	Serial.begin(115200);
+	Serial << "Start"<<endl;
+	Serial << "Effects: "<<numberOfPatterns<<endl;
+	initializeLEDs();
+
+	// init LED Backlight
+	pinMode(TFT_LED,OUTPUT);
+	digitalWriteFast(TFT_LED,1);
+
+	Serial << "Init TFT"<<endl;
+	initializeTFT();
+
+	// enable UI
+	enableSwitches();
+	enableEncoders();
+
+	// draw mask
+	initMask();
+
+	// initialize tasks
+	taskQueue.scheduleFunction(processLEDEffects,NULL,"EFFC",0,1000/FRAMES_PER_SECOND);
+}
 
 void loop() {
 	// put your main code here, to run repeatedly:
@@ -322,54 +383,10 @@ void loop() {
 	// }
 
 	if(displayTimer > 100){
-		while(eventQueue.length()){
-			UserEvent *evnt = eventQueue.popEvent();
-			Serial << evnt << endl;
-			if(evnt->getType() == UserEvent::EventType::EventTypeKey){
-				UserEvent::ButtonData data = evnt->getData().buttonData;
-				metaButton *someButton = NULL;
-				effectHandler k = NULL;
-				switch(data.id){
-					case UserEvent::ButtonID::UpButton: someButton = &UpButton; k = effectMoiree; break;
-					case UserEvent::ButtonID::CenterButton: someButton = &CenterButton;break;
-					case UserEvent::ButtonID::DownButton: someButton = &DownButton; k = testThings; break;
-					case UserEvent::ButtonID::LeftButton: someButton = &LeftButton; k=scrollLeft; break;
-					case UserEvent::ButtonID::RightButton: someButton = &RightButton; k=scrollRight; break;
-					default: break;
-				}
-				boolean someState = false;
-				switch(data.state){
-					case UserEvent::ButtonState::ButtonDown: someState = true; break;
-					case UserEvent::ButtonState::ButtonUp: someState = false; break;
-					default: break;
-				}
-				if(someButton)
-					someButton->drawButton(someState);
-
-				//		Serial << evnt<<", "<<_HEX((long unsigned int)k)<<endl;
-				if((NULL != k)){
-					switch(data.state){
-						case UserEvent::ButtonState::ButtonClick:
-						case UserEvent::ButtonState::ButtonLongClick:
-						case UserEvent::ButtonState::ButtonDoubleClick:
-						k();
-
-						drawMask();
-						k=0;
-						break;
-						default: break;
-
-					}
-				}
-			}else{
-				adjustBrightness();
-				drawMask();
-			}
-			delete evnt;
-		}
+		processMainEventLoop();
 		displayTimer = 0;
-		// tft.setLuminance(tft.getLuminance()+1);
-		// Serial << "Brigth "<<tft.getLuminance()<<endl;
-		// drawMask();
 	}
+	/** run all sequence tasks */
+taskQueue.Run(millis());
+
 }
