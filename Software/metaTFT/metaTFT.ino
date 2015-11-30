@@ -79,7 +79,7 @@ typedef struct _valuePair{
 
 valuePair upButtonPair("Up", "Palettes");
 valuePair downButtonPair("Down", "Test");
-valuePair centerButtonPair("Effect","");
+valuePair centerButtonPair("Center"," Effect");
 valuePair leftButtonPair("Left","");
 valuePair rightButtonPair("Right","");
 
@@ -97,17 +97,22 @@ metaValue RightButton(&rightButtonPair.label, &rightButtonPair.value);
 
 void initMask()
 {
-	UpButton.initValue(&tft,GCRect(160,45,100,50),Arial_16);
-/*	DownButton.initValue(&tft,GCRect(160,tft.height()-45,100,50),Arial_16);
-	CenterButton.initValue(&tft,GCRect(160,tft.height()/2,100,50),Arial_16);
-	LeftButton.initValue(&tft,GCRect(50,tft.height()/2,100,50),Arial_16);
-	RightButton.initValue(&tft,GCRect(270,tft.height()/2,100,50),Arial_16);*/
+	UpButton.initValue(&tft,GCRect(160,45,100,60),&Arial_16,&Arial_10);
+	DownButton.initValue(&tft,GCRect(160,tft.height()-45,100,60),&Arial_16,&Arial_10);
+	CenterButton.initValue(&tft,GCRect(160,tft.height()/2,100,60),&Arial_16,&Arial_10);
+	LeftButton.initValue(&tft,GCRect(50,tft.height()/2,100,60),&Arial_16,&Arial_10);
+	RightButton.initValue(&tft,GCRect(270,tft.height()/2,100,60),&Arial_16,&Arial_10);
 	MaskView.initView(&tft,GCRect(0,0,tft.width(),tft.height()));
 	MaskView.addSubview(&UpButton);
-	// MaskView.addSubview(&DownButton);
-	// MaskView.addSubview(&LeftButton);
-	// MaskView.addSubview(&RightButton);
-	// MaskView.addSubview(&CenterButton);
+	MaskView.addSubview(&DownButton);
+	MaskView.addSubview(&LeftButton);
+	MaskView.addSubview(&RightButton);
+	MaskView.addSubview(&CenterButton);
+	UpButton.allignInSuperView(VALLIGN_TOP | HALLIGN_CENTER);
+	CenterButton.allignInSuperView(VALLIGN_CENTER | HALLIGN_CENTER);
+	DownButton.allignInSuperView(VALLIGN_BOTTOM | HALLIGN_CENTER);
+	LeftButton.allignInSuperView(VALLIGN_CENTER | HALLIGN_LEFT);
+	RightButton.allignInSuperView(VALLIGN_CENTER | HALLIGN_RIGHT);
 	MaskView.setOpaque(false);
 }
 
@@ -215,10 +220,10 @@ void adjustBrightness()
 	String valueStr = String("-55 ");
 	String blubberStr = String ("-UU ");
 	metaValue bla = metaValue();
-	bla.initValue(&tft,GCRect(180,tft.height()/2-25,138,80), &labelStr, &valueStr);
-	GCPoint bp = bla.getOrigin();
-	bp.x = tft.width()/2.0 - bla.getSize().w/2.0;
-	bla.setOrigin(bp);
+	bla.initValue(&tft,GCRect(100,00,13,8), &labelStr, &valueStr,&Arial_60, &Arial_16);
+	bla.sizeToFit();
+	Serial << "Allign Now"<<endl;
+	bla.allignInSuperView(HALLIGN_CENTER | VALLIGN_CENTER);
 	valueStr.remove(0);
 	valueStr+=String()+uValue;
 	bla.redraw();
@@ -228,7 +233,6 @@ void adjustBrightness()
 	lastAdjust =0;
 
 	do{
-		Serial <<"2"<<endl;
 		taskQueue.Run(millis());
 		if(eventQueue.length()){
 			int8_t kValue = uValue;

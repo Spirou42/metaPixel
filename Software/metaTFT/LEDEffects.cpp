@@ -73,5 +73,5 @@ void nextPattern()
 {
   // add one to the current pattern number, and wrap around at the end
   currentPatternNumber = (currentPatternNumber + 1) % numberOfPatterns;
-  Serial << "Pattern: "<<currentPatternNumber<<" "<<patternNames[currentPatternNumber]<<endl;
+  //Serial << "Pattern: "<<currentPatternNumber<<" "<<patternNames[currentPatternNumber]<<endl;
 }

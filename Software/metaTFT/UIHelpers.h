@@ -61,9 +61,9 @@ class metaView
 
 public:
   metaView(void):_gc(NULL),_frame(),_outlineColor(0),_backgroundColor(0),_cornerRadius(0),_opaque(true),
-  _drawsOutline(true),_needsRedraw(false),_needsLayout(false) {};
+  _drawsOutline(true),_needsRedraw(false),_needsLayout(false),_superView(NULL) {};
   metaView(GCRect frame):_gc(NULL),_frame(frame),_outlineColor(0),_backgroundColor(0),_opaque(true),
-  _drawsOutline(false),_needsRedraw(true),_needsLayout(true){};
+  _drawsOutline(false),_needsRedraw(true),_needsLayout(true),_superView(NULL){};
 
   virtual void initView(metaTFT* tft, GCRect frame);
   virtual void initView(metaTFT* tft, GCPoint origin, GCSize size);
@@ -99,9 +99,15 @@ public:
   void setNeedsLayout(){_needsLayout = true;};
   virtual GCSize intrinsicSize(){return GCSize();};
   virtual void redraw();
+  void allignInSuperView(uint8_t allignmentMask);
+  void allignInRect(uint8_t allignmentMask,GCRect r);
+  boolean drawDebugRect = false;
+  GCRect debugRect;
+  void drawDebug();
 protected:
   const vector<metaView*>::iterator findSubview(metaView* subView);
   boolean childNeedsLayout();
+  void redrawChildren(boolean forceRedraw = false);
   void resetFlags(){
     _needsLayout = false;
     _needsRedraw = false;
@@ -163,14 +169,16 @@ class metaValue : public metaView
 public:
   metaValue():metaView(),_label(),_value(),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN){};
   metaValue(String* label, String* value):metaView(),_label(label),_value(value),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN){};
-  void initValue(metaTFT* tft, GCRect frame, String* label, String* value, ILI9341_t3_font_t valueFont=Arial_40, ILI9341_t3_font_t labelFont=Arial_14);
-  void initValue(metaTFT* tft, GCRect frame, ILI9341_t3_font_t valueFont=Arial_40, ILI9341_t3_font_t labelFont=Arial_14);
+  void initValue(metaTFT* tft, GCRect frame, String* label, String* value, const ILI9341_t3_font_t *valueFont=&Arial_40, const ILI9341_t3_font_t *labelFont=&Arial_14);
+  void initValue(metaTFT* tft, GCRect frame, const ILI9341_t3_font_t *valueFont=&Arial_40, const ILI9341_t3_font_t *labelFont=&Arial_14);
   void setLabel(String* label){_label = label; setNeedsRedraw();};
   void setValue(String* value){_value = value; setNeedsRedraw();};
 
   void setLabelColor(uint16_t c){_labelColor = c;_outlineColor=c; _labelView.setTextColor(c);setNeedsRedraw();}
   void setValueColor(uint16_t c){_valueColor = c;_valueView.setTextColor(c); setNeedsRedraw();};
   void valueUpdate(){_valueView.setNeedsRedraw();};
+  virtual void redraw();
+  void sizeToFit();
 protected:
   String * _label;
   String * _value;
@@ -178,5 +186,6 @@ protected:
   uint16_t _valueColor;
   metaLabel _labelView;
   metaLabel _valueView;
+  int16_t   _topBorderOffset;
 };
 #endif

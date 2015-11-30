@@ -20,6 +20,8 @@ typedef struct _GCPoint{
   _GCPoint operator+(_GCPoint &p){_GCPoint r; r.x=p.x+x;r.y=p.y+y;return r;}
 }GCPoint;
 
+
+
 typedef struct _GCSize{
   int16_t w,h;
   _GCSize():w(0),h(0){};
@@ -38,6 +40,21 @@ typedef struct _GCRect{
   _GCRect(GCPoint o, GCSize s){origin = o; size = s;};
   _GCRect(int16_t x, int16_t y, int16_t w, int16_t h):origin(x,y),size(w,h){};
 }GCRect;
+
+inline Print& operator<<(Print& obj, GCPoint &p){
+  obj << "{"<<p.x<<", "<<p.y<<"}";
+  return obj;
+};
+inline Print& operator<<(Print& obj, GCSize &p){
+  obj << "{"<<p.w<<", "<<p.h<<"}";
+  return obj;
+};
+inline Print& operator<<(Print& obj, GCRect &p){
+  obj << "{"<<p.origin<<", "<<p.size<<"}";
+  return obj;
+};
+
+
 
 /** my display */
 class metaTFT : public ILI9341_t3 {
@@ -148,8 +165,8 @@ public:
 
   GCSize stringSize(const char* str){return _display->stringSize(str);};
 	virtual size_t write(uint8_t);
-
-protected:
+  GCSize displaySize(){return GCSize(_display->width(),_display->height());};
+//protected:
   GCPoint _base;
   metaTFT* _display;
   uint16_t _fillColor;

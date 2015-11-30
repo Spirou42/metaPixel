@@ -123,6 +123,67 @@ boolean metaView::childNeedsLayout(){
 	return false;
 }
 
+void metaView::allignInRect(uint8_t allignmentMask, GCRect rect){
+	if(!allignmentMask)
+		return;
+	GCPoint origin = _frame.origin;
+	if(allignmentMask & HALLIGN_LEFT){
+		origin.x = rect.origin.x;
+	}else if(allignmentMask & HALLIGN_RIGHT){
+		origin.x = (rect.size.w - _frame.size.w) +rect.origin.x;
+	}else if(allignmentMask & HALLIGN_CENTER){
+		origin.x = (rect.size.w/2 - _frame.size.w/2) + rect.origin.x;
+	}
+
+	if(allignmentMask & VALLIGN_TOP){
+		origin.y = rect.origin.y;
+	}else if(allignmentMask & VALLIGN_BOTTOM){
+		origin.y = (rect.size.h - _frame.size.h) + rect.origin.y;
+	}else if(allignmentMask & VALLIGN_CENTER){
+		origin.y = (rect.size.h/2 - _frame.size.h/2)+rect.origin.y;
+	}
+	setOrigin(origin);
+	setNeedsLayout();
+
+}
+void metaView::allignInSuperView(uint8_t allignmentMask){
+	if((allignmentMask == 0))
+		return;
+	GCRect p;
+	if(_superView){
+		p.size = _superView->getSize();
+	}else{
+		p.size = _gc.displaySize();
+		Serial << "Allign: "<<p<<endl;
+	}
+	allignInRect(allignmentMask, p);
+}
+
+void metaView::redrawChildren(boolean forceRedraw){
+	vector<metaView*>::iterator redrawIter = _subViews.begin();
+	while(redrawIter!=_subViews.end()){
+		//Serial << "RedrawChild: "<<endl;
+		if(forceRedraw){
+			(*redrawIter)->_needsRedraw = true;
+		}
+		(*redrawIter)->redraw();
+		(*redrawIter)->resetFlags();
+		redrawIter++;
+	}
+}
+
+void metaView::drawDebug(){
+	#if 1
+	if (drawDebugRect){
+		GCRect dr = debugRect;
+		dr.origin += _frame.origin;
+		_gc.setStrokeColor(ILI9341_RED);
+		_gc.drawRect(dr);
+		Serial << "DebugDraw: "<<debugRect<<endl;
+	}
+	#endif
+}
+
 void metaView::redraw(){
 	vector<metaView*>::iterator redrawIter = _subViews.begin();
 	boolean cnl = childNeedsLayout();
@@ -142,26 +203,12 @@ void metaView::redraw(){
       	_gc.drawRoundRect(_frame,_cornerRadius);
     	}
   	}
-		while(redrawIter!=_subViews.end()){
-			Serial << "RedrawChild: "<<endl;
-			(*redrawIter)->_needsRedraw = true;
-			(*redrawIter)->redraw();
-			(*redrawIter)->resetFlags();
-			redrawIter++;
-		}
+		redrawChildren(true);
 		resetFlags();
 	}else{
-		if(_subViews.size()){
-//			Serial << "Refresh children"<<endl;
-			while(redrawIter!=_subViews.end()){
-				if((*redrawIter)->_needsRedraw){
-					(*redrawIter)->redraw();
-					(*redrawIter)->resetFlags();
-				}
-				redrawIter++;
-			}
-		}
+		redrawChildren();
 	}
+	drawDebug();
 }
 
 /** metaLabel **/
@@ -172,8 +219,8 @@ GCSize metaLabel::intrinsicSize(){
 	s = _gc.stringSize(_label->c_str());
 	return s;
 }
-void metaLabel::redraw()
-{
+
+void metaLabel::redraw(){
 	//Serial << "Label Redraw"<<endl;
   metaView::redraw();
 	GCPoint tp=_textPosition;
@@ -207,42 +254,50 @@ void metaLabel::redraw()
 	}
 	_gc.setCursor(_frame.origin+tp);
 	_gc.setFont(_font);
-	Serial << "[Label] ("<<*_label<<") "<<(int)_font<<","<<_textColor<<","<<_backgroundColor<<endl;
+	//Serial << "[Label] ("<<*_label<<") "<<(int)_font<<","<<_textColor<<","<<_backgroundColor<<endl;
 	_gc.setTextColor(_textColor,_backgroundColor);
 	_gc.setTextSize(_textSize);
 	_gc << *_label<<endl;
 }
 
-void metaValue::initValue(metaTFT* tft, GCRect frame, ILI9341_t3_font_t valueFont, ILI9341_t3_font_t labelFont){
+
+void metaValue::initValue(metaTFT* tft, GCRect frame, const ILI9341_t3_font_t *valueFont, const ILI9341_t3_font_t *labelFont){
 	metaView::initView(tft, frame);
 	setBackgroundColor(ILI9341_BLACK);
 	setOutlineColor(ILI9341_YELLOW);
 	setCornerRadius(8);
-	setDrawsOutline(true);
+	setDrawsOutline(false);
 
 	_labelView.initView(tft,0,0,100,100);
 	_labelView.setLabel(_label);
-	_labelView.setFont(NULL);
+	_labelView.setFont(labelFont);
 	_labelView.setTextSize(2);
-	_labelView.setBackgroundColor(ILI9341_WHITE/*_backgroundColor*/);
+	_labelView.setBackgroundColor(_backgroundColor);
 	_labelView.setTextColor(_labelColor);
-	_labelView.setTextColor(ILI9341_RED);
-	_labelView.setOutlineColor(ILI9341_RED);
-	_labelView.setDrawsOutline(true);
+	_labelView.setOutlineColor(_labelColor);
+	_labelView.setCornerRadius(3);
+	_labelView.setDrawsOutline(false);
+	_labelView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
 	_labelView.sizeToFit();
 
-	Serial << "labelColor: "<<_labelColor<<endl;
 	GCSize ls = _labelView.getSize();
+	ls.h = labelFont->line_space;
+	if(_labelView.getDrawsOutline()){
+		ls.h+=6;
+	}
+	ls.w+=15;
+	_labelView.setSize(ls);
+
 	GCPoint lo =_labelView.getOrigin();
 	lo.x = 18;
-	lo.y =  -ls.h/2 +2;
-	_labelView.setOrigin(lo);
+	_topBorderOffset =   ls.h/2 ;
 
+	_labelView.setOrigin(lo);
 	_valueView.initView(tft,0,0,120,120);
 	_valueView.setLabel(_value);
 	_valueView.setTextSize(3);
-	_valueView.setFont(NULL);
-	_valueView.setBackgroundColor(ILI9341_RED /*_backgroundColor*/);
+	_valueView.setFont(valueFont);
+	_valueView.setBackgroundColor(_backgroundColor);
 	_valueView.setTextColor(_valueColor);
 	_valueView.sizeToFit();
 	_valueView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
@@ -254,19 +309,75 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, ILI9341_t3_font_t valueFon
 
 	GCPoint valOr = GCPoint();
 	valOr.x =getSize().w/2 - s.w/2;
-	valOr.y = getSize().h/2 - s.h/2;
+	valOr.y = (getSize().h/2 - s.h/2)+_topBorderOffset/2;
 	_valueView.setOrigin(valOr);
-	Serial << "ValuePos "<<valOr.x<<", "<<valOr.y<<"("<<s.w<<","<<s.h<<")"<<endl;
-//	value->remove(0);
+	//Serial << "ValuePos "<<valOr.x<<", "<<valOr.y<<"("<<s.w<<","<<s.h<<")"<<endl;
+	//	value->remove(0);
 
 	addSubview(&_labelView);
-	Serial << "Label Added"<<endl;
+	//	Serial << "Label Added"<<endl;
 	addSubview(&_valueView);
-	Serial << "Value Added"<<endl;
+		//Serial << "Value Added"<<endl;
 
 }
-void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *value, ILI9341_t3_font_t valueFont, ILI9341_t3_font_t labelFont){
+
+void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *value, const ILI9341_t3_font_t *valueFont, const ILI9341_t3_font_t *labelFont){
 	_label = label;
 	_value = value;
 	initValue(tft,frame, valueFont, labelFont);
+}
+
+void metaValue::redraw(){
+	if(_needsRedraw || childNeedsLayout()){
+		GCRect p=_frame;
+		p.origin.y+=_topBorderOffset;
+		p.size.h-=_topBorderOffset;
+		//Serial << "TopBorderOffset: "<<_topBorderOffset<<endl;
+		//Serial << "Rect: "<<p<<endl;
+		//Serial<< "Base: "<<_gc._base<<endl;
+		_gc.setFillColor(_backgroundColor);
+		_gc.setStrokeColor(_outlineColor);
+		_gc.fillRoundRect(p,_cornerRadius);
+		_gc.drawRoundRect(p,_cornerRadius);
+		resetFlags();
+		redrawChildren(true);
+	}else{
+		redrawChildren();
+	}
+	drawDebug();
+}
+#define VALUE_HORIZONTAL_INSET 18
+#define VALUE_VERTICAL_INSET 10
+void metaValue::sizeToFit(){
+	GCSize valueSize = _valueView.getSize();
+	Serial << "valueSize: "<<valueSize<<endl;
+	GCSize labelSize = _labelView.getSize();
+	Serial << "labelSize: "<<labelSize;
+	GCSize ownSize = _frame.size;
+	Serial << "ownSize: "<<ownSize<<endl;
+	valueSize.h+=(2*VALUE_VERTICAL_INSET)+(2*_topBorderOffset);
+	valueSize.w+=2*VALUE_HORIZONTAL_INSET;
+	//labelSize.h+=2*VALUE_VERTICAL_INSET;
+	labelSize.w+=2*VALUE_HORIZONTAL_INSET;
+
+	ownSize.w = MAX(ownSize.w,MAX(valueSize.w,labelSize.w));
+	ownSize.h = MAX(ownSize.h,valueSize.h);
+	if(( (float)ownSize.w/(float)ownSize.h)>1.8){
+		ownSize.h = ownSize.w/1.6180;
+	}
+	Serial << "resultSize: "<<ownSize<<endl;
+	// relayout the Value<
+	GCRect p;
+	p.size = ownSize;
+	//p.size.w-=2*VALUE_HORIZONTAL_INSET;
+	p.size.h=(p.size.h - (2*_topBorderOffset))-(2*VALUE_VERTICAL_INSET);
+	p.size.w=p.size.w - (2*VALUE_HORIZONTAL_INSET);
+	p.origin.x = VALUE_HORIZONTAL_INSET;
+	p.origin.y = 2*_topBorderOffset+VALUE_VERTICAL_INSET-(_valueView.getSize().h/10);
+	Serial << "layoutRect: "<<p<<endl;
+	this->debugRect =p;
+	//this->drawDebugRect = true;
+	_valueView.allignInRect(HALLIGN_CENTER | VALLIGN_CENTER,p);
+
+	setSize(ownSize);
 }
