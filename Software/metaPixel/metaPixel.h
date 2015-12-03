@@ -40,7 +40,7 @@
 #define TFT_MISO  12
 #define TFT_MOSI  11
 #define TFT_SCK   13
-#define TFT_LED   A14
+#define TFT_LED   6
 
 /** Local Libraries **/
 #include "Types.h"

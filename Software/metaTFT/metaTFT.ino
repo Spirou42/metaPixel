@@ -300,10 +300,13 @@ void adjustBrightness()
 			UserEvent *evnt = eventQueue.popEvent();
 			if(evnt->getType()==UserEvent::EventType::EventTypeKey){
 				UserEvent::ButtonData data = evnt->getData().buttonData;
-				if(data.id==UserEvent::ButtonID::CenterButton){
+				if(data.id==UserEvent::ButtonID::CenterButton &&
+					data.state == UserEvent::ButtonState::ButtonLongClick){
 					break;
 				}
-				if(data.id == UserEvent::ButtonID::UpButton){
+				if(data.id == UserEvent::ButtonID::UpButton &&
+					(data.state == UserEvent::ButtonState::ButtonClick ||
+						data.state == UserEvent::ButtonState::ButtonLongClick)){
 					uValue = 55;
 					lastAdjust=0;
 				}
@@ -401,7 +404,8 @@ void processListEvents(metaList *list)
 			if((selIndex == 0) && (evnt->getType() == UserEvent::EventType::EventTypeKey)){
 				Serial << "IDX=0 and type=key"<<endl;;
 				if((evnt->getButtonID() == UserEvent::ButtonID::CenterButton) &&
-				(evnt->getButtonState() == UserEvent::ButtonState::ButtonClick)){
+				((evnt->getButtonState() == UserEvent::ButtonState::ButtonClick)
+				|| (evnt->getButtonState() == UserEvent::ButtonState::ButtonLongClick))){
 					adjustBrightness();
 					list->setNeedsRedraw();
 					SecondView.setNeedsRedraw();
