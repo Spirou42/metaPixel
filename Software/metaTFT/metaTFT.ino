@@ -89,12 +89,14 @@ typedef struct _valuePair{
 const String proLabel("Program");
 const String palLabel("Palettes");
 const String testLabel("Test");
+const String Brightness("Brightness");
 
 metaList  MaskView;
 metaView	SecondView;
 metaLabel ProgramLabel(&proLabel);
 metaLabel PaletteLabel(&palLabel);
 metaLabel TestLabel(&testLabel);
+metaLabel bLabel(&Brightness);
 
 // metaValue UpButton(&upButtonPair.label,&upButtonPair.value);
 // metaValue DownButton(&downButtonPair.label,&downButtonPair.value);
@@ -112,7 +114,6 @@ void initMask()
 	GCSize insets(2,2);
 	ProgramLabel.setInsets(insets);
 	ProgramLabel.setOutlineColor(ILI9341_PURPLE);
-
 	ProgramLabel.initView(&tft,GCRect());
 	ProgramLabel.setFont(&Arial_14);
 	ProgramLabel.setTextSize(1);
@@ -120,7 +121,6 @@ void initMask()
 
 	PaletteLabel.setInsets(insets);
 	PaletteLabel.setOutlineColor(ILI9341_PURPLE);
-
 	PaletteLabel.initView(&tft,GCRect());
 	PaletteLabel.setFont(&Arial_14);
 	PaletteLabel.setTextSize(2);
@@ -128,19 +128,28 @@ void initMask()
 
 	TestLabel.setInsets(insets);
 	TestLabel.setOutlineColor(ILI9341_PURPLE);
-
 	TestLabel.initView(&tft,GCRect());
 	TestLabel.setFont(&Arial_14);
 	TestLabel.setTextSize(3);
 	TestLabel.sizeToFit();
 
+	bLabel.setInsets(insets);
+	bLabel.setOutlineColor(ILI9341_PURPLE);
+	bLabel.initView(&tft,GCRect());
+	bLabel.setFont(&Arial_14);
+	bLabel.setTextSize(3);
+	bLabel.sizeToFit();
+
 	MaskView.initView(&tft,GCRect(10,20,tft.width()/3,tft.height()-40));
+	MaskView.setBorderInset(GCSize(5,5));
 
-
-	MaskView.setRespondsToEvents(UserEvent::EventMask::EncoderEvents | UserEvent::EventMask::ButtonEvents);
+	MaskView.setRespondsToEvents(UserEvent::EventMask::EncoderEvents | UserEvent::EventMask::ButtonEvent_Down |
+	UserEvent::EventMask::ButtonEvent_Up);
 	MaskView.setDrawsOutline(true);
 	MaskView.setCornerRadius(3);
 	MaskView.setOutlineColor(ILI9341_RED);
+
+	MaskView.addSubview(&bLabel);
 	MaskView.addSubview(&ProgramLabel);
 	MaskView.addSubview(&PaletteLabel);
 	MaskView.addSubview(&TestLabel);
@@ -379,11 +388,27 @@ void processListEvents(metaList *list)
 		UserEvent *evnt = eventQueue.popEvent();
 		uint16_t l = evnt->eventMask();
 		uint16_t k = list->respondsToEvents();
+		int16_t selIndex =list->selectedIndex();
 		if((l&k) != 0){
-			int16_t selIndex = list->processEvent(evnt);
+			selIndex = list->processEvent(evnt);
 			Serial << "SelectedIndex = "<<selIndex<<endl;
 			if( selIndex >=0 ){
 				list->redraw();
+			}
+		}else{
+
+			Serial << "List will not process : "<<evnt<<endl;
+			if((selIndex == 0) && (evnt->getType() == UserEvent::EventType::EventTypeKey)){
+				Serial << "IDX=0 and type=key"<<endl;;
+				if((evnt->getButtonID() == UserEvent::ButtonID::CenterButton) &&
+				(evnt->getButtonState() == UserEvent::ButtonState::ButtonClick)){
+					adjustBrightness();
+					list->setNeedsRedraw();
+					SecondView.setNeedsRedraw();
+					drawMask();
+				}
+			}else{
+				Serial << "bla";
 			}
 		}
 		delete evnt;

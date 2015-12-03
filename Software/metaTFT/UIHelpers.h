@@ -47,7 +47,7 @@ protected:
 
 /** baseclass for UI elements */
 
-class metaView
+class metaView : public GraphicsContext
 {
 public:
   typedef enum _states{
@@ -55,15 +55,20 @@ public:
     On,
     Mixed
   }State;
-  metaView(void):_gc(NULL),_frame(),_outlineColor(0),_backgroundColor(0),_cornerRadius(0),_opaque(true),
+  metaView(void):_frame(),_outlineColor(0),_backgroundColor(0),_cornerRadius(0),_opaque(true),
   _drawsOutline(true),_needsRedraw(false),_needsLayout(false),_superView(NULL),_visualizeState(false),_state(Off) {}
-  metaView(GCRect frame):_gc(NULL),_frame(frame),_outlineColor(0),_backgroundColor(0),_opaque(true),
+  metaView(GCRect frame):_frame(frame),_outlineColor(0),_backgroundColor(0),_opaque(true),
   _drawsOutline(false),_needsRedraw(true),_needsLayout(true),_superView(NULL),_visualizeState(false),_state(Off){}
 
   virtual void initView(metaTFT* tft, GCRect frame);
   virtual void initView(metaTFT* tft, GCPoint origin, GCSize size);
   virtual void initView(metaTFT* tft, int16_t x, int16_t y, int16_t w, int16_t h);
-
+  virtual GCPoint getBase();
+  GCRect getBounds(){
+    GCRect k;
+    k.size = getSize();
+    return k;
+  }
   void setOutlineColor(uint16_t c){
     _outlineColor = c;_needsRedraw = true;}
 
@@ -121,6 +126,8 @@ public:
   virtual void addSubview(metaView* ptr);
   void removeSubview(metaView* subView);
   void removeFromSuperview();
+  metaView * getSuperview(){
+    return _superView;}
   void setNeedsRedraw(){
     _needsRedraw = true;};
   void setNeedsLayout(){
@@ -146,7 +153,7 @@ protected:
     _needsLayout = false;
     _needsRedraw = false;
   };
-  GraphicsContext _gc;
+//  GraphicsContext _gc;
   GCRect _frame;
 	uint16_t _outlineColor, _backgroundColor;  // colorization
   uint8_t _cornerRadius;                     // cornerradius
@@ -173,7 +180,7 @@ public:
     _drawsOutline=false;_opaque=false;}
 
   void setFont(const ILI9341_t3_font_t *f){
-    _font = f;_needsRedraw=true;_gc.setFont(_font);}
+    _font = f;_needsRedraw=true;GraphicsContext::setFont(_font);}
 
   const ILI9341_t3_font_t *getFont(){
     return _font;}
@@ -185,7 +192,7 @@ public:
     return _textColor;};
 
   void setTextSize(uint8_t s){
-    _textSize = s;_needsRedraw=true;_gc.setTextSize(s);};
+    _textSize = s;_needsRedraw=true;GraphicsContext::setTextSize(s);};
 
   uint8_t getTextSize(){
     return _textSize;};
@@ -347,6 +354,10 @@ public:
   metaList():metaView(),_cellInset(2,2),_borderInset(10,10),_lastSelectedView(NULL),_maxElementSize(){};
 
   void initResponder(UserEventQueue* q);
+  void setBorderInset(GCSize i){_borderInset = i;setNeedsLayout();}
+  GCSize getBorderInset(){return _borderInset;}
+
+
   void layoutList();
   virtual void addSubview(metaView* view);
   virtual void redraw();
@@ -354,6 +365,7 @@ public:
   void selectIndex(int8_t);
   virtual int16_t processEvent(UserEvent* k);
   void forgetSelection(){_lastSelectedView = NULL;}
+  metaResponder* addEntry(const String *k);
 protected:
   void drawConnectionFor(metaView* view, uint16_t lineColor);
   metaView* selectedSubview();

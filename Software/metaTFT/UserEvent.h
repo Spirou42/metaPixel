@@ -20,6 +20,7 @@ public:
   } EventType;
   /** and we got 5 Buttons */
   typedef enum _ButtonID{
+    NoButton = -1,
     Button0 = 0,
     LeftButton    = Button0,
     Button1,
@@ -34,6 +35,7 @@ public:
   }ButtonID;
 
   typedef enum _ButtonState{
+    NoState = -1,
     ButtonDown,
     ButtonUp,
     ButtonClick,
@@ -42,11 +44,13 @@ public:
   }ButtonState;
 
   typedef enum _EncoderID{
+    NoEncoder = -1,
     Encoder0 = 0,
     EncoderMax
   }EncoderID;
 
   typedef enum _EncoderDirection{
+    NoDirection = -1,
     EncoderRight,
     EncoderUp     = EncoderRight,
     EncoderLeft,
@@ -138,6 +142,7 @@ public:
 
   friend Print& operator<<(Print& out, _ButtonState state){
     switch(state){
+      case NoState:           out<<"None";  break;
       case ButtonDown:        out<<"Down";  break;
       case ButtonUp:          out<<"Up";    break;
       case ButtonClick:       out<<"Click"; break;
@@ -159,19 +164,23 @@ public:
 
   friend Print& operator<<(Print& out, _EncoderDirection dir){
       switch(dir){
+        case NoDirection:   out<<"Undefined"; break;
         case EncoderLeft:   out <<"Left";   break;
         case EncoderRight:  out <<"Right";  break;
       }
     return out;}
   uint16_t eventMask();
+
+  ButtonID getButtonID();
+  ButtonState getButtonState();
+
+
 protected:
   UserEvent *nextEvent;
   EventType _type;
   EventData _data;
   unsigned long timeStamp;
 };
-
-
 
 class UserEventQueue
 {

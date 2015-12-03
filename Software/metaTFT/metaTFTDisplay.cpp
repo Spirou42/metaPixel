@@ -3,6 +3,7 @@
 */
 #include "metaTFTDisplay.h"
 #include "Streaming.h"
+//#include "UIHelpers.h"  ///<< i need the metaView definition
 void metaTFT::start()
 {
   this->begin();
@@ -146,6 +147,11 @@ GraphicsContext::GraphicsContext(const GraphicsContext &gc){
 	_fillColor = gc._fillColor;
 	_strokeColor = gc._strokeColor;
 }
+
 size_t GraphicsContext::write(uint8_t c){
   return _display->write(c);
+}
+
+void GraphicsContext::initGraphicsContext(metaTFT* display){
+  _display = display;
 }

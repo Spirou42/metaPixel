@@ -15,10 +15,20 @@
 /*** metaView **/
 void metaView::initView(metaTFT* tft, GCRect frame)
 {
+	initGraphicsContext(tft);
 	_frame = frame;
-	_gc = GraphicsContext(tft);
 	_needsRedraw = true;
 	_needsLayout = true;
+}
+GCPoint metaView::getBase(){
+  GCPoint result;
+  result += getOrigin();
+  metaView *superView = getSuperview();
+  while(superView){
+    result += superView->getOrigin();
+    superView = superView->getSuperview();
+  }
+  return result;
 }
 
 void metaView::initView(metaTFT* tft, GCPoint origin, GCSize size)
@@ -54,23 +64,23 @@ void metaView::removeSubview(metaView* subView)
 	if(_subViews.end() != subIter){
 		_subViews.erase(subIter);
 		subView->_superView = NULL;
-		subView->_gc._base = GCPoint(0,0);
+//		subView->_gc._base = GCPoint(0,0);
 	}
 }
 void metaView::addSubview(metaView* ptr){
 	_subViews.push_back(ptr);
 	ptr->_superView = this;
-	ptr->_gc._base = _frame.origin+_gc._base;
+//	ptr->_gc._base = _frame.origin+_gc._base;
 }
 void metaView::setOrigin(GCPoint p){
 	_frame.origin = p;
-	vector<metaView*>::iterator iter = _subViews.begin();
-	while(iter != _subViews.end()){
-		metaView * ptr = *iter;
-		ptr->_gc._base = _frame.origin+_gc._base;
-		ptr->setNeedsLayout();
-		iter++;
-	}
+	// vector<metaView*>::iterator iter = _subViews.begin();
+	// while(iter != _subViews.end()){
+	// 	metaView * ptr = *iter;
+	// 	ptr->_gc._base = _frame.origin+_gc._base;
+	// 	ptr->setNeedsLayout();
+	// 	iter++;
+	// }
 	_needsLayout=true;
 };
 
@@ -114,7 +124,7 @@ void metaView::allignInSuperView(uint8_t allignmentMask){
 	if(_superView){
 		p.size = _superView->getSize();
 	}else{
-		p.size = _gc.displaySize();
+		p.size = GraphicsContext::displaySize();
 		Serial << "Allign: "<<p<<endl;
 	}
 	allignInRect(allignmentMask, p);
@@ -137,9 +147,9 @@ void metaView::drawDebug(){
 	#if DEBUG_LAYOUT
 	if (drawDebugRect){
 		GCRect dr = debugRect;
-		dr.origin += _frame.origin;
-		_gc.setStrokeColor(DEBUG_LAYOUT_LINECOLOR);
-		_gc.drawRect(dr);
+//		dr.origin += _frame.origin;
+		GraphicsContext::setStrokeColor(DEBUG_LAYOUT_LINECOLOR);
+		GraphicsContext::drawRect(dr);
 		Serial << "DebugDraw: "<<debugRect<<endl;
 	}
 	#endif
@@ -149,19 +159,19 @@ void metaView::redraw(){
 	vector<metaView*>::iterator redrawIter = _subViews.begin();
 	bool cnl = childNeedsLayout();
 	if(_needsRedraw || cnl){
-		//Serial << "Redraw: "<<_needsRedraw<<" "<<cnl<<endl;
-		_gc.setFillColor(_backgroundColor);
-		_gc.setStrokeColor(_outlineColor);
+		Serial << "Redraw: "<<_needsRedraw<<" "<<cnl<<endl;
+		GraphicsContext::setFillColor(_backgroundColor);
+		GraphicsContext::setStrokeColor(_outlineColor);
   	if(_cornerRadius==0){
-    	_gc.fillRect(_frame);
+    	GraphicsContext::fillRect(getBounds());
   	}else{
-    	_gc.fillRoundRect(_frame,_cornerRadius);
+    	GraphicsContext::fillRoundRect(getBounds(),_cornerRadius);
   	}
   	if(_drawsOutline){
     	if(_cornerRadius==0){
-      	_gc.drawRect(_frame);
+      	GraphicsContext::drawRect(getBounds());
     	}else{
-      	_gc.drawRoundRect(_frame,_cornerRadius);
+      	GraphicsContext::drawRoundRect(getBounds(),_cornerRadius);
     	}
   	}
 		redrawChildren(true);
@@ -177,9 +187,9 @@ void metaView::redraw(){
 /** metaLabel **/
 GCSize metaLabel::intrinsicSize(){
 	GCSize s=GCSize();
-	_gc.setFont(_font);
-	_gc.setTextSize(_textSize);
-	s = _gc.stringSize(_label->c_str());
+	GraphicsContext::setFont(_font);
+	GraphicsContext::setTextSize(_textSize);
+	s = GraphicsContext::stringSize(_label->c_str());
 	if(_visualizeState){
 		s.w +=12;
 	}
@@ -234,19 +244,19 @@ void metaLabel::redraw(){
 			case Mixed: bgColor = ILI9341_NAVY; break;
 		}
 		if(_state != Off){
-			_gc.setFillColor(bgColor);
+			GraphicsContext::setFillColor(bgColor);
 			GCRect indicator;
-			indicator.origin = _frame.origin;
+			//indicator.origin = _frame.origin;
 			indicator.size = GCSize(10,_frame.size.h);
-			_gc.fillRect(indicator);
+			GraphicsContext::fillRect(indicator);
 		}
 	}
-	_gc.setCursor(_frame.origin+tp);
-	_gc.setFont(_font);
+	GraphicsContext::setCursor(tp);
+	GraphicsContext::setFont(_font);
 	//Serial << "[Label] ("<<*_label<<") "<<(int)_font<<","<<_textColor<<","<<_backgroundColor<<endl;
-	_gc.setTextColor(_textColor,_backgroundColor);
-	_gc.setTextSize(_textSize);
-	_gc << *_label<<endl;
+	GraphicsContext::setTextColor(_textColor,_backgroundColor);
+	GraphicsContext::setTextSize(_textSize);
+	(*this) << *_label<<endl;
 }
 
 
@@ -328,21 +338,21 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *val
 
 void metaValue::redraw(){
 	if(_needsRedraw || childNeedsLayout()){
-		GCRect p=_frame;
+		GCRect p=getBounds();
 		p.origin.y+=_frameInset;
 		p.size.h-=_frameInset;
 		//Serial << "TopBorderOffset: "<<_frameInset<<endl;
 		//Serial << "Rect: "<<p<<endl;
 		//Serial<< "Base: "<<_gc._base<<endl;
 		#if DEBUG_LAYOUT_VALUEBACKGROUND
-		_gc.setFillColor(DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER);
-		_gc.fillRoundRect(_frame,_cornerRadius);
+		GraphicsContext::setFillColor(DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER);
+		GraphicsContext::fillRoundRect(getBounds(),_cornerRadius);
 		#endif
-		_gc.setFillColor(_backgroundColor);
-		_gc.setStrokeColor(_outlineColor);
+		GraphicsContext::setFillColor(_backgroundColor);
+		GraphicsContext::setStrokeColor(_outlineColor);
 
-		_gc.fillRoundRect(p,_cornerRadius);
-		_gc.drawRoundRect(p,_cornerRadius);
+		GraphicsContext::fillRoundRect(p,_cornerRadius);
+		GraphicsContext::drawRoundRect(p,_cornerRadius);
 		resetFlags();
 		redrawChildren(true);
 	}else{
@@ -437,21 +447,21 @@ void metaList::drawConnectionFor(metaView* v, uint16_t lineColor)
 {
 	if(v){
 		GCPoint vo = v->getOrigin();
-		vo+=_frame.origin;
+//		vo+=_frame.origin;
 		GCSize  vs = v->getSize();
 		// Serial << "DrawConnection: "<<vo<<", "<<vs<<endl;
 		vo.x+=vs.w;
 		vo.y+=vs.h/2-1;
 		// Serial << "Start: "<<vo<<endl;
 		// Serial << "Base: "<<_gc._base<<endl;
-		_gc.setStrokeColor(lineColor);
-		_gc.drawLine(vo,GCPoint(_frame.size.w+_frame.origin.x-1,vo.y));
+		GraphicsContext::setStrokeColor(lineColor);
+		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-1,vo.y));
 		vo.y++;
-		_gc.setStrokeColor(_backgroundColor);
-		_gc.drawLine(vo,GCPoint(_frame.size.w+_frame.origin.x-1,vo.y));
+		GraphicsContext::setStrokeColor(_backgroundColor);
+		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-1,vo.y));
 		vo.y++;
-		_gc.setStrokeColor(lineColor);
-		_gc.drawLine(vo,GCPoint(_frame.size.w+_frame.origin.x-1,vo.y));
+		GraphicsContext::setStrokeColor(lineColor);
+		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-1,vo.y));
 	}
 }
 
@@ -527,7 +537,7 @@ int16_t metaList::processEvent(UserEvent* k){
 				(*subIter)->setDrawsOutline(false);
 				(*k)->setState(metaView::State::On);
 				(*k)->setDrawsOutline(true);
-				setNeedsRedraw();
+				//setNeedsRedraw();
 			}
 		}
 	}else if(k->getType() == UserEvent::EventType::EventTypeEncoder){
@@ -546,7 +556,7 @@ int16_t metaList::processEvent(UserEvent* k){
 			(*subIter)->setDrawsOutline(false);
 			(*k)->setState(metaView::State::On);
 			(*k)->setDrawsOutline(true);
-			setNeedsRedraw();
+			//setNeedsRedraw();
 		}
 	}
 	return selectedIndex();

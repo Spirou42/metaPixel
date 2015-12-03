@@ -18,6 +18,7 @@ uint16_t UserEvent::eventMask()
         case ButtonID::CenterButton: result |= EventMask::ButtonEvent_Center; break;
         case ButtonID::UpButton: result |= EventMask::ButtonEvent_Up; break;
         case ButtonID::DownButton: result |= EventMask::ButtonEvent_Down; break;
+        default: break;
       }
       switch(bData.state){
         case ButtonState::ButtonDown: result |= EventMask::ButtonState_Down; break;
@@ -25,12 +26,26 @@ uint16_t UserEvent::eventMask()
         case ButtonState::ButtonClick: result |= EventMask::ButtonState_Click; break;
         case ButtonState::ButtonLongClick: result |= EventMask::ButtonState_LongClick; break;
         case ButtonState::ButtonDoubleClick: result |= EventMask::ButtonState_DoubleClick; break;
+        default: break;
       }
     } break;
   }
   return result;
 }
 
+UserEvent::ButtonID UserEvent::getButtonID(){
+  if(_type != EventTypeKey){
+    return NoButton;
+  }
+  return _data.buttonData.id;
+}
+
+UserEvent::ButtonState UserEvent::getButtonState(){
+  if(_type !=EventTypeKey){
+    return NoState;
+  }
+  return _data.buttonData.state;
+}
 
 void UserEventQueue::addEvent(UserEvent* evnt)
 {
