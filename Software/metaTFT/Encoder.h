@@ -63,7 +63,7 @@ protected:
   uint8_t               _idiv;
   size_t                _idx;
   unsigned long         _lastTick;            ///< the wallclock at the last registered tick
-  UserEvent::EventData encoderData(boolean direction,int8_t step,float vel);
+  UserEvent::EventData encoderData(bool direction,int8_t step,float vel);
   void initialState(){
     uint8_t s = 0;
     if(digitalReadFast(_aPin))

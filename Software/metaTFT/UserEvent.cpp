@@ -3,6 +3,35 @@
 
 #include "UserEvent.h"
 
+uint16_t UserEvent::eventMask()
+{
+  uint16_t result = 0;
+  switch(_type){
+    case EventType::EventTypeEncoder: result |=EventMask::EncoderEvents; break;
+    case EventType::EventTypeKey: {
+      result |= EventMask::ButtonEvents;
+      ButtonData bData = getData().buttonData;
+      switch(bData.id){
+        case ButtonID::LeftButton: result |= EventMask::ButtonEvent_Left; break;
+        case ButtonID::RightButton: result |= EventMask::ButtonEvent_Right; break;
+        case ButtonID::ButtonMax:
+        case ButtonID::CenterButton: result |= EventMask::ButtonEvent_Center; break;
+        case ButtonID::UpButton: result |= EventMask::ButtonEvent_Up; break;
+        case ButtonID::DownButton: result |= EventMask::ButtonEvent_Down; break;
+      }
+      switch(bData.state){
+        case ButtonState::ButtonDown: result |= EventMask::ButtonState_Down; break;
+        case ButtonState::ButtonUp: result |= EventMask::ButtonState_Up; break;
+        case ButtonState::ButtonClick: result |= EventMask::ButtonState_Click; break;
+        case ButtonState::ButtonLongClick: result |= EventMask::ButtonState_LongClick; break;
+        case ButtonState::ButtonDoubleClick: result |= EventMask::ButtonState_DoubleClick; break;
+      }
+    } break;
+  }
+  return result;
+}
+
+
 void UserEventQueue::addEvent(UserEvent* evnt)
 {
   #if DEBUG_USEREVENT
@@ -10,7 +39,7 @@ void UserEventQueue::addEvent(UserEvent* evnt)
   #endif
   __disable_irq();
   #if DEBUG_USEREVENT
-  boolean consolidated = false;
+  bool consolidated = false;
   #endif
   if(!_queueStart){
     evnt->nextEvent=NULL;
@@ -41,7 +70,7 @@ void UserEventQueue::addEvent(UserEvent* evnt)
   __enable_irq();
 }
 
-boolean UserEventQueue::consolidateEvent(UserEvent* evnt)
+bool UserEventQueue::consolidateEvent(UserEvent* evnt)
 {
   if( (evnt->getType() == _queueEnd->getType()) &&
       (evnt->getType() == UserEvent::EventType::EventTypeEncoder)){

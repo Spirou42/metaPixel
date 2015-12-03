@@ -18,6 +18,9 @@
 #include "FastLED.h"
 #include "Palettes.h"
 #include "font_Arial.h"
+#include "font_ArialBold.h"
+#include "font_GillSans.h"
+#include "font_GillSans_SemiBold.h"
 #include "GraphicTests.h"
 #include "UIHelpers.h"
 //#include "font_Montserrat_Regular.h"
@@ -77,18 +80,27 @@ typedef struct _valuePair{
 	_valuePair(const char* l, const char* v):label(l),value(v){};
 }valuePair;
 
-valuePair upButtonPair("Up", "Palettes");
-valuePair downButtonPair("Down", "Test");
-valuePair centerButtonPair("Center"," Effect");
-valuePair leftButtonPair("Left","");
-valuePair rightButtonPair("Right","");
+// valuePair upButtonPair("Up", "Palettes");
+// valuePair downButtonPair("Down", "Test");
+// valuePair centerButtonPair("Center"," Effect");
+// valuePair leftButtonPair("Left","");
+// valuePair rightButtonPair("Right","");
 
-metaView  MaskView;
-metaValue UpButton(&upButtonPair.label,&upButtonPair.value);
-metaValue DownButton(&downButtonPair.label,&downButtonPair.value);
-metaValue CenterButton(&centerButtonPair.label, &centerButtonPair.value);
-metaValue LeftButton(&leftButtonPair.label, &leftButtonPair.value);
-metaValue RightButton(&rightButtonPair.label, &rightButtonPair.value);
+const String proLabel("Program");
+const String palLabel("Palettes");
+const String testLabel("Test");
+
+metaList  MaskView;
+metaView	SecondView;
+metaLabel ProgramLabel(&proLabel);
+metaLabel PaletteLabel(&palLabel);
+metaLabel TestLabel(&testLabel);
+
+// metaValue UpButton(&upButtonPair.label,&upButtonPair.value);
+// metaValue DownButton(&downButtonPair.label,&downButtonPair.value);
+// metaValue CenterButton(&centerButtonPair.label, &centerButtonPair.value);
+// metaValue LeftButton(&leftButtonPair.label, &leftButtonPair.value);
+// metaValue RightButton(&rightButtonPair.label, &rightButtonPair.value);
 // metaButton UpButton = metaButton();
 // metaButton DownButton = metaButton();
 // metaButton CenterButton = metaButton();
@@ -97,23 +109,50 @@ metaValue RightButton(&rightButtonPair.label, &rightButtonPair.value);
 
 void initMask()
 {
-	UpButton.initValue(&tft,GCRect(160,45,100,60),&Arial_16,&Arial_10);
-	DownButton.initValue(&tft,GCRect(160,tft.height()-45,100,60),&Arial_16,&Arial_10);
-	CenterButton.initValue(&tft,GCRect(160,tft.height()/2,100,60),&Arial_16,&Arial_10);
-	LeftButton.initValue(&tft,GCRect(50,tft.height()/2,100,60),&Arial_16,&Arial_10);
-	RightButton.initValue(&tft,GCRect(270,tft.height()/2,100,60),&Arial_16,&Arial_10);
-	MaskView.initView(&tft,GCRect(0,0,tft.width(),tft.height()));
-	MaskView.addSubview(&UpButton);
-	MaskView.addSubview(&DownButton);
-	MaskView.addSubview(&LeftButton);
-	MaskView.addSubview(&RightButton);
-	MaskView.addSubview(&CenterButton);
-	UpButton.allignInSuperView(VALLIGN_TOP | HALLIGN_CENTER);
-	CenterButton.allignInSuperView(VALLIGN_CENTER | HALLIGN_CENTER);
-	DownButton.allignInSuperView(VALLIGN_BOTTOM | HALLIGN_CENTER);
-	LeftButton.allignInSuperView(VALLIGN_CENTER | HALLIGN_LEFT);
-	RightButton.allignInSuperView(VALLIGN_CENTER | HALLIGN_RIGHT);
+	GCSize insets(2,2);
+	ProgramLabel.setInsets(insets);
+	ProgramLabel.setOutlineColor(ILI9341_PURPLE);
+
+	ProgramLabel.initView(&tft,GCRect());
+	ProgramLabel.setFont(&Arial_14);
+	ProgramLabel.setTextSize(1);
+	ProgramLabel.sizeToFit();
+
+	PaletteLabel.setInsets(insets);
+	PaletteLabel.setOutlineColor(ILI9341_PURPLE);
+
+	PaletteLabel.initView(&tft,GCRect());
+	PaletteLabel.setFont(&Arial_14);
+	PaletteLabel.setTextSize(2);
+	PaletteLabel.sizeToFit();
+
+	TestLabel.setInsets(insets);
+	TestLabel.setOutlineColor(ILI9341_PURPLE);
+
+	TestLabel.initView(&tft,GCRect());
+	TestLabel.setFont(&Arial_14);
+	TestLabel.setTextSize(3);
+	TestLabel.sizeToFit();
+
+	MaskView.initView(&tft,GCRect(10,20,tft.width()/3,tft.height()-40));
+
+
+	MaskView.setRespondsToEvents(UserEvent::EventMask::EncoderEvents | UserEvent::EventMask::ButtonEvents);
+	MaskView.setDrawsOutline(true);
+	MaskView.setCornerRadius(3);
+	MaskView.setOutlineColor(ILI9341_RED);
+	MaskView.addSubview(&ProgramLabel);
+	MaskView.addSubview(&PaletteLabel);
+	MaskView.addSubview(&TestLabel);
+	MaskView.layoutList();
+
 	MaskView.setOpaque(false);
+
+	SecondView.initView(&tft,GCRect(tft.width()/3+10+2,20,(2*tft.width()/3)-20,tft.height()-40));
+	SecondView.setDrawsOutline(true);
+	SecondView.setCornerRadius(3);
+	SecondView.setOutlineColor(ILI9341_NAVY);
+	SecondView.setOpaque(false);
 }
 
 elapsedMillis firstTime = elapsedMillis(0);
@@ -122,9 +161,10 @@ elapsedMillis displayTimer ;
 elapsedMillis ledTimer;
 
 void drawMask(){
-	tft.fillScreen(ILI9341_BLACK);
-	MaskView.setNeedsRedraw();
+	//tft.fillScreen(ILI9341_BLACK);
+	//MaskView.setNeedsRedraw();
 	MaskView.redraw();
+	SecondView.redraw();
 	//
 	// tft.setFontAdafruit();
 	// tft.setTextSize(2);
@@ -178,7 +218,7 @@ void effectMoiree()
 	delay(3000);
 }
 
-boolean skipMask = false;
+bool skipMask = false;
 typedef void(*effectHandler)();
 
 static uint16_t offset = 0;
@@ -216,11 +256,23 @@ void adjustBrightness()
 {
 	int8_t uValue = log(256-tft.getLuminance())*10;
 	tft.fillScreen(ILI9341_BLACK);
-	String labelStr = String(" Brightness ");
+	String labelStr = String("Brightness");
 	String valueStr = String("-55 ");
 	String blubberStr = String ("-UU ");
 	metaValue bla = metaValue();
-	bla.initValue(&tft,GCRect(100,00,13,8), &labelStr, &valueStr,&Arial_60, &Arial_16);
+	metaValue::LayoutDefinition brightnessTheme;
+	brightnessTheme.labelFont = &Arial_16;
+	brightnessTheme.valueFont = &Arial_40;
+	brightnessTheme.labelOutlineCornerRadius = 10;
+	brightnessTheme.labelOutlineInset = 8;
+	brightnessTheme.labelDrawOutline=false;
+	brightnessTheme.verticalValueInset=20;
+	brightnessTheme.horizontalLabelInset=10;
+	brightnessTheme.horizontalValueInset=30;
+	brightnessTheme.valueColor = ILI9341_DARKGREEN;
+
+	bla.setLayout(brightnessTheme);
+	bla.initValue(&tft,GCRect(100,00,13,8), &labelStr, &valueStr);
 	bla.sizeToFit();
 	Serial << "Allign Now"<<endl;
 	bla.allignInSuperView(HALLIGN_CENTER | VALLIGN_CENTER);
@@ -278,7 +330,7 @@ void adjustBrightness()
 				//Serial <<"Brightness: "<<tft.getLuminance()<<"    "<<endl;
 			}
 		}
-	}while(lastAdjust<5000);
+	}while(true/*lastAdjust<5000*/);
 }
 
 void resetDisplay()
@@ -320,57 +372,28 @@ void testViews()
 	}
 	l.removeFromSuperview();
 }
-void processMainEventLoop()
+
+void processListEvents(metaList *list)
 {
 	while(eventQueue.length()){
 		UserEvent *evnt = eventQueue.popEvent();
-		Serial << evnt << endl;
-		if(evnt->getType() == UserEvent::EventType::EventTypeKey){
-			UserEvent::ButtonData data = evnt->getData().buttonData;
-			metaValue *someButton = NULL;
-			effectHandler k = NULL;
-			switch(data.id){
-				case UserEvent::ButtonID::UpButton: someButton = &UpButton; k = effectMoiree; break;
-				case UserEvent::ButtonID::CenterButton: someButton = &CenterButton;break;
-				case UserEvent::ButtonID::DownButton: someButton = &DownButton; k = testThings; break;
-				case UserEvent::ButtonID::LeftButton: someButton = &LeftButton; k=scrollLeft; break;
-				case UserEvent::ButtonID::RightButton: someButton = &RightButton; k=scrollRight; break;
-				default: break;
+		uint16_t l = evnt->eventMask();
+		uint16_t k = list->respondsToEvents();
+		if((l&k) != 0){
+			int16_t selIndex = list->processEvent(evnt);
+			Serial << "SelectedIndex = "<<selIndex<<endl;
+			if( selIndex >=0 ){
+				list->redraw();
 			}
-			// boolean someState = false;
-			// switch(data.state){
-			// 	case UserEvent::ButtonState::ButtonDown: someState = true; break;
-			// 	case UserEvent::ButtonState::ButtonUp: someState = false; break;
-			// 	default: break;
-			// }
-			// if(someButton)
-			// 	someButton->drawButton(someState);
-
-			//		Serial << evnt<<", "<<_HEX((long unsigned int)k)<<endl;
-			if((NULL != k)){
-				switch(data.state){
-					case UserEvent::ButtonState::ButtonClick:
-					case UserEvent::ButtonState::ButtonLongClick:
-					case UserEvent::ButtonState::ButtonDoubleClick:
-					k();
-
-					drawMask();
-					k=0;
-					break;
-					default: break;
-
-				}
-			}
-		}else{
-			adjustBrightness();
-			drawMask();
 		}
 		delete evnt;
 	}
 }
 
+
 void setup() {
 	Serial.begin(115200);
+	while(!Serial){}
 	Serial << "Start"<<endl;
 	Serial << "Effects: "<<numberOfPatterns<<endl;
 	initializeLEDs();
@@ -396,6 +419,7 @@ void setup() {
 void loop() {
 	// put your main code here, to run repeatedly:
 	if(firstTime>1000 && !skipMask){
+		tft.fillScreen(ILI9341_BLACK);
 		drawMask();
 		Serial << "Draw"<<endl;
 		Serial.flush();
@@ -408,7 +432,7 @@ void loop() {
 	// }
 
 	if(displayTimer > 100){
-		processMainEventLoop();
+		processListEvents(&MaskView);
 		displayTimer = 0;
 	}
 	/** run all sequence tasks */

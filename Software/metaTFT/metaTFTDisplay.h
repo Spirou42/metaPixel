@@ -10,7 +10,7 @@
 #include "FastLED.h"
 #include "Streaming.h"
 
- /** a couple of structs  for basic geometry */
+ /** a collection of structs for basic geometry  handling (int16_t)*/
 typedef struct _GCPoint{
   int16_t x,y;
   _GCPoint(int16_t X,int16_t Y):x(X),y(Y){};
@@ -19,8 +19,6 @@ typedef struct _GCPoint{
   _GCPoint operator+=(_GCPoint &p){x+=p.x;y+=p.y;return *this;};
   _GCPoint operator+(_GCPoint &p){_GCPoint r; r.x=p.x+x;r.y=p.y+y;return r;}
 }GCPoint;
-
-
 
 typedef struct _GCSize{
   int16_t w,h;
@@ -41,6 +39,8 @@ typedef struct _GCRect{
   _GCRect(int16_t x, int16_t y, int16_t w, int16_t h):origin(x,y),size(w,h){};
 }GCRect;
 
+// Streaming operator for geometry classes
+
 inline Print& operator<<(Print& obj, GCPoint &p){
   obj << "{"<<p.x<<", "<<p.y<<"}";
   return obj;
@@ -56,15 +56,21 @@ inline Print& operator<<(Print& obj, GCRect &p){
 
 
 
-/** my display */
+/** my display subclass */
 class metaTFT : public ILI9341_t3 {
 public:
   metaTFT(uint8_t _CS, uint8_t _DC, uint8_t _RST = 255, uint8_t _MOSI=11, uint8_t _SCLK=13, uint8_t _MISO=12, uint8_t bkg_pin=A14,uint8_t rotation = 3):
-  ILI9341_t3(_CS, _DC, _RST, _MOSI, _SCLK, _MISO),_backlight_pin(bkg_pin),defaultRotation(rotation),_luminance(80){updateBacklight();};
+  ILI9341_t3(_CS, _DC, _RST, _MOSI, _SCLK, _MISO),_backlight_pin(bkg_pin),defaultRotation(rotation),_luminance(80){
+    updateBacklight();}
+
   void start();
 
-  void setLuminance(uint8_t val){_luminance = val;updateBacklight();};
-  uint8_t getLuminance(){return _luminance;};
+  void setLuminance(uint8_t val){
+    _luminance = val;updateBacklight();}
+
+  uint8_t getLuminance(){
+    return _luminance;}
+
   virtual void drawLogo();
 
   GCSize stringSize(const char* str);
@@ -86,9 +92,8 @@ protected:
 
 };
 
-/** graphics context encapsulates the device information of the TFT class and acts as a proxy for drawing operations */
-
-
+/** graphics context encapsulates the device information of the TFT class and acts as a proxy for drawing operations
+allowing the establishment of a simple coordinate system hierarchy  without the need for handling real stacks of finite transformation matrices. */
 class GraphicsContext : public Print{
   friend class metaView;
   friend class metaLabel;

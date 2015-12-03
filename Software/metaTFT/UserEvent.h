@@ -18,7 +18,6 @@ public:
     EventTypeKey,
     EventTypeEncoder
   } EventType;
-
   /** and we got 5 Buttons */
   typedef enum _ButtonID{
     Button0 = 0,
@@ -73,13 +72,39 @@ public:
     EncoderData encoderData;
   }EventData;
 
+  typedef enum _EventMask{
+    ButtonEvents            = (1 << 0),
+    EncoderEvents           = (1 << 1),
+    ButtonEvent_Left        = (1 << 2),
+    ButtonEvent_Down        = (1 << 3),
+    ButtonEvent_Right       = (1 << 4),
+    ButtonEvent_Up          = (1 << 5),
+    ButtonEvent_Center      = (1 << 6),
+    ButtonState_Down        = (1 << 7),
+    ButtonState_Up          = (1 << 8),
+    ButtonState_Click       = (1 << 9),
+    ButtonState_LongClick   = (1 << 10),
+    ButtonState_DoubleClick = (1 << 11),
+    ButtonState_All         = (ButtonState_Down | ButtonState_Up | ButtonState_Click | ButtonState_LongClick | ButtonState_DoubleClick),
+    ButtonState_AllClick    = (ButtonState_Click | ButtonState_DoubleClick | ButtonState_LongClick),
+
+  }EventMask;
+
   UserEvent(EventType type):_type(type){};
-  EventType getType(){return _type;};
-  void setType(EventType t){_type = t;}
-  EventData getData(){return _data;}
-  void setData(EventData d){_data = d;}
-  friend Print& operator<<(Print& out,UserEvent* event)
-  {
+
+  EventType getType(){
+    return _type;};
+
+  void setType(EventType t){
+    _type = t;}
+
+  EventData getData(){
+    return _data;}
+
+  void setData(EventData d){
+    _data = d;}
+
+  friend Print& operator<<(Print& out,UserEvent* event){
     out << "Event{"<<event->_type<<", ";
     switch(event->_type){
       case EventTypeKey:      out<<event->_data.buttonData;break;
@@ -87,24 +112,20 @@ public:
       default: out<<"??"; Serial << "Type: "<<(int)event->_type<< endl;break;
     }
     out << "}";
-    return out;
-  };
-  friend Print& operator<<(Print& out,_EventType type)
-  {
+    return out;}
+
+  friend Print& operator<<(Print& out,_EventType type){
     switch(type){
       case EventTypeKey: out << "Key";break;
       case EventTypeEncoder: out << "Enc";break;
     }
-    return out;
-  }
+    return out;}
 
-  friend Print& operator<<(Print& out, _ButtonData data)
-  {
+  friend Print& operator<<(Print& out, _ButtonData data){
     out << data.id<<", "<<data.state;
-    return out;
-  }
-  friend Print& operator<<(Print& out, _ButtonID id)
-  {
+    return out;}
+
+  friend Print& operator<<(Print& out, _ButtonID id){
     switch(id){
       case LeftButton:    out << "[L]";break;
       case UpButton:      out << "[U]";break;
@@ -113,10 +134,9 @@ public:
       case CenterButton:  out << "[C]";break;
       default: break;
     }
-    return out;
-  }
-  friend Print& operator<<(Print& out, _ButtonState state)
-  {
+    return out;}
+
+  friend Print& operator<<(Print& out, _ButtonState state){
     switch(state){
       case ButtonDown:        out<<"Down";  break;
       case ButtonUp:          out<<"Up";    break;
@@ -124,33 +144,26 @@ public:
       case ButtonLongClick:   out<<"Long";  break;
       case ButtonDoubleClick: out<<"Double";break;
     }
-    return out;
-  }
+    return out;}
 
-  friend Print& operator<<(Print& out, _EncoderData data)
-  {
+  friend Print& operator<<(Print& out, _EncoderData data){
     out << data.id <<", "<<data.direction<<", "<<data.steps<<", "<<data.position<<", "<<data.speed;
-    return out;
-  }
+    return out;}
 
-  friend Print& operator<<(Print& out, _EncoderID id)
-  {
+  friend Print& operator<<(Print& out, _EncoderID id){
     switch(id){
       case Encoder0:  out << "[0]";break;
       default: break;
     }
-    return out;
-  }
+    return out;}
 
-  friend Print& operator<<(Print& out, _EncoderDirection dir)
-  {
+  friend Print& operator<<(Print& out, _EncoderDirection dir){
       switch(dir){
         case EncoderLeft:   out <<"Left";   break;
         case EncoderRight:  out <<"Right";  break;
       }
-    return out;
-  }
-
+    return out;}
+  uint16_t eventMask();
 protected:
   UserEvent *nextEvent;
   EventType _type;
@@ -167,14 +180,19 @@ public:
   void addEvent(UserEvent* event);
   UserEvent* popEvent();
 
-  volatile size_t length(){return _queueLength;};
-  UserEvent*  getStart(){return _queueStart;};
-  UserEvent*  getEnd(){return _queueEnd;};
+  volatile size_t length(){
+    return _queueLength;}
+
+  UserEvent*  getStart(){
+    return _queueStart;}
+
+  UserEvent*  getEnd(){
+    return _queueEnd;}
 
 protected:
   UserEvent*        _queueStart;
   UserEvent*        _queueEnd;
   volatile size_t   _queueLength;
-  boolean     consolidateEvent(UserEvent* evnt);
+  bool     consolidateEvent(UserEvent* evnt);
 };
 #endif

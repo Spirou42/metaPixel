@@ -37,7 +37,7 @@ void disableSwitches(){
   }
 }
 void switchHandler(size_t idx){
-  boolean pinState = digitalReadFast(switches[idx].getPin());
+  bool pinState = digitalReadFast(switches[idx].getPin());
   if(pinState){
     switches[idx].doSwitchDown();
   }else{

@@ -100,7 +100,7 @@ GCSize metaTFT::stringSize(const char* str){
   GCSize s=GCSize();
   if(!font){
     s.w = strlen(str)*6 * textsize;
-    s.h = 7*textsize;
+    s.h = 8*textsize;
   }else{
     size_t i=0;
     uint32_t width = 0;

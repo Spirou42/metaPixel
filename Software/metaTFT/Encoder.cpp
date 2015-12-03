@@ -18,7 +18,7 @@ void Encoder::disable()
   detachInterrupt(_bPin);
 }
 
-UserEvent::EventData Encoder::encoderData(boolean state,int8_t steps,float vel)
+UserEvent::EventData Encoder::encoderData(bool state,int8_t steps,float vel)
 {
   UserEvent::EventData result;
   UserEvent::EncoderData data;
@@ -44,7 +44,7 @@ void Encoder::doEncoderStep()
   if (p2val) s |= 8;
   _state = (s >> 2);
   int8_t step = 0;
-  boolean shouldCountPhase = true;
+  bool shouldCountPhase = true;
   float velocity = 0;
   if(_divider){
     shouldCountPhase = false;
