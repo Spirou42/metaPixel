@@ -157,13 +157,14 @@ protected:
   GCRect _frame;
 	uint16_t _outlineColor, _backgroundColor;  // colorization
   uint8_t _cornerRadius;                     // cornerradius
-  bool _opaque;                           // draws background color
+  bool _opaque;                              // draws background color
   bool _drawsOutline;
-  bool _needsRedraw;                       // triggers a redraw of the View
-  bool _needsLayout;                       // triggers a redraw of the superView;
+  bool _needsRedraw;                        // triggers a redraw of the View
+  bool _needsLayout;                        // triggers a redraw of the superView;
   metaView* _superView;
   bool _visualizeState;                     // used by subclass to
-  State _state;                           //
+  State _state;                             //
+  bool _selected;
   vector<metaView*> _subViews;
 };
 
@@ -349,6 +350,7 @@ protected:
   uint8_t _verticalValueInset;
 };
 
+
 class metaList : public metaView, public metaResponder{
 public:
   metaList():metaView(),_cellInset(2,2),_borderInset(10,10),_lastSelectedView(NULL),_maxElementSize(){};
@@ -356,7 +358,6 @@ public:
   void initResponder(UserEventQueue* q);
   void setBorderInset(GCSize i){_borderInset = i;setNeedsLayout();}
   GCSize getBorderInset(){return _borderInset;}
-
 
   void layoutList();
   virtual void addSubview(metaView* view);
@@ -370,6 +371,7 @@ protected:
   void drawConnectionFor(metaView* view, uint16_t lineColor);
   metaView* selectedSubview();
   vector<metaView*>::iterator selectedIterator();
+  vector<metaView*>::iterator onIterator();
   GCSize _cellInset;
   GCSize _borderInset;
   metaView* _lastSelectedView;

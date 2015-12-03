@@ -143,8 +143,10 @@ void initMask()
 	MaskView.initView(&tft,GCRect(10,20,tft.width()/3,tft.height()-40));
 	MaskView.setBorderInset(GCSize(5,5));
 
-	MaskView.setRespondsToEvents(UserEvent::EventMask::EncoderEvents | UserEvent::EventMask::ButtonEvent_Down |
-	UserEvent::EventMask::ButtonEvent_Up);
+	MaskView.setRespondsToEvents(UserEvent::EventMask::EncoderEvents |
+		 UserEvent::EventMask::ButtonEvent_Down |
+		 UserEvent::EventMask::ButtonEvent_Up |
+		 UserEvent::EventMask::ButtonEvent_Center);
 	MaskView.setDrawsOutline(true);
 	MaskView.setCornerRadius(3);
 	MaskView.setOutlineColor(ILI9341_RED);
@@ -301,7 +303,7 @@ void adjustBrightness()
 			if(evnt->getType()==UserEvent::EventType::EventTypeKey){
 				UserEvent::ButtonData data = evnt->getData().buttonData;
 				if(data.id==UserEvent::ButtonID::CenterButton &&
-					data.state == UserEvent::ButtonState::ButtonLongClick){
+					data.state == UserEvent::ButtonState::ButtonClick){
 					break;
 				}
 				if(data.id == UserEvent::ButtonID::UpButton &&
@@ -403,7 +405,7 @@ void processListEvents(metaList *list)
 			Serial << "List will not process : "<<evnt<<endl;
 			if((selIndex == 0) && (evnt->getType() == UserEvent::EventType::EventTypeKey)){
 				Serial << "IDX=0 and type=key"<<endl;;
-				if((evnt->getButtonID() == UserEvent::ButtonID::CenterButton) &&
+				if((evnt->getButtonID() == UserEvent::ButtonID::RightButton) &&
 				((evnt->getButtonState() == UserEvent::ButtonState::ButtonClick)
 				|| (evnt->getButtonState() == UserEvent::ButtonState::ButtonLongClick))){
 					adjustBrightness();

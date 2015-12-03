@@ -159,7 +159,7 @@ void metaView::redraw(){
 	vector<metaView*>::iterator redrawIter = _subViews.begin();
 	bool cnl = childNeedsLayout();
 	if(_needsRedraw || cnl){
-		Serial << "Redraw: "<<_needsRedraw<<" "<<cnl<<endl;
+		//Serial << "Redraw: "<<_needsRedraw<<" "<<cnl<<endl;
 		GraphicsContext::setFillColor(_backgroundColor);
 		GraphicsContext::setStrokeColor(_outlineColor);
   	if(_cornerRadius==0){
@@ -403,6 +403,8 @@ void metaValue::sizeToFit(){
 	setSize(ownSize);
 }
 
+/** metaList **/
+
 void metaList::addSubview(metaView* aView){
 	metaView::addSubview(aView);
 	_maxElementSize.w = MAX(aView->getSize().w,_maxElementSize.w);
@@ -419,12 +421,12 @@ void metaList::layoutList()
 	while(subIter != _subViews.end()){
 		(*subIter)->setSize(_maxElementSize);
 		(*subIter)->setOrigin(currentLine);
-		(*subIter)->setVisualizeState(false);
+		(*subIter)->setVisualizeState(true);
 		if(subIter != _subViews.begin()){
 			(*subIter)->setDrawsOutline(false);
 			(*subIter)->setState(metaView::State::Off);
 		}else{
-			(*subIter)->setState(metaView::State::On);
+			(*subIter)->setState(metaView::State::Off);
 			(*subIter)->setDrawsOutline(true);
 			_lastSelectedView = NULL;
 		}
@@ -436,7 +438,7 @@ void metaList::layoutList()
 metaView* metaList::selectedSubview(){
 	vector<metaView*>::iterator subIter = _subViews.begin();
 	while(subIter!=_subViews.end()){
-		if((*subIter)->getState()==metaView::State::On){
+		if((*subIter)->getDrawsOutline()){
 			return *subIter;
 		}
 		subIter++;
@@ -483,7 +485,7 @@ int8_t metaList::selectedIndex(){
 	int8_t result = -1;
 	int8_t c = 0;
 	while(subIter != _subViews.end()){
-		if((*subIter)->getState() == metaView::State::On){
+		if((*subIter)->getDrawsOutline()){
 			result = c;
 			break;
 		}
@@ -492,10 +494,20 @@ int8_t metaList::selectedIndex(){
 	}
 	return result;
 }
-vector<metaView*>::iterator metaList::selectedIterator(){
+vector<metaView*>::iterator metaList::onIterator(){
 	vector<metaView*>::iterator result = _subViews.begin();
 	while(result != _subViews.end()){
 		if((*result)->getState()==metaView::State::On){
+			break;
+		}
+		result ++;
+	}
+	return result;
+}
+vector<metaView*>::iterator metaList::selectedIterator(){
+	vector<metaView*>::iterator result = _subViews.begin();
+	while(result != _subViews.end()){
+		if((*result)->getDrawsOutline()){
 			break;
 		}
 		result ++;
@@ -507,11 +519,11 @@ void metaList::selectIndex(int8_t idx){
 	vector<metaView*>::iterator subIter = _subViews.begin();
 	if(selectedIndex() != idx){
 		if(_lastSelectedView){
-			_lastSelectedView->setState(metaView::State::Off);
+			_lastSelectedView->setDrawsOutline(false);
 		}
 		subIter += idx;
 		if(subIter != _subViews.end()){
-			(*subIter)->setState(metaView::State::On);
+			(*subIter)->setDrawsOutline(true);
 		}
 	}
 }
@@ -527,15 +539,25 @@ int16_t metaList::processEvent(UserEvent* k){
 		switch(bData.id){
 			case UserEvent::ButtonID::DownButton: if(bData.state == UserEvent::ButtonState::ButtonDown){step = 1;} break;
 			case UserEvent::ButtonID::UpButton: if(bData.state == UserEvent::ButtonState::ButtonDown){step = -1;} break;
+			case UserEvent::ButtonID::CenterButton: if(bData.state == UserEvent::ButtonState::ButtonDown){
+				vector<metaView*>::iterator oldIter = onIterator();
+				vector<metaView*>::iterator newIter = selectedIterator();
+				if (oldIter != _subViews.end() ){
+					(*oldIter)->setState(metaView::State::Off);
+				}
+				if (newIter != _subViews.end()) {
+					(*newIter)->setState(metaView::State::On);
+				}
+			} break;
 			default: break;
 		}
 		if(step){
 			vector<metaView*>::iterator subIter = selectedIterator();
 			vector<metaView*>::iterator k = subIter+step;
 			if( (k>=_subViews.begin()) && (k<_subViews.end()) ) {
-				(*subIter)->setState(metaView::State::Off);
+				//(*subIter)->setState(metaView::State::Off);
 				(*subIter)->setDrawsOutline(false);
-				(*k)->setState(metaView::State::On);
+				//(*k)->setState(metaView::State::On);
 				(*k)->setDrawsOutline(true);
 				//setNeedsRedraw();
 			}
@@ -552,9 +574,9 @@ int16_t metaList::processEvent(UserEvent* k){
 		if( (k>=_subViews.begin()) && (k<_subViews.end()) ) {
 			// label = ((metaLabel*) *k)->getLabel();
 			// Serial << "NextSelect: "<<*label<<endl;
-			(*subIter)->setState(metaView::State::Off);
+			//(*subIter)->setState(metaView::State::Off);
 			(*subIter)->setDrawsOutline(false);
-			(*k)->setState(metaView::State::On);
+			//(*k)->setState(metaView::State::On);
 			(*k)->setDrawsOutline(true);
 			//setNeedsRedraw();
 		}
