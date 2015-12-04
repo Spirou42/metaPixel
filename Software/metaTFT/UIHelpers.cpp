@@ -84,6 +84,10 @@ void metaView::setOrigin(GCPoint p){
 	_needsLayout=true;
 };
 
+void metaView::sizeToFit()
+{
+	return;
+}
 bool metaView::childNeedsLayout(){
 	vector<metaView*>::iterator iter = _subViews.begin();
 	while(iter != _subViews.end()){
@@ -191,7 +195,7 @@ GCSize metaLabel::intrinsicSize(){
 	GraphicsContext::setTextSize(_textSize);
 	s = GraphicsContext::stringSize(_label->c_str());
 	if(_visualizeState){
-		s.w +=12;
+		s.w +=16;
 	}
 	s.w+=2*_insets.w;
 	s.h+=2*_insets.h;
@@ -246,8 +250,9 @@ void metaLabel::redraw(){
 		if(_state != Off){
 			GraphicsContext::setFillColor(bgColor);
 			GCRect indicator;
+			indicator.origin=GCPoint(2,_frame.size.h/2-4 -(_font->line_space-_font->cap_height)/2);
 			//indicator.origin = _frame.origin;
-			indicator.size = GCSize(10,_frame.size.h);
+			indicator.size = GCSize(8,8);
 			GraphicsContext::fillRect(indicator);
 		}
 	}
@@ -404,9 +409,14 @@ void metaValue::sizeToFit(){
 }
 
 /** metaList **/
+metaList::~metaList()
+{
 
+}
 void metaList::addSubview(metaView* aView){
 	metaView::addSubview(aView);
+	aView->setVisualizeState(true);
+	aView->sizeToFit();
 	_maxElementSize.w = MAX(aView->getSize().w,_maxElementSize.w);
 	_maxElementSize.h = MAX(aView->getSize().h,_maxElementSize.h);
 }

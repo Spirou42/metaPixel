@@ -137,7 +137,7 @@ public:
   virtual void redraw();
   void allignInSuperView(uint8_t allignmentMask);
   void allignInRect(uint8_t allignmentMask,GCRect r);
-
+  virtual void sizeToFit();
 
   #if DEBUG_LAYOUT
   bool drawDebugRect = false;
@@ -218,6 +218,7 @@ public:
     _allignmentMask = mask;};
 
   virtual void sizeToFit(){
+    Serial << "Labels sizeToFit"<<endl;
     GCSize is = intrinsicSize();is.w+=2*_insets.w; is.h+=2*_insets.h;
     setSize(is); _textPosition.x = _insets.w; _textPosition.y = _insets.h;setNeedsLayout();}
 
@@ -354,7 +355,7 @@ protected:
 class metaList : public metaView, public metaResponder{
 public:
   metaList():metaView(),_cellInset(2,2),_borderInset(10,10),_lastSelectedView(NULL),_maxElementSize(){};
-
+  ~metaList();
   void initResponder(UserEventQueue* q);
   void setBorderInset(GCSize i){_borderInset = i;setNeedsLayout();}
   GCSize getBorderInset(){return _borderInset;}

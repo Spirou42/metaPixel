@@ -113,34 +113,34 @@ void initMask()
 {
 	GCSize insets(2,2);
 	ProgramLabel.setInsets(insets);
-	ProgramLabel.setOutlineColor(ILI9341_PURPLE);
+	ProgramLabel.setOutlineColor(ILI9341_ORANGE);
 	ProgramLabel.initView(&tft,GCRect());
 	ProgramLabel.setFont(&Arial_14);
 	ProgramLabel.setTextSize(1);
-	ProgramLabel.sizeToFit();
+	//ProgramLabel.sizeToFit();
 
 	PaletteLabel.setInsets(insets);
-	PaletteLabel.setOutlineColor(ILI9341_PURPLE);
+	PaletteLabel.setOutlineColor(ILI9341_ORANGE);
 	PaletteLabel.initView(&tft,GCRect());
 	PaletteLabel.setFont(&Arial_14);
 	PaletteLabel.setTextSize(2);
-	PaletteLabel.sizeToFit();
+	//PaletteLabel.sizeToFit();
 
 	TestLabel.setInsets(insets);
-	TestLabel.setOutlineColor(ILI9341_PURPLE);
+	TestLabel.setOutlineColor(ILI9341_ORANGE);
 	TestLabel.initView(&tft,GCRect());
 	TestLabel.setFont(&Arial_14);
 	TestLabel.setTextSize(3);
-	TestLabel.sizeToFit();
+	//TestLabel.sizeToFit();
 
 	bLabel.setInsets(insets);
-	bLabel.setOutlineColor(ILI9341_PURPLE);
+	bLabel.setOutlineColor(ILI9341_ORANGE);
 	bLabel.initView(&tft,GCRect());
 	bLabel.setFont(&Arial_14);
 	bLabel.setTextSize(3);
-	bLabel.sizeToFit();
+	//bLabel.sizeToFit();
 
-	MaskView.initView(&tft,GCRect(10,20,tft.width()/3,tft.height()-40));
+	MaskView.initView(&tft,GCRect(10,20,tft.width()/2,tft.height()-40));
 	MaskView.setBorderInset(GCSize(5,5));
 
 	MaskView.setRespondsToEvents(UserEvent::EventMask::EncoderEvents |
@@ -159,7 +159,7 @@ void initMask()
 
 	MaskView.setOpaque(false);
 
-	SecondView.initView(&tft,GCRect(tft.width()/3+10+2,20,(2*tft.width()/3)-20,tft.height()-40));
+	SecondView.initView(&tft,GCRect(tft.width()/2+10+2,20,(2*tft.width()/3)-20,tft.height()-40));
 	SecondView.setDrawsOutline(true);
 	SecondView.setCornerRadius(3);
 	SecondView.setOutlineColor(ILI9341_NAVY);
