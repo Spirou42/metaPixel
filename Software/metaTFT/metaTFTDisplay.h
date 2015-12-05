@@ -16,6 +16,8 @@ typedef struct _GCPoint{
   _GCPoint(int16_t X,int16_t Y):x(X),y(Y){};
   _GCPoint():x(0),y(0){};
   _GCPoint( const _GCPoint& k){x=k.x;y=k.y;};
+  bool operator==(_GCPoint p){return (x==p.x)&&(y==p.y);}
+  bool operator!=(_GCPoint p){return !(*this == p);}
   _GCPoint operator+=(_GCPoint p){x+=p.x;y+=p.y;return *this;};
   //_GCPoint operator+(_GCPoint &p){_GCPoint r; r.x=p.x+x;r.y=p.y+y;return r;}
   _GCPoint operator+(_GCPoint p){_GCPoint r; r.x=p.x+x; r.y= p.y+y;return r;}
@@ -26,9 +28,12 @@ typedef struct _GCSize{
   _GCSize():w(0),h(0){};
   _GCSize(const _GCSize & k){w=k.w;h=k.h;};
   _GCSize(int16_t w, int16_t h):w(w),h(h){};
-  _GCSize operator+=(_GCSize &s){w+=s.w;h+=s.h; return *this;};
-  _GCSize operator+(_GCSize &p){_GCSize r; r.w=p.w+w;r.h=p.h+h;return r;}
+  bool operator==(_GCSize s){return (s.w == w)&&(s.h == h);}
+  bool operator!=(_GCSize s){return !(*this == s);}
+  _GCSize operator+=(_GCSize s){w+=s.w;h+=s.h; return *this;};
+  _GCSize operator+(_GCSize p){_GCSize r; r.w=p.w+w;r.h=p.h+h;return r;}
   _GCSize operator+=(int t){w+=t;h+=t; return *this;};
+  _GCSize operator*(int k){_GCSize l;l.w=k*w;l.h=k*h;return l;}
 }GCSize;
 
 typedef struct _GCRect{
@@ -85,11 +90,7 @@ protected:
   uint8_t _luminance ;                    //< valaue for backlight
 
   void updateBacklight();
-  typedef struct _charDim {
-    uint32_t width, height;
-  } charDimentions;
-
-  charDimentions fontCharDimentions(unsigned int c);
+  GCSize fontCharDimentions(unsigned int c);
 
 };
 

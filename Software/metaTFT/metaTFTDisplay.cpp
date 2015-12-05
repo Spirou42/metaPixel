@@ -56,11 +56,11 @@ static uint32_t fetchbits_signed(const uint8_t *p, uint32_t index, uint32_t requ
 	return (int32_t)val;
 }
 
-metaTFT::charDimentions metaTFT::fontCharDimentions(unsigned int c)
+GCSize metaTFT::fontCharDimentions(unsigned int c)
 {
   uint32_t bitoffset;
   const uint8_t *data;
-  metaTFT::charDimentions k={0,0};
+  GCSize k;
   //Serial.printf("drawFontChar %d\n", c);
 
   if (c >= font->index1_first && c <= font->index1_last) {
@@ -91,9 +91,9 @@ metaTFT::charDimentions metaTFT::fontCharDimentions(unsigned int c)
 
   uint32_t delta = fetchbits_unsigned(data, bitoffset, font->bits_delta);
 	bitoffset += font->bits_delta;
-  //Serial<<"size["<<((char)c)<<"] = "<<width<<", "<< height<<" ("<<delta<<")"<<"Xof: "<<xoffset<<" yOff: "<<yoffset<<endl;
-  k.width = delta;
-  k.height = font->cap_height-yoffset;
+  k.w = delta;
+  k.h = font->cap_height-yoffset;
+//  Serial<<"size["<<((char)c)<<"] = "<<width<<", "<< height<<" ("<<delta<<")"<<"Xof: "<<xoffset<<" yOff: "<<yoffset<<" "<<k<<endl;
   return k;
 }
 
@@ -104,17 +104,17 @@ GCSize metaTFT::stringSize(const char* str){
     s.h = 8*textsize;
   }else{
     size_t i=0;
-    uint32_t width = 0;
-    uint32_t height = 0;
+    int32_t width = 0;
+    int32_t height = 0;
     //uint32_t height= 0;
     while(str[i]!= 0x00){
-      charDimentions k = fontCharDimentions(str[i]);
-      width += k.width;
-      height=(height < k.height)?k.height:height;
+      GCSize k = fontCharDimentions(str[i]);
+      width += k.w;
+      height=(height < k.h)?k.h:height;
       ++i;
     }
     s.w = width;
-    s.h = height;
+    s.h = height;//font->cap_height;
   }
   return s;
 }

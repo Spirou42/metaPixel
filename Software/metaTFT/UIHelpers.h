@@ -31,6 +31,9 @@ class UserEvent;
 class metaResponder
 {
 public:
+  typedef enum _responderResult{
+    ResponderExit = -1
+  }ResponderResult;
   metaResponder(){}
   void initResponder(UserEventQueue* queue){
     _eventQueue = queue;}
@@ -50,51 +53,75 @@ protected:
 class metaView : public GraphicsContext
 {
 public:
+
   typedef enum _states{
     Off,
     On,
     Mixed
   }State;
+
+  typedef struct _viewLayout{
+  public:
+    uint16_t outlineColor;
+    uint16_t backgroundColor;
+    uint8_t cornerRadius;
+    bool opaque;
+    bool drawsOutline;
+    bool visualizeState;
+    State state;
+    _viewLayout():outlineColor(0),backgroundColor(0),cornerRadius(0),opaque(true),drawsOutline(true),
+    visualizeState(false),state(Off){};
+
+    _viewLayout(uint16_t olc,uint16_t bc,uint8_t cr, bool op, bool dol, bool vs, State s):
+    outlineColor(olc),backgroundColor(bc),cornerRadius(cr),opaque(op),drawsOutline(dol),
+    visualizeState(vs),state(s){};
+  }ViewLayout;
+
   metaView(void):_frame(),_outlineColor(0),_backgroundColor(0),_cornerRadius(0),_opaque(true),
   _drawsOutline(true),_needsRedraw(false),_needsLayout(false),_superView(NULL),_visualizeState(false),_state(Off) {}
+
   metaView(GCRect frame):_frame(frame),_outlineColor(0),_backgroundColor(0),_opaque(true),
   _drawsOutline(false),_needsRedraw(true),_needsLayout(true),_superView(NULL),_visualizeState(false),_state(Off){}
 
   virtual void initView(metaTFT* tft, GCRect frame);
   virtual void initView(metaTFT* tft, GCPoint origin, GCSize size);
   virtual void initView(metaTFT* tft, int16_t x, int16_t y, int16_t w, int16_t h);
+
   virtual GCPoint getBase();
+
+  void setLayout(ViewLayout vl);
+
   GCRect getBounds(){
     GCRect k;
     k.size = getSize();
     return k;
   }
   void setOutlineColor(uint16_t c){
-    _outlineColor = c;_needsRedraw = true;}
+    if(c!=_outlineColor){_outlineColor = c;_needsRedraw = true;}}
 
   uint16_t getOutlineColor(){
     return _outlineColor;}
 
   void setDrawsOutline(bool flag){
-    _drawsOutline = flag;_needsRedraw = true;}
+    if(flag != _drawsOutline){_drawsOutline = flag;_needsRedraw = true;}}
 
   bool getDrawsOutline(){
     return _drawsOutline;}
 
   void setBackgroundColor(uint16_t c){
-    _backgroundColor = c;_needsRedraw=true;}
+    if(c != _backgroundColor){_backgroundColor = c;_needsRedraw=true;}}
 
   uint16_t getBackgroundColor(){
     return _backgroundColor;}
 
   void setOpaque(bool f){
-    _opaque = f;_needsRedraw=true;}
+    if(f != _opaque){_opaque = f;_needsRedraw=true;}}
 
   bool getOpaque(){
     return _opaque;}
 
   void setCornerRadius(uint8_t r){
-    _cornerRadius = r;_needsRedraw=true;};
+    if(r != _cornerRadius){_cornerRadius = r;_needsRedraw=true;}}
 
   uint8_t getCornerRadius(){
     return _cornerRadius;};
@@ -108,17 +135,19 @@ public:
   GCSize getSize(){
     return _frame.size;};
 
-  void setOrigin(GCPoint p);
+  void setOrigin(GCPoint p){
+  	if(_frame.origin != p){_frame.origin = p;_needsLayout=true;}}
+
   void setOrigin(int16_t x, int16_t y){
     setOrigin(GCPoint(x,y));};
   GCPoint getOrigin(){
     return _frame.origin;};
 
   void setVisualizeState(bool f){
-    _visualizeState = f; setNeedsLayout();}
+    if(f != _visualizeState){_visualizeState = f; setNeedsLayout();}}
 
   void setState(State s){
-    _state = s;setNeedsRedraw();}
+    if(s != _state){_state = s;setNeedsRedraw();}}
 
   State getState(){
     return _state;}
@@ -164,7 +193,6 @@ protected:
   metaView* _superView;
   bool _visualizeState;                     // used by subclass to
   State _state;                             //
-  bool _selected;
   vector<metaView*> _subViews;
 };
 
@@ -172,28 +200,49 @@ protected:
 class metaLabel : public metaView
 {
 public:
+  typedef struct _labelLayout{
+  public:
+    ViewLayout *viewLayout;
+    const ILI9341_t3_font_t *font;
+    uint8_t textSize;
+    uint16_t textColor;
+    uint8_t  allignmentMask;   // mask for TextAlignment;
+    GCPoint  textPosition;     // used if allignmentMask == 0
+    GCSize   insets;
+    uint8_t  indicatorSpace;
+    GCSize   indicatorSize;
+
+    _labelLayout():viewLayout(NULL),font(NULL),textSize(1),textColor(ILI9341_GREEN),
+    allignmentMask(),textPosition(0,0),insets(0,0),indicatorSpace(0),indicatorSize(){};
+
+    _labelLayout(ViewLayout *vl, ILI9341_t3_font_t* f, uint8_t ts, uint16_t tc, uint8_t am, GCPoint tp, GCSize i, uint8_t is,GCSize inSi):
+    viewLayout(vl),font(f),textSize(ts),textColor(tc),allignmentMask(am),textPosition(tp),insets(i),indicatorSpace(is),indicatorSize(inSi){};
+
+  }LabelLayout;
+
   metaLabel(void):metaView(),_textColor(ILI9341_GREEN),_allignmentMask(),_textPosition(),
-  _insets(2,2),_textSize(3),_font(NULL),_label(NULL){
+  _insets(2,2),_indicatorSize(8,8),_indicatorSpace(16),_textSize(3),_font(NULL),_label(NULL){
     _drawsOutline=false; _opaque=false;};
 
   metaLabel(const String* label,uint16_t textColor=ILI9341_GREEN):metaView(),_textColor(textColor),
-  _allignmentMask(),_textPosition(),_insets(2,2),_textSize(3),_font(NULL),_label(label){
+  _allignmentMask(),_textPosition(),_insets(2,2),_indicatorSize(8,8),_indicatorSpace(16),_textSize(3),_font(NULL),_label(label){
     _drawsOutline=false;_opaque=false;}
 
+  void setLayout(LabelLayout ll);
   void setFont(const ILI9341_t3_font_t *f){
-    _font = f;_needsRedraw=true;GraphicsContext::setFont(_font);}
+    if(f != _font){_font = f;_needsRedraw=true;GraphicsContext::setFont(_font);}}
 
   const ILI9341_t3_font_t *getFont(){
     return _font;}
 
   void setTextColor(uint16_t tc){
-    _textColor=tc;_needsRedraw=true;}
+    if(tc != _textColor){_textColor=tc;_needsRedraw=true;}}
 
   uint16_t getTextColor(){
     return _textColor;};
 
   void setTextSize(uint8_t s){
-    _textSize = s;_needsRedraw=true;GraphicsContext::setTextSize(s);};
+    if(s != _textSize){_textSize = s;_needsRedraw=true;GraphicsContext::setTextSize(s);}}
 
   uint8_t getTextSize(){
     return _textSize;};
@@ -210,6 +259,17 @@ public:
     _insets=in;setNeedsLayout();}
   GCSize getInsets(){
     return _insets;}
+
+  void setIndicatorSize(GCSize f){
+    if(f!=_indicatorSize){_indicatorSize=f;setNeedsRedraw();}}
+
+  GCSize getIndicatorSize(){return _indicatorSize;}
+
+  void setIndicatorSpace(uint8_t s){
+    if(s != _indicatorSpace){_indicatorSpace = s;setNeedsLayout();}}
+
+  uint8_t getIndicatorSpace(){return _indicatorSpace;}
+
   void setLabel(String* label){
     _label = label;_needsRedraw=true;};
   const String * getLabel(){return _label;}
@@ -219,8 +279,8 @@ public:
 
   virtual void sizeToFit(){
     Serial << "Labels sizeToFit"<<endl;
-    GCSize is = intrinsicSize();is.w+=2*_insets.w; is.h+=2*_insets.h;
-    setSize(is); _textPosition.x = _insets.w; _textPosition.y = _insets.h;setNeedsLayout();}
+    GCSize is = intrinsicSize();
+    setSize(is); /*_textPosition.x = _insets.w; _textPosition.y = _insets.h;*/setNeedsLayout();}
 
   virtual void redraw();
 
@@ -231,7 +291,10 @@ protected:
   uint8_t  _allignmentMask;   // mask for TextAlignment;
   GCPoint  _textPosition;     // used if allignmentMask == 0
   GCSize   _insets;
-  uint8_t _textSize;          // used if font == NULL
+  GCSize  _indicatorSize;    // frame of the Indicator rectangle
+  uint8_t _indicatorSpace;    // horizontal space for the indicator
+  uint8_t  _textSize;          // used if font == NULL
+
   const ILI9341_t3_font_t *_font;   //
   const String *_label;
 };
@@ -261,7 +324,7 @@ public:
     valueColor(vc),labelDrawOutline(ldo),labelOutlineInset(loi),labelOutlineCornerRadius(locr),
     cornerRadius(cr),horizontalLabelInset(hli),horizontalValueInset(hvi),verticalValueInset(vvi){};
 
-  }LayoutDefinition;
+  }ValueLayout;
 
   metaValue():metaView(),_label(),_value(),_frameInset(),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN),
   _labelDrawOutline(false),_labelOutlineInset(3),_labelOutlineCornerRadius(6){};
@@ -272,7 +335,7 @@ public:
 
   void initValue(metaTFT* tft, GCRect frame);
 
-  void setLayout(LayoutDefinition definition){
+  void setLayout(ValueLayout &definition){
     setLabelFont(definition.labelFont);
     setValueFont(definition.valueFont);
     setLabelColor(definition.labelColor);
@@ -368,6 +431,7 @@ public:
   virtual int16_t processEvent(UserEvent* k);
   void forgetSelection(){_lastSelectedView = NULL;}
   metaResponder* addEntry(const String *k);
+  virtual void sizeToFit();
 protected:
   void drawConnectionFor(metaView* view, uint16_t lineColor);
   metaView* selectedSubview();

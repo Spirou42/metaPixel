@@ -169,8 +169,9 @@ public:
         case EncoderRight:  out <<"Right";  break;
       }
     return out;}
-  uint16_t eventMask();
 
+  uint16_t eventMask();
+  bool matchesMask(uint16_t mask);
   ButtonID getButtonID();
   ButtonState getButtonState();
 

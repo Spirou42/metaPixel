@@ -7,7 +7,9 @@ uint16_t UserEvent::eventMask()
 {
   uint16_t result = 0;
   switch(_type){
-    case EventType::EventTypeEncoder: result |=EventMask::EncoderEvents; break;
+    case EventType::EventTypeEncoder:
+      result |= EventMask::EncoderEvents;
+      break;
     case EventType::EventTypeKey: {
       result |= EventMask::ButtonEvents;
       ButtonData bData = getData().buttonData;
@@ -28,8 +30,33 @@ uint16_t UserEvent::eventMask()
         case ButtonState::ButtonDoubleClick: result |= EventMask::ButtonState_DoubleClick; break;
         default: break;
       }
-    } break;
+    }
+    break;
   }
+
+  return result;
+}
+
+bool UserEvent::matchesMask(uint16_t mask){
+  bool result = false;
+  uint16_t myMask = eventMask();
+  bool typeMatch=false,buttonMatch=false,stateMatch=false;
+  typeMatch = ((myMask & 0x3)&(mask & 0x3))!=0;
+
+  if(typeMatch && ((myMask & EventMask::EncoderEvents)!=0) ){
+    return true;
+  }
+  mask = mask >> 2;
+  myMask = myMask >> 2;
+
+  buttonMatch = ((myMask & 0x1F)&(mask &0x1f))!= 0;
+
+  mask = mask >> 5;
+  myMask = myMask >> 5;
+  stateMatch = ((myMask & 0x1F)&(mask &0x1f))!= 0;
+
+  result = typeMatch && buttonMatch && stateMatch;
+
   return result;
 }
 

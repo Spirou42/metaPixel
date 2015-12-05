@@ -4,6 +4,14 @@
 #ifndef __METATFT_H__
 #define __METATFT_H__
 #define FASTLED_INTERNAL
+
+#include <stack>
+#include <vector>
+#include <tuple>
+#include <list>
+
+#include "FastLED.h"
+
 /** TFT Configuration **/
 #define TFT_RST   2
 #define TFT_DC    9
@@ -25,4 +33,10 @@
 #include <FastLED.h>
 extern CRGB leds[];
 
+
+typedef std::pair<const String,CRGBPalette16> PalettePair;
+typedef std::vector<PalettePair> PaletteList;
+
+extern PaletteList systemPalettes;
+extern PaletteList::iterator currentSystemPalette;
 #endif

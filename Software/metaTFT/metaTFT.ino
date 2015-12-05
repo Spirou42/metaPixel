@@ -1,6 +1,8 @@
 #define FASTLED_INTERNAL
 #include <stack>
 #include <vector>
+#include <tuple>
+#include <list>
 #include "Math.h"
 
 #include "SPI.h"
@@ -32,7 +34,29 @@ CRGB  leds[NUM_LEDS];
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
 UserEventQueue eventQueue = UserEventQueue();
 using namespace std;
-vector<int> blubber;
+typedef pair<const String,CRGBPalette16> PalettePair;
+typedef vector<PalettePair> PaletteList;
+
+PaletteList initializeSystemPalettes()
+{
+	PaletteList tmp;
+	tmp.push_back(PalettePair("Rainbow",RainbowColors_p));
+	tmp.push_back(PalettePair("Clouds",CloudColors_p));
+	tmp.push_back(PalettePair("Ocean",OceanColors_p));
+	tmp.push_back(PalettePair("Forest",ForestColors_p));
+	tmp.push_back(PalettePair("Party",PartyColors_p));
+	tmp.push_back(PalettePair("Rainbow Stripes",RainbowStripeColors_p));
+	tmp.push_back(PalettePair("Lava",LavaColors_p));
+	tmp.push_back(PalettePair("Heat",HeatColors_p));
+	tmp.push_back(PalettePair("Arctic",arctic_gp));
+	tmp.push_back(PalettePair("Temperature",temperature_gp));
+	tmp.push_back(PalettePair("Colombia",colombia_gp));
+	tmp.push_back(PalettePair("Cequal",cequal_gp));
+	return tmp;
+}
+
+PaletteList systemPalettes = initializeSystemPalettes();
+PaletteList::iterator currentSystemPalette = systemPalettes.begin();
 
 CRGBPalette16 palettes[] = {
 	(CRGBPalette16)RainbowColors_p,
@@ -91,12 +115,13 @@ const String palLabel("Palettes");
 const String testLabel("Test");
 const String Brightness("Brightness");
 
-metaList  MaskView;
+metaList  SelectMenu;
 metaView	SecondView;
 metaLabel ProgramLabel(&proLabel);
 metaLabel PaletteLabel(&palLabel);
 metaLabel TestLabel(&testLabel);
 metaLabel bLabel(&Brightness);
+metaLabel kLabel(&testLabel);
 
 // metaValue UpButton(&upButtonPair.label,&upButtonPair.value);
 // metaValue DownButton(&downButtonPair.label,&downButtonPair.value);
@@ -109,57 +134,63 @@ metaLabel bLabel(&Brightness);
 // metaButton LeftButton = metaButton();
 // metaButton RightButton = metaButton();
 
-void initMask()
+void initSelectMenu()
 {
-	GCSize insets(2,2);
-	ProgramLabel.setInsets(insets);
-	ProgramLabel.setOutlineColor(ILI9341_ORANGE);
+	GCSize insets(7,5);
+	metaView::ViewLayout viewLayout;
+	metaLabel::LabelLayout labelLayout;
+	viewLayout.backgroundColor=ILI9341_BLACK;
+	viewLayout.outlineColor=ILI9341_ORANGE;
+	viewLayout.opaque=false;
+	labelLayout.viewLayout = &viewLayout;
+	labelLayout.font = &Arial_24;
+	labelLayout.insets=insets;
+	labelLayout.indicatorSpace = 17;
+	labelLayout.indicatorSize = GCSize(10,10);
+	labelLayout.textSize=1;
+	labelLayout.textColor=ILI9341_GREEN;
+	viewLayout.visualizeState=true;
+
 	ProgramLabel.initView(&tft,GCRect());
-	ProgramLabel.setFont(&Arial_14);
-	ProgramLabel.setTextSize(1);
-	//ProgramLabel.sizeToFit();
+	ProgramLabel.setLayout(labelLayout);
 
-	PaletteLabel.setInsets(insets);
-	PaletteLabel.setOutlineColor(ILI9341_ORANGE);
 	PaletteLabel.initView(&tft,GCRect());
-	PaletteLabel.setFont(&Arial_14);
-	PaletteLabel.setTextSize(2);
-	//PaletteLabel.sizeToFit();
+	PaletteLabel.setLayout(labelLayout);
 
-	TestLabel.setInsets(insets);
-	TestLabel.setOutlineColor(ILI9341_ORANGE);
 	TestLabel.initView(&tft,GCRect());
-	TestLabel.setFont(&Arial_14);
-	TestLabel.setTextSize(3);
-	//TestLabel.sizeToFit();
+	TestLabel.setLayout(labelLayout);
 
-	bLabel.setInsets(insets);
-	bLabel.setOutlineColor(ILI9341_ORANGE);
 	bLabel.initView(&tft,GCRect());
-	bLabel.setFont(&Arial_14);
-	bLabel.setTextSize(3);
-	//bLabel.sizeToFit();
+	bLabel.setLayout(labelLayout);
 
-	MaskView.initView(&tft,GCRect(10,20,tft.width()/2,tft.height()-40));
-	MaskView.setBorderInset(GCSize(5,5));
+	kLabel.initView(&tft,GCRect());
+	kLabel.setLayout(labelLayout);
 
-	MaskView.setRespondsToEvents(UserEvent::EventMask::EncoderEvents |
+	SelectMenu.initView(&tft,GCRect(2,2,tft.width()/2,tft.height()-4));
+	SelectMenu.setBorderInset(GCSize(15,5));
+
+	SelectMenu.setRespondsToEvents(UserEvent::EventMask::EncoderEvents | UserEvent::EventMask::ButtonEvents |
 		 UserEvent::EventMask::ButtonEvent_Down |
 		 UserEvent::EventMask::ButtonEvent_Up |
-		 UserEvent::EventMask::ButtonEvent_Center);
-	MaskView.setDrawsOutline(true);
-	MaskView.setCornerRadius(3);
-	MaskView.setOutlineColor(ILI9341_RED);
+		 UserEvent::EventMask::ButtonEvent_Center | UserEvent::EventMask::ButtonState_All);
+	SelectMenu.setDrawsOutline(true);
+	SelectMenu.setCornerRadius(3);
+	SelectMenu.setOutlineColor(ILI9341_RED);
+	SelectMenu.setOpaque(false);
 
-	MaskView.addSubview(&bLabel);
-	MaskView.addSubview(&ProgramLabel);
-	MaskView.addSubview(&PaletteLabel);
-	MaskView.addSubview(&TestLabel);
-	MaskView.layoutList();
+	SelectMenu.addSubview(&bLabel);
+	SelectMenu.addSubview(&ProgramLabel);
+	SelectMenu.addSubview(&PaletteLabel);
+	SelectMenu.addSubview(&TestLabel);
+	SelectMenu.addSubview(&kLabel);
+	SelectMenu.layoutList();
+	SelectMenu.sizeToFit();
 
-	MaskView.setOpaque(false);
-
-	SecondView.initView(&tft,GCRect(tft.width()/2+10+2,20,(2*tft.width()/3)-20,tft.height()-40));
+	GCPoint selO = SelectMenu.getOrigin();
+	GCSize 	selS = SelectMenu.getSize();
+	int seVx = selO.x+selS.w + 2;
+	SecondView.initView(&tft,GCRect(seVx, selO.y,
+	tft.width()-seVx-selO.x,selS.h));
 	SecondView.setDrawsOutline(true);
 	SecondView.setCornerRadius(3);
 	SecondView.setOutlineColor(ILI9341_NAVY);
@@ -171,10 +202,10 @@ elapsedMillis firstTime = elapsedMillis(0);
 elapsedMillis displayTimer ;
 elapsedMillis ledTimer;
 
-void drawMask(){
+void drawSelectMenu(){
 	//tft.fillScreen(ILI9341_BLACK);
-	//MaskView.setNeedsRedraw();
-	MaskView.redraw();
+	//SelectMenu.setNeedsRedraw();
+	SelectMenu.redraw();
 	SecondView.redraw();
 	//
 	// tft.setFontAdafruit();
@@ -198,8 +229,8 @@ void drawText()
 	tft.fillRect(x,y,stringSize.w,stringSize.h,ILI9341_BLACK);
 	tft.setCursor(x,y);
 	tft << name<<endl;
-
 }
+
 void effectMoiree()
 {
 	uint8_t colorIDX = 0;
@@ -210,14 +241,14 @@ void effectMoiree()
 //	for(int step=10;step>0;--step){
 		//		int step = 3;
 		for(int x=0;x<tft.width();x+=step){
-			CRGB c = ColorFromPalette(palettes[currentPalette],colorIDX++);
+			CRGB c = ColorFromPalette((*currentSystemPalette).second,colorIDX++);
 			//uint16_t color = tft.color565(c.r, c.g, c.b);
 			tft.drawLine(x,0,tft.width()-x,tft.height(),c);
 //			drawText();
 //			delay(lineDelay);
 		}
 		for(int y=tft.height();y>=0;y-=step){
-			CRGB c = ColorFromPalette(palettes[currentPalette],colorIDX++);
+			CRGB c = ColorFromPalette((*currentSystemPalette).second,colorIDX++);
 			uint16_t color = tft.color565(c.r, c.g, c.b);
 			tft.drawLine(0,y,tft.width(),tft.height()-y,color);
 //			drawText();
@@ -271,7 +302,7 @@ void adjustBrightness()
 	String valueStr = String("-55 ");
 	String blubberStr = String ("-UU ");
 	metaValue bla = metaValue();
-	metaValue::LayoutDefinition brightnessTheme;
+	metaValue::ValueLayout brightnessTheme;
 	brightnessTheme.labelFont = &Arial_16;
 	brightnessTheme.valueFont = &Arial_40;
 	brightnessTheme.labelOutlineCornerRadius = 10;
@@ -387,21 +418,21 @@ void testViews()
 	l.removeFromSuperview();
 }
 
+/** todo: re-move this functionalityto a generic implementation */
 void processListEvents(metaList *list)
 {
 	while(eventQueue.length()){
 		UserEvent *evnt = eventQueue.popEvent();
-		uint16_t l = evnt->eventMask();
+		//uint16_t l = evnt->eventMask();
 		uint16_t k = list->respondsToEvents();
 		int16_t selIndex =list->selectedIndex();
-		if((l&k) != 0){
+		if((evnt->matchesMask(k)) ){
 			selIndex = list->processEvent(evnt);
-			Serial << "SelectedIndex = "<<selIndex<<endl;
+//			Serial << "SelectedIndex = "<<selIndex<<endl;
 			if( selIndex >=0 ){
 				list->redraw();
 			}
 		}else{
-
 			Serial << "List will not process : "<<evnt<<endl;
 			if((selIndex == 0) && (evnt->getType() == UserEvent::EventType::EventTypeKey)){
 				Serial << "IDX=0 and type=key"<<endl;;
@@ -411,7 +442,7 @@ void processListEvents(metaList *list)
 					adjustBrightness();
 					list->setNeedsRedraw();
 					SecondView.setNeedsRedraw();
-					drawMask();
+					drawSelectMenu();
 				}
 			}else{
 				Serial << "bla";
@@ -441,8 +472,15 @@ void setup() {
 	enableEncoders();
 
 	// draw mask
-	initMask();
-
+	initSelectMenu();
+	Serial << "Installed Palettes: ("<<systemPalettes.size()<<")"<<endl;
+	PaletteList::iterator iter = systemPalettes.begin();
+	while(iter != systemPalettes.end()){
+		PalettePair k = *iter;
+		Serial << "Name: "<< k.first<<endl;
+		iter ++;
+	}
+	Serial << "Current: "<<(*currentSystemPalette).first<<endl;
 	// initialize tasks
 	taskQueue.scheduleFunction(processLEDEffects,NULL,"EFFC",0,1000/FRAMES_PER_SECOND);
 }
@@ -451,7 +489,7 @@ void loop() {
 	// put your main code here, to run repeatedly:
 	if(firstTime>1000 && !skipMask){
 		tft.fillScreen(ILI9341_BLACK);
-		drawMask();
+		drawSelectMenu();
 		Serial << "Draw"<<endl;
 		Serial.flush();
 		skipMask = true;
@@ -463,7 +501,7 @@ void loop() {
 	// }
 
 	if(displayTimer > 100){
-		processListEvents(&MaskView);
+		processListEvents(&SelectMenu);
 		displayTimer = 0;
 	}
 	/** run all sequence tasks */
