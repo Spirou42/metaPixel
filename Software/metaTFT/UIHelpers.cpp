@@ -11,6 +11,29 @@
 #define DEBUG_LAYOUT_COLOR_BACKGROUND_MIDDLE ILI9341_LIGHTGREY
 #define DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER ILI9341_NAVY
 #define DEBUG_LAYOUT_LINECOLOR ILI9341_WHITE
+/**********************************************
+ *									metaAction								*
+ **********************************************/
+
+metaAction::metaAction(metaView* view, String label, int16_t *value){
+	_mask = view;
+	_value = value;
+	_label.remove(0);
+	_label.append(label);
+}
+void metaAction::operator()(void) const {
+	Serial << "action called with nothing "<<endl;
+	return;
+}
+
+void metaAction::operator()(int16_t val) const{
+	Serial <<"action called with "<<val<<endl;
+	if(_value){
+		*_value = val;
+	}
+	return;
+}
+
 
 /**********************************************
  *									metaView									*
@@ -21,6 +44,7 @@ void metaView::initView(metaTFT* tft, GCRect frame){
 	_frame = frame;
 	_needsRedraw = true;
 	_needsLayout = true;
+	_respondsToEvents = 0;
 }
 
 GCPoint metaView::getScreenOrigin(){
@@ -319,7 +343,7 @@ void metaLabel::redraw(){
 /**********************************************
  *									metaValue 								*
  **********************************************/
-#if 0
+
 void metaValue::initValue(metaTFT* tft, GCRect frame){
 	metaView::initView(tft, frame);
 	setBackgroundColor(ILI9341_BLACK);
@@ -332,22 +356,22 @@ void metaValue::initValue(metaTFT* tft, GCRect frame){
 	setDrawsOutline(false);
 
 	_labelView.initView(tft,0,0,100,100);
-	_labelView.setLabel(_label);
-	_labelView.setFont(_labelFont);
+	_labelView.setLabel("");
+	//_labelView.setFont(_labelFont);
 	_labelView.setTextSize(2);
 	_labelView.setBackgroundColor(_backgroundColor);
 	#if DEBUG_LAYOUT_VALUE
 	_labelView.setBackgroundColor(DEBUG_LAYOUT_COLOR_BACKGROUND_INNER);
 	#endif
-	_labelView.setTextColor(_labelColor);
-	_labelView.setOutlineColor(_labelColor);
+	//_labelView.setTextColor(_labelColor);
+	//_labelView.setOutlineColor(_labelColor);
 	_labelView.setCornerRadius(_labelOutlineCornerRadius);
 	_labelView.setDrawsOutline(_labelDrawOutline);
 	_labelView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
 	_labelView.sizeToFit();
 
 	GCSize ls = _labelView.getSize();
-	ls.h = _labelFont->line_space;
+	ls.h = _labelView.getFont()->line_space;
 	if(_labelView.getDrawsOutline()){
 		ls.h+=2*_labelOutlineInset;
 	}
@@ -360,14 +384,14 @@ void metaValue::initValue(metaTFT* tft, GCRect frame){
 
 	_labelView.setOrigin(lo);
 	_valueView.initView(tft,0,0,120,120);
-	_valueView.setLabel(_value);
+	//_valueView.setLabel(_value);
 	_valueView.setTextSize(3);
-	_valueView.setFont(_valueFont);
+	//_valueView.setFont(_valueFont);
 	_valueView.setBackgroundColor(_backgroundColor);
 	#if DEBUG_LAYOUT_VALUE
 	_valueView.setBackgroundColor(DEBUG_LAYOUT_COLOR_BACKGROUND_INNER);
 	#endif
-	_valueView.setTextColor(_valueColor);
+	//_valueView.setTextColor(_valueColor);
 	_valueView.sizeToFit();
 	_valueView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
 	_valueView.setTextPosition(1,1);
@@ -391,8 +415,8 @@ void metaValue::initValue(metaTFT* tft, GCRect frame){
 }
 
 void metaValue::initValue(metaTFT* tft, GCRect frame, String label, String value){
-	_label = label;
-	_value = value;
+	_labelView.setLabel(label);
+	_valueView.setLabel(value);
 	initValue(tft,frame);
 }
 
@@ -462,28 +486,37 @@ void metaValue::sizeToFit(){
 
 	setSize(ownSize);
 }
-#endif
+
 
 /**********************************************
  *									metaList 									*
  **********************************************/
 
+void metaList::initView(metaTFT* tft, GCRect frame ){
+	metaView::initView(tft,frame);
+	setRespondsToEvents(EventMask::EncoderEvents | EventMask::ButtonEvents |
+		 EventMask::ButtonEvent_Down |
+		 EventMask::ButtonEvent_Up |
+		 EventMask::ButtonEvent_Center | EventMask::ButtonState_All);
+}
+
 void metaList::addSubview(metaView* aView){
 	metaView::addSubview(aView);
 	aView->sizeToFit();
-	GCSize l = aView->getSize();
-	Serial << " View: "<<l<<endl;
+	//GCSize l = aView->getSize();
+	//Serial << " View: "<<l<<endl;
 	_maxElementSize.w = MAX(aView->getSize().w,_maxElementSize.w);
 	_maxElementSize.h = MAX(aView->getSize().h,_maxElementSize.h);
 }
 
-void metaList::addEntry(const String b){
+metaLabel* metaList::addEntry(const String b){
 	metaLabel *k = new metaLabel(b);
 	k->initView(_display,GCRect());
 	if(_ll){
 		k->setLayout(*_ll);
 	}
 	addSubview(k);
+	return k;
 	//Serial << "added: "<<_HEX((long int)k)<<" "<<_subViews.size()<<endl;
 }
 
@@ -650,9 +683,14 @@ void metaList::activateIndex(int16_t idx){
 	}
 }
 
-void metaList::initResponder(UserEventQueue* queue){
-	metaResponder::initResponder(queue);
+metaView* metaList::activeElement(){
+	vector<metaView*>::iterator l = onIterator();
+	if(l==_subViews.end()){
+		return NULL;
+	}
+	return (*l);
 }
+
 
 bool metaList::switchSelectedOn(){
 	vector<metaView*>::iterator oldIter = onIterator();

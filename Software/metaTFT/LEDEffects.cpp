@@ -6,10 +6,10 @@
 #include "metaTFT.h"
 #include "LEDEffects.h"
 
-SimplePatternList patterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
-const char* patternNames[]={"Rainbow","Rainbow glitter", "Confetti", "Sinelon", "Juggle", "BPM"};
-uint8_t currentPatternNumber = 0; // Index number of which pattern is current
-size_t numberOfPatterns = ARRAY_SIZE(patterns);
+//SimplePatternList patterns = { rainbow, rainbowWithGlitter, confetti, sinelon, juggle, bpm };
+//const char* patternNames[]={"Rainbow","Rainbow glitter", "Confetti", "Sinelon", "Juggle", "BPM"};
+//uint8_t currentPatternNumber = 0; // Index number of which pattern is current
+//size_t numberOfPatterns = ARRAY_SIZE(patterns);
 uint8_t gHue = 0;
 
 void rainbow()

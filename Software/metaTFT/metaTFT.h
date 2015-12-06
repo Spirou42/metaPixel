@@ -6,9 +6,12 @@
 #define FASTLED_INTERNAL
 
 #include <stack>
+#include <deque>
 #include <vector>
 #include <tuple>
 #include <list>
+#include <deque>
+#include "UIHelpers.h"
 
 #include "FastLED.h"
 
@@ -47,5 +50,8 @@ extern PaletteList::iterator currentSystemPalette;
 
 extern EffectList systemEffects;
 extern EffectList::iterator currentSystemEffect;
+
+typedef std::stack<metaView*,std::vector<metaView*>> ResponderStack;
+extern ResponderStack responderStack;
 
 #endif

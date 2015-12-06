@@ -14,7 +14,7 @@
 #include "UserEvent.h"
 #include "metaTFTDisplay.h"
 #include "Switch.h"
-
+#include "Parameter.h"
 #include "Switches.h"
 #include "Encoder.h"
 #include "Encoders.h"
@@ -70,68 +70,75 @@ PaletteList::iterator currentSystemPalette = systemPalettes.begin();
 EffectList systemEffects = initializeSystemEffects();
 EffectList::iterator currentSystemEffect = systemEffects.begin();
 
+ResponderStack responderStack;
+
 Queue taskQueue;
 
-void initializeTFT()
-{
-	//tft.setLuminance(10);
-	tft.start();
-	//tft.setLuminance(180);
-	//tft.setFont(Arial_16);
+/**					Global UI Elements				**/
+metaList  SystemMenu;
+metaView	SecondView;
+metaList	EffectsMenu;
+metaList 	PalettesMenu;
+
+metaLabel::LabelLayout*  getListLayout(){
+	static metaView::ViewLayout viewLayout;
+	static metaLabel::LabelLayout labelLayout;
+	static bool isInitialized = false;
+	if(!isInitialized){
+		viewLayout.backgroundColor=ILI9341_BLACK;
+		viewLayout.outlineColor=ILI9341_ORANGE;
+		viewLayout.opaque=false;
+		labelLayout.viewLayout = &viewLayout;
+		labelLayout.font = &Arial_14;
+		labelLayout.insets=GCSize(5,5);
+		labelLayout.indicatorSpace = 14;
+		labelLayout.indicatorSize = GCSize(6,6);
+		labelLayout.textSize=1;
+		labelLayout.textColor=ILI9341_GREEN;
+		viewLayout.visualizeState=true;
+		isInitialized=true;
+	}
+	return &labelLayout;
 }
 
-void initializeLEDs()
-{
+void initListVisual(metaList &k){
+	k.setBorderInset(GCSize(15,5));
+	k.setLabelLayout(getListLayout());
+	k.setDrawsOutline(true);
+	k.setCornerRadius(3);
+	k.setOutlineColor(ILI9341_RED);
+	k.setOpaque(false);
+}
+
+void initializeTFT(){
+	tft.start();
+}
+
+void initializeLEDs(){
 	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
 	FastLED.clear(true);
 	FastLED.setBrightness( LED_BRIGHTNESS );
 	FastLED.show();
 }
 
-metaList  SelectMenu;
-metaView	SecondView;
-
-void initSelectMenu()
-{
+void initSystemMenu(){
 	// visual them definition for a single list entry
-	GCSize insets(5,5);
-	metaView::ViewLayout viewLayout;
-	metaLabel::LabelLayout labelLayout;
-	viewLayout.backgroundColor=ILI9341_BLACK;
-	viewLayout.outlineColor=ILI9341_ORANGE;
-	viewLayout.opaque=false;
-	labelLayout.viewLayout = &viewLayout;
-	labelLayout.font = &Arial_16;
-	labelLayout.insets=insets;
-	labelLayout.indicatorSpace = 14;
-	labelLayout.indicatorSize = GCSize(6,6);
-	labelLayout.textSize=1;
-	labelLayout.textColor=ILI9341_GREEN;
-	viewLayout.visualizeState=true;
 
+	SystemMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
+	initListVisual(SystemMenu);
 
-	SelectMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
-	SelectMenu.setBorderInset(GCSize(15,5));
-	SelectMenu.setLabelLayout(&labelLayout);
-	SelectMenu.setRespondsToEvents(EventMask::EncoderEvents | EventMask::ButtonEvents |
-		 EventMask::ButtonEvent_Down |
-		 EventMask::ButtonEvent_Up |
-		 EventMask::ButtonEvent_Center | EventMask::ButtonState_All);
-	SelectMenu.setDrawsOutline(true);
-	SelectMenu.setCornerRadius(3);
-	SelectMenu.setOutlineColor(ILI9341_RED);
-	SelectMenu.setOpaque(false);
+	SystemMenu.addEntry( String("Brightness"));
+	SystemMenu.addEntry( String("Program"));
+	SystemMenu.addEntry( String("Pallette"));
+	SystemMenu.addEntry( String("Test"));
+	SystemMenu.addEntry( String("Tast"));
 
-	SelectMenu.addEntry( String("Brightness"));
-	SelectMenu.addEntry( String("Program"));
-	SelectMenu.addEntry( String("Pallette"));
-	SelectMenu.addEntry( String("Test"));
-	SelectMenu.addEntry( String("Tast"));
-	SelectMenu.layoutList();
-	SelectMenu.sizeToFit();
+	SystemMenu.layoutList();
+	SystemMenu.sizeToFit();
 
-	GCPoint selO = SelectMenu.getOrigin();
-	GCSize 	selS = SelectMenu.getSize();
+	// Layout the second view
+	GCPoint selO = SystemMenu.getOrigin();
+	GCSize 	selS = SystemMenu.getSize();
 	int seVx = selO.x+selS.w + 2;
 	SecondView.initView(&tft,GCRect(seVx, selO.y,
 	tft.width()-seVx-selO.x,selS.h));
@@ -141,18 +148,44 @@ void initSelectMenu()
 	SecondView.setOpaque(false);
 }
 
+void initEffectsMenu(){
+	EffectsMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
+	initListVisual(EffectsMenu);
+	EffectList::iterator iter = systemEffects.begin();
+	while(iter != systemEffects.end()){
+		EffectsMenu.addEntry((*iter)->first );
+		iter ++;
+	}
+	EffectsMenu.layoutList();
+	EffectsMenu.sizeToFit();
+}
+
+void initPalettesMenu(){
+	PalettesMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
+	initListVisual(PalettesMenu);
+	PaletteList::iterator iter = systemPalettes.begin();
+	while(iter != systemPalettes.end()){
+		PalettesMenu.addEntry((*iter)->first);
+		iter ++;
+	}
+	PalettesMenu.layoutList();
+	PalettesMenu.sizeToFit();
+}
+
+
+void initUI()
+{
+	initSystemMenu();
+	initPalettesMenu();
+	initEffectsMenu();
+}
 elapsedMillis firstTime = elapsedMillis(0);
 
 elapsedMillis displayTimer ;
 elapsedMillis ledTimer;
 
 
-
-
-
-
-int processLEDEffects(unsigned long now,void* data)
-{
+int processLEDEffects(unsigned long now,void* data){
 	if(ledTimer > (1000/FRAMES_PER_SECOND)){
 		EffectPair *l = *currentSystemEffect;
 		effectHandler h = l->second;
@@ -257,26 +290,28 @@ void adjustBrightness()
 
 
 /** todo: re-move this functionalityto a generic implementation */
-void processListEvents(metaList *list)
-{
-	// if(eventQueue.length()){
-	// 	vector<metaView*>::iterator iter = list->_subViews.begin();
-	// 	Serial << "SubViews: "<<list->_subViews.size()<<endl;
-	// 	while(iter != list->_subViews.end()){
-	// 		Serial << "SubView: "<<_HEX((long int)(*iter))<<endl;
-	// 		iter ++;
-	// 	}
-	// }
+int processUserEvents(unsigned long now, void * userdata){
+	if(responderStack.size()==0){
+		Serial << "There is no top responder"<<endl;
+		return 0;
+	}
+	metaView *resp = responderStack.top();
 	while(eventQueue.length()){
 		UserEvent *evnt = eventQueue.popEvent();
 		//uint16_t l = evnt->eventMask();
-		uint16_t k = list->respondsToEvents();
-		int16_t oldSelectedElement =list->selectedIndex();
+		uint16_t k = resp->respondsToEvents();
+		int16_t oldSelectedElement =resp->selectedIndex();
 		if((evnt->matchesMask(k)) ){
-			int16_t result = list->processEvent(evnt);
-			if(result > ResponderResult::ChangedSelect){
-				Serial << "List changed select x = "<<result<<endl;
-				list->redraw();
+			int16_t result = resp->processEvent(evnt);
+			if(result > ResponderResult::ChangedValue){
+				Serial << "List changed Value x = "<<result<<endl;
+				metaAction *a = resp->getAction();
+				if(a){
+					Serial << "Responder got a value action"<<endl;
+				}else{
+					Serial << "Responder did not have a value action"<<endl;
+				}
+				resp->redraw();
 			}else{
 				switch(result){
 					case ResponderResult::ChangedNothing:
@@ -285,14 +320,29 @@ void processListEvents(metaList *list)
 
 					case ResponderResult::ChangedVisual:
 					Serial << "List changed visualy"<< endl;
-					list->redraw();
+					resp->redraw();
 					break;
 
-					case ResponderResult::ChangedState:
+					case ResponderResult::ChangedState:			/// this only is send if there was a list select
 					{
-						int16_t idx =list->activeIndex();
+						int16_t idx =resp->activeIndex();
 						Serial << "List changed state selected "<<idx<<endl;
-						list->redraw();
+						metaAction *a = resp->getAction();
+						if(a){
+							Serial << "resp has a action for this"<< endl;
+						}else{
+							// check if the list entry has an metaAction added;
+							metaView * p = resp->activeElement();
+							if(p){
+								metaAction *a = p->getAction();
+								if(a){
+									Serial << "got an action on the active Elements"<<endl;
+								}else{
+									Serial << "on element does not have a action"<<endl;
+								}
+							}
+						}
+						resp->redraw();
 					}
 					break;
 
@@ -305,6 +355,7 @@ void processListEvents(metaList *list)
 		}
 		delete evnt;
 	}
+	return 0;
 }
 
 
@@ -312,7 +363,8 @@ void setup() {
 	Serial.begin(115200);
 	while(!Serial){}
 	Serial << "Start"<<endl;
-	Serial << "Effects: "<<numberOfPatterns<<endl;
+	Serial << "Effects: "<<systemEffects.size()<<endl;
+	Serial << "Palettes: "<<systemPalettes.size()<<endl;
 	initializeLEDs();
 
 	// init LED Backlight
@@ -327,25 +379,11 @@ void setup() {
 	enableEncoders();
 
 	// draw mask
-	initSelectMenu();
-	Serial << "Installed Palettes: ("<<systemPalettes.size()<<")"<<endl;
-	PaletteList::iterator iter = systemPalettes.begin();
-	while(iter != systemPalettes.end()){
-		PalettePair *k = *iter;
-		Serial << "Name: "<< k->first<<endl;
-		iter ++;
-	}
-	Serial << "Current: "<<(*currentSystemPalette)->first<<endl;
+	initUI();
 
-	Serial << "Installed Effects: ("<<systemEffects.size()<<")"<<endl;
-	EffectList::iterator eiter = systemEffects.begin();
-	while(eiter != systemEffects.end()){
-		EffectPair *k = *eiter;
-		Serial << "Name: "<<k->first<<endl;
-		eiter ++;
-	}
 	// initialize tasks
 	taskQueue.scheduleFunction(processLEDEffects,NULL,"EFFC",0,1000/FRAMES_PER_SECOND);
+	taskQueue.scheduleFunction(processUserEvents,NULL,"USER",0,100);
 }
 
 bool skipMask = false;
@@ -353,24 +391,20 @@ void loop() {
 	// put your main code here, to run repeatedly:
 	if(firstTime>1000 && !skipMask){
 		tft.fillScreen(ILI9341_BLACK);
-		SelectMenu.redraw();
 		SecondView.redraw();
+		responderStack.push(&SystemMenu);
+		responderStack.top()->redraw();
+
 
 		Serial << "Draw"<<endl;
 		Serial.flush();
 		skipMask = true;
 	}
-	// if(eventQueue.length()){
-	// 	tft.setCursor(0,0);
-	// 	tft << eventQueue.length()<<"     ";
-	// 	Serial <<eventQueue.length()<<endl;
-	// }
-
-	if(displayTimer > 100){
-		processListEvents(&SelectMenu);
-		displayTimer = 0;
+	if(responderStack.empty()){ // this is not good
+		responderStack.push(&SystemMenu);
 	}
+
 	/** run all sequence tasks */
-taskQueue.Run(millis());
+	taskQueue.Run(millis());
 
 }

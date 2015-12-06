@@ -6,6 +6,7 @@
 #define __UIHELPERS_H__
 #include "Arduino.h"
 #include <vector>
+#include <stack>
 #include "metaTFTDisplay.h"
 #include "font_Arial.h"
 
@@ -26,28 +27,42 @@
 
 using namespace std;
 /** baseclass for EventResponding */
-class UserEventQueue;
-class UserEvent;
 
+class UserEvent;
+class metaView;
+typedef std::stack<metaView*,std::vector<metaView*>> ResponderStack;
 /**
 the Responder is the base class for all event processing related stuff
 */
 typedef enum _responderResult{
-  ChangedSelect   = -1,
+  ChangedValue   = -1,
   ChangedVisual   = -1,                          ///< this result from a processEvent call will remove this responder from the responder stack.
   ChangedState    = -2,
   ChangedNothing  = -3,
   ResponderExit   = -4,
 }ResponderResult;
 
+class metaView;
+
+class metaAction
+{
+ public:
+   metaAction(metaView* mask,String label,int16_t *value);
+   void operator()(void)const;
+   void operator()(int16_t value)const;
+  protected:
+   metaView* _mask;                         /// this is the next responder
+   String _label;                           /// the optional label if the responer is a ValueResponder
+   int16_t *_value;                          /// pointer to a concrete int16_t
+};
+
 class metaResponder
 {
  public:
 
-  metaResponder(){}
-  void initResponder(UserEventQueue* queue){
-    _eventQueue = queue;}
-
+  metaResponder():_responderStack(NULL),_respondsToEvents(),_action(NULL){}
+  void initResponder(ResponderStack* rS){
+    _responderStack = rS;}
 
   void setRespondsToEvents(uint16_t m){
     _respondsToEvents = m;}
@@ -55,16 +70,28 @@ class metaResponder
   uint16_t respondsToEvents(){
     return _respondsToEvents;}
 
-  virtual int16_t processEvent(UserEvent *k)=0;
+  void setAction(metaAction* action){_action = action;}
+  metaAction* getAction(){return _action;}
+
+  virtual int16_t selectedIndex(){return -1;}                             /// returns the index of the selected (outlined) entry
+  virtual void selectIndex(int16_t){}
+
+  virtual int16_t activeIndex(){return -1;}
+  virtual void activateIndex(int16_t){}
+  virtual metaView* activeElement(){return NULL;};
+
+  virtual int16_t processEvent(UserEvent *k){return ChangedNothing;};
+
 
  protected:
-    UserEventQueue * _eventQueue;
+    ResponderStack * _responderStack;
     uint16_t _respondsToEvents;
+    metaAction* _action;
 };
 
 /** baseclass for UI elements */
 
-class metaView : public GraphicsContext
+class metaView : public GraphicsContext, public metaResponder
 {
  public:
 
@@ -162,6 +189,7 @@ class metaView : public GraphicsContext
   void allignInRect(uint8_t allignmentMask,GCRect r);
 
   virtual void sizeToFit();
+
 
   #if DEBUG_LAYOUT
   bool drawDebugRect = false;
@@ -277,7 +305,7 @@ class metaLabel : public metaView
 };
 
 /** compleate rectangular display unit with label and value */
-#if 0
+
 class metaValue : public metaView{
   public:
   typedef struct _valueLayout{
@@ -303,10 +331,10 @@ class metaValue : public metaView{
 
   }ValueLayout;
 
-  metaValue():metaView(),_label(),_value(),_frameInset(),_labelColor(ILI9341_YELLOW),_valueColor(ILI9341_GREEN),
+  metaValue():metaView(),_frameInset(),
   _labelDrawOutline(false),_labelOutlineInset(3),_labelOutlineCornerRadius(6){};
-  metaValue(String label, String value):metaView(),_label(label),_value(value),_frameInset(),_labelColor(ILI9341_YELLOW),
-  _valueColor(ILI9341_GREEN),_labelDrawOutline(false),_labelOutlineInset(6),_labelOutlineCornerRadius(6){};
+  metaValue(String label, String value):metaView(),_frameInset(),
+  _labelDrawOutline(false),_labelOutlineInset(6),_labelOutlineCornerRadius(6){};
 
   void initValue(metaTFT* tft, GCRect frame, String label, String value);
 
@@ -328,22 +356,26 @@ class metaValue : public metaView{
 
   void setLabel(String label){
     Serial<<"Value: setLabel "<<label<<endl;
-    _label = label;_labelView.setLabel(label); setNeedsRedraw();};
+    _labelView.setLabel(label);
+    setNeedsRedraw();
+  };
 
-  void setValue(String value){
-    _value = value; _valueView.setLabel(value);setNeedsRedraw();
-    Serial<<"newValue "<<_value<<endl;};
+  void setValue(String label){
+    _valueView.setLabel(label);
+    Serial<<"newValue "<<_valueView.getLabel()<<endl;};
 
   void setLabelFont(const ILI9341_t3_font_t* f){
-    _labelFont = f;setNeedsLayout();}
+    _labelView.setFont(f);setNeedsLayout();}
+
   void setValueFont(const ILI9341_t3_font_t* f){
-    _valueFont = f;setNeedsLayout();}
+    _valueView.setFont(f);setNeedsLayout();}
 
   void setDrawLabelOutline(bool flag){
-    _labelDrawOutline = flag; setNeedsRedraw();};
+    _labelView.setDrawsOutline(flag); setNeedsRedraw();
+  };
 
   bool getDrawLabelOutline(){
-    return _labelDrawOutline;}
+    return _labelView.getDrawsOutline();}
 
   void setLabelOutlineInset(uint8_t offset){
     _labelOutlineInset=offset;setNeedsLayout();}
@@ -357,10 +389,10 @@ class metaValue : public metaView{
     return _labelOutlineCornerRadius;}
 
   void setLabelColor(uint16_t c){
-    _labelColor = c;_outlineColor=c; _labelView.setTextColor(c);setNeedsRedraw();}
+    _outlineColor=c; _labelView.setTextColor(c);setNeedsRedraw();}
 
   void setValueColor(uint16_t c){
-    _valueColor = c;_valueView.setTextColor(c); setNeedsRedraw();};
+    _valueView.setTextColor(c); setNeedsRedraw();};
 
   void setVerticalValueInset(uint8_t vvi){
     _verticalValueInset = vvi;}
@@ -374,16 +406,10 @@ class metaValue : public metaView{
   virtual void redraw();
   virtual void sizeToFit();
   protected:
-  String  &_label = String();
-  String  &_value = String();
   metaLabel _labelView;
   metaLabel _valueView;
   int16_t  _frameInset;
 
-  const ILI9341_t3_font_t *_labelFont;
-  const ILI9341_t3_font_t *_valueFont;
-  uint16_t _labelColor;
-  uint16_t _valueColor;
 
   bool _labelDrawOutline;
   uint8_t _labelOutlineInset;
@@ -392,31 +418,29 @@ class metaValue : public metaView{
   uint8_t _horizontalValueInset;
   uint8_t _verticalValueInset;
 };
-#endif
 
-class metaList : public metaView, public metaResponder{
+class metaList : public metaView{
  public:
   metaList():metaView(),_cellInset(2,2),_borderInset(10,10),_lastSelectedView(NULL),_maxElementSize(){};
-  void initResponder(UserEventQueue* q);
   void setBorderInset(GCSize i){_borderInset = i;setNeedsLayout();}
   GCSize getBorderInset(){return _borderInset;}
 
   void layoutList();
   virtual void addSubview(metaView* view);
-  void addEntry(const String);
+  metaLabel* addEntry(const String);
   virtual void redraw();
-  int16_t selectedIndex();                             /// returns the index of the selected (outlined) entry
-  void selectIndex(int16_t);
-
-  int16_t activeIndex();
-  void activateIndex(int16_t);
-
+  virtual void initView(metaTFT* tft, GCRect frame);
   virtual int16_t processEvent(UserEvent* k);
+  virtual int16_t selectedIndex();
+  virtual int16_t activeIndex();
+  virtual void activateIndex(int16_t idx);
+  virtual void selectIndex(int16_t idx);
+  virtual metaView* activeElement();
+
   void forgetSelection(){_lastSelectedView = NULL;}
-  metaResponder* addEntry(const String *k);
+  metaView* addEntry(const String *k);
   virtual void sizeToFit();
-  void setLabelLayout(metaLabel::LabelLayout *l){
-    _ll = l;}
+  void setLabelLayout(metaLabel::LabelLayout *l){_ll = l;}
 
  protected:
   void drawConnectionFor(metaView* view, uint16_t lineColor);
