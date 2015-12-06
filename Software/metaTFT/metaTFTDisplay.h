@@ -94,8 +94,11 @@ protected:
 
 };
 
-/** graphics context encapsulates the device information of the TFT class and acts as a proxy for drawing operations
-allowing the establishment of a simple coordinate system hierarchy  without the need for handling real stacks of finite transformation matrices. */
+/** abstract base class for all view related classes.
+graphics context encapsulates the device information of the TFT class and acts as a proxy for drawing operations
+allowing a simple coordinate system hierarchy  without the need for handling real stacks of finite transformation matrices.
+
+*/
 class GraphicsContext : public Print{
   friend class metaView;
   friend class metaLabel;
@@ -109,7 +112,7 @@ public:
   void setBaseCoord(GCPoint p){_base = p;}
   GCPoint getBaseCoord(){return _base;}
 
-  virtual GCPoint getBase()=0;
+  virtual GCPoint getScreenOrigin()=0;
 
   void setFillColor(uint16_t c){_fillColor = c;}
   uint16_t getFillColor(){return _fillColor;}
@@ -119,7 +122,7 @@ public:
 
   void addBase(GCPoint p){_base+=p;};
   void drawPixel(GCPoint p){
-    GCPoint k = p+getBase();
+    GCPoint k = p+getScreenOrigin();
     _display->drawPixel(k.x,k.y,_strokeColor);
   }
 
@@ -128,7 +131,7 @@ public:
   }
 
   void drawLine(GCPoint start, GCPoint end){
-    GCPoint base = getBase();
+    GCPoint base = getScreenOrigin();
     GCPoint s1 = start + base;
     GCPoint e1 = end +base;
     _display->drawLine(s1.x,s1.y,e1.x,e1.y,_strokeColor);
@@ -137,35 +140,35 @@ public:
     drawLine(GCPoint(x1,y1),GCPoint(x2,y2));
   }
   void drawRect(GCRect frame){
-    GCPoint l = frame.origin + getBase();
+    GCPoint l = frame.origin + getScreenOrigin();
     _display->drawRect(l.x,l.y,frame.size.w,frame.size.h,_strokeColor);
   }
   void drawRect(GCPoint p, GCSize s){drawRect(GCRect(p,s));}
   void drawRect(int16_t x, int16_t y, int16_t w, int16_t h){drawRect(GCRect(x,y,w,h));}
 
   void fillRect(GCRect frame){
-    GCPoint l = frame.origin + getBase();
+    GCPoint l = frame.origin + getScreenOrigin();
     _display->fillRect(l.x,l.y,frame.size.w,frame.size.h,_fillColor);
   }
   void fillRect(GCPoint p, GCSize s){fillRect(GCRect(p,s));}
   void fillRect(int16_t x, int16_t y, int16_t w, int16_t h){fillRect(GCRect(x,y,w,h));}
 
   void drawRoundRect(GCRect frame, int16_t r){
-    GCPoint l = frame.origin+getBase();
+    GCPoint l = frame.origin+getScreenOrigin();
     _display->drawRoundRect(l.x,l.y,frame.size.w,frame.size.h,r,_strokeColor);
   }
   void drawRoundRect(GCPoint p, GCSize s, int16_t r){drawRoundRect(GCRect(p,s),r);}
   void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r){drawRoundRect(GCRect(x,y,w,h),r);}
 
   void fillRoundRect(GCRect frame, int16_t r){
-    GCPoint l = frame.origin+getBase();
+    GCPoint l = frame.origin+getScreenOrigin();
     _display->fillRoundRect(l.x,l.y,frame.size.w,frame.size.h,r,_fillColor);
   }
   void fillRoundRect(GCPoint p, GCSize s, int16_t r){fillRoundRect(GCRect(p,s),r);}
   void fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r){fillRoundRect(GCRect(x,y,w,h),r);}
 
   void setCursor(GCPoint p){
-    GCPoint l = p+getBase();
+    GCPoint l = p+getScreenOrigin();
     _display->setCursor(l.x,l.y);
   }
   void setCursor(int16_t x, int16_t y){setCursor(GCPoint(x,y));}

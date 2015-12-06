@@ -6,11 +6,11 @@
 
 
 Switch switches[]={
-  Switch(UserEvent::ButtonID::RightButton,&eventQueue,14,0),
-  Switch(UserEvent::ButtonID::LeftButton,&eventQueue,15,1),
-  Switch(UserEvent::ButtonID::UpButton,&eventQueue,16,2),
-  Switch(UserEvent::ButtonID::DownButton,&eventQueue,17,3),
-  Switch(UserEvent::ButtonID::CenterButton,&eventQueue,18,4),
+  Switch(ButtonID::RightButton,&eventQueue,14,0),
+  Switch(ButtonID::LeftButton,&eventQueue,15,1),
+  Switch(ButtonID::UpButton,&eventQueue,16,2),
+  Switch(ButtonID::DownButton,&eventQueue,17,3),
+  Switch(ButtonID::CenterButton,&eventQueue,18,4),
 };
 
 size_t numberOfSwitches = sizeof(switches) / sizeof(Switch);

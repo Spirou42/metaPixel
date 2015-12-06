@@ -26,17 +26,26 @@
 #define COLOR_ORDER       GRB
 #define CHIPSET           WS2812
 #define COLOR_CORRECTION  0xffeeff
-#define LED_BRIGHTNESS    30
+#define LED_BRIGHTNESS    80
 
 #define LED_PIN           4
 #define NUM_LEDS 60
 #include <FastLED.h>
 extern CRGB leds[];
 
+typedef void(*effectHandler)(void);
 
 typedef std::pair<const String,CRGBPalette16> PalettePair;
-typedef std::vector<PalettePair> PaletteList;
+typedef std::vector<PalettePair*> PaletteList;
+
+typedef std::pair<const String, effectHandler> EffectPair;
+typedef std::vector<EffectPair*> EffectList;
+
 
 extern PaletteList systemPalettes;
 extern PaletteList::iterator currentSystemPalette;
+
+extern EffectList systemEffects;
+extern EffectList::iterator currentSystemEffect;
+
 #endif

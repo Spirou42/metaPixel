@@ -16,7 +16,7 @@
 class Switch
 {
 public:
-  Switch(UserEvent::ButtonID button,UserEventQueue* eventC,uint8_t pin,size_t idx):
+  Switch(ButtonID button,UserEventQueue* eventC,uint8_t pin,size_t idx):
   _id(button),_eventQueue(eventC),_pin(pin),_idx(idx),_downTimer(0),_upTimer(0),_sendUpEvent(true),_sendDownEvent(true),_sendClickEvent(true),_sendDoubleClickEvent(true),_sendLongClickEvent(true),_isDouble(false){};
   void setSendUpEvent(bool f){_sendUpEvent=f;}
   void setSendDownEvent(bool f){_sendDownEvent=f;}
@@ -37,7 +37,7 @@ public:
   void doSwitchDown();
   void doSwitchUp();
 protected:
-  UserEvent::ButtonID _id;
+  ButtonID _id;
   UserEventQueue *_eventQueue;
   uint8_t         _pin;
   size_t          _idx;
@@ -50,6 +50,6 @@ protected:
   bool _sendDoubleClickEvent   : 1;
   bool _sendLongClickEvent     : 1;
   bool _isDouble               : 1;
-  UserEvent::EventData buttonData(UserEvent::ButtonState state);
+  EventData buttonData(ButtonState state);
 };
 #endif

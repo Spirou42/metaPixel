@@ -13,6 +13,7 @@ extern const char* patternNames[];
 extern uint8_t currentPatternNumber;
 extern uint8_t gHue;
 
+
 void rainbow();
 void rainbowWithGlitter();
 void confetti();
@@ -20,8 +21,9 @@ void sinelon();
 void bpm();
 void juggle();
 void nextPattern();
+void nextPalette();
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
-#define FRAMES_PER_SECOND  120
+#define FRAMES_PER_SECOND  60
 
 #endif

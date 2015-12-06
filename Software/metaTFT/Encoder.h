@@ -10,7 +10,7 @@
 class Encoder
 {
 public:
-  Encoder(UserEvent::EncoderID encoder, UserEventQueue* eventC,uint8_t aPin, uint8_t bPin, size_t idx, uint8_t div=0):
+  Encoder(EncoderID encoder, UserEventQueue* eventC,uint8_t aPin, uint8_t bPin, size_t idx, uint8_t div=0):
   _id(encoder),_eventQueue(eventC),_aPin(aPin),_bPin(bPin),_divider(div),_idx(idx)
   {
     pinMode(aPin, INPUT_PULLUP);
@@ -34,7 +34,7 @@ public:
   void doEncoderStep();
 
 protected:
-  UserEvent::EncoderID  _id;                  ///< id of the encoder
+  EncoderID  _id;                  ///< id of the encoder
   UserEventQueue        *_eventQueue;         ///< ref to the eventQueue to use
   uint8_t               _aPin;                ///< A output of the encoder
   uint8_t               _bPin;                ///< B output of the encoder
@@ -63,7 +63,7 @@ protected:
   uint8_t               _idiv;
   size_t                _idx;
   unsigned long         _lastTick;            ///< the wallclock at the last registered tick
-  UserEvent::EventData encoderData(bool direction,int8_t step,float vel);
+  EventData encoderData(bool direction,int8_t step,float vel);
   void initialState(){
     uint8_t s = 0;
     if(digitalReadFast(_aPin))

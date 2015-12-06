@@ -18,12 +18,12 @@ void Encoder::disable()
   detachInterrupt(_bPin);
 }
 
-UserEvent::EventData Encoder::encoderData(bool state,int8_t steps,float vel)
+EventData Encoder::encoderData(bool state,int8_t steps,float vel)
 {
-  UserEvent::EventData result;
-  UserEvent::EncoderData data;
+  EventData result;
+  EncoderData data;
   data.id = this->_id;
-  data.direction = state?UserEvent::EncoderDirection::EncoderRight:UserEvent::EncoderDirection::EncoderLeft;
+  data.direction = state?EncoderDirection::EncoderRight:EncoderDirection::EncoderLeft;
   data.steps = abs(steps);
   data.absSteps = steps;
   data.position = _position;
@@ -73,8 +73,8 @@ void Encoder::doEncoderStep()
     if(step != 0){
       _position += step;
       //Serial << "Encoder: "<<_id<< "got a Step in "<<(step>0)<<endl;
-      UserEvent *evnt = new UserEvent(UserEvent::EventType::EventTypeEncoder);
-      UserEvent::EventData data = encoderData(step>0,step,velocity);
+      UserEvent *evnt = new UserEvent(EventType::EventTypeEncoder);
+      EventData data = encoderData(step>0,step,velocity);
       _lastTick = wallClock;
       evnt->setData(data);
       _eventQueue->addEvent(evnt);

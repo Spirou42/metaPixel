@@ -12,15 +12,18 @@
 #define DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER ILI9341_NAVY
 #define DEBUG_LAYOUT_LINECOLOR ILI9341_WHITE
 
-/*** metaView **/
-void metaView::initView(metaTFT* tft, GCRect frame)
-{
+/**********************************************
+ *									metaView									*
+ **********************************************/
+
+void metaView::initView(metaTFT* tft, GCRect frame){
 	initGraphicsContext(tft);
 	_frame = frame;
 	_needsRedraw = true;
 	_needsLayout = true;
 }
-GCPoint metaView::getBase(){
+
+GCPoint metaView::getScreenOrigin(){
   GCPoint result;
   result += getOrigin();
   metaView *superView = getSuperview();
@@ -30,13 +33,12 @@ GCPoint metaView::getBase(){
   }
   return result;
 }
-void metaView::initView(metaTFT* tft, GCPoint origin, GCSize size)
-{
+
+void metaView::initView(metaTFT* tft, GCPoint origin, GCSize size){
 	initView(tft,GCRect(origin,size));
 }
 
-void metaView::initView(metaTFT* tft, int16_t x, int16_t y, int16_t w, int16_t h)
-{
+void metaView::initView(metaTFT* tft, int16_t x, int16_t y, int16_t w, int16_t h){
 	initView(tft,GCRect(x,y,w,h));
 }
 
@@ -61,32 +63,30 @@ const vector<metaView*>::iterator metaView::findSubview(metaView* subView){
 	}
 	return start;
 }
+
 void metaView::removeFromSuperview(){
 	if(_superView){
 		_superView->removeSubview(this);
 	}
-//	_superView = NULL;
 }
 
-void metaView::removeSubview(metaView* subView)
-{
+void metaView::removeSubview(metaView* subView){
 	const vector<metaView*>::iterator subIter = findSubview(subView);
 	if(_subViews.end() != subIter){
 		_subViews.erase(subIter);
 		subView->_superView = NULL;
-//		subView->_gc._base = GCPoint(0,0);
 	}
 }
+
 void metaView::addSubview(metaView* ptr){
 	_subViews.push_back(ptr);
 	ptr->_superView = this;
-//	ptr->_gc._base = _frame.origin+_gc._base;
 }
 
-void metaView::sizeToFit()
-{
+void metaView::sizeToFit(){
 	return;
 }
+
 bool metaView::childNeedsLayout(){
 	vector<metaView*>::iterator iter = _subViews.begin();
 	while(iter != _subViews.end()){
@@ -120,6 +120,7 @@ void metaView::allignInRect(uint8_t allignmentMask, GCRect rect){
 	setNeedsLayout();
 
 }
+
 void metaView::allignInSuperView(uint8_t allignmentMask){
 	if((allignmentMask == 0))
 		return;
@@ -136,27 +137,28 @@ void metaView::allignInSuperView(uint8_t allignmentMask){
 void metaView::redrawChildren(bool forceRedraw){
 	if(_subViews.size() ==0)
 		return;
-//	Serial << ">>>>>>>redrawChildren "<< forceRedraw<<endl;
+		//	Serial << ">>>>>>>redrawChildren "<< forceRedraw<<endl;
 	vector<metaView*>::iterator redrawIter = _subViews.begin();
 	while(redrawIter!=_subViews.end()){
 		//Serial << "RedrawChild: "<<endl;
 		if(forceRedraw){
 			(*redrawIter)->_needsRedraw = true;
-//			Serial << "Force:"<<endl;
+			//			Serial << "Force:"<<endl;
 		}
 		if((*redrawIter)->_needsRedraw)
 			(*redrawIter)->redraw();
 		(*redrawIter)->resetFlags();
 		redrawIter++;
 	}
-//	Serial << "<<<<<<<redrawChildren"<<endl<<endl;;
+	//	Serial << "<<<<<<<redrawChildren"<<endl<<endl;;
 }
+
 #if DEBUG_LAYOUT
 void metaView::drawDebug(){
 	#if DEBUG_LAYOUT
 	if (drawDebugRect){
 		GCRect dr = debugRect;
-//		dr.origin += _frame.origin;
+		//		dr.origin += _frame.origin;
 		GraphicsContext::setStrokeColor(DEBUG_LAYOUT_LINECOLOR);
 		GraphicsContext::drawRect(dr);
 		Serial << "DebugDraw: "<<debugRect<<endl;
@@ -164,11 +166,12 @@ void metaView::drawDebug(){
 	#endif
 }
 #endif
+
 void metaView::redraw(){
 	vector<metaView*>::iterator redrawIter = _subViews.begin();
 	bool cnl = childNeedsLayout();
 	if(_needsRedraw || cnl){
-//		Serial << "Redraw: "<<_needsRedraw<<" "<<cnl<<endl;
+	//		Serial << "Redraw: "<<_needsRedraw<<" "<<cnl<<endl;
 		GraphicsContext::setFillColor(_backgroundColor);
 		GraphicsContext::setStrokeColor(_outlineColor);
   	if(_cornerRadius==0){
@@ -193,12 +196,28 @@ void metaView::redraw(){
 	#endif
 }
 
-/** metaLabel **/
+
+/**********************************************
+ *									metaLabel 								*
+ **********************************************/
+
+void metaLabel::sizeToFit(){
+	 GCSize is = intrinsicSize();
+	 setSize(is); setNeedsLayout();
+}
+
+void metaLabel::setLabel(const String &label){
+	_label.remove(0);
+	_label.append(label);
+	_needsRedraw=true;
+	Serial <<"Label ("<<_label<<")"<<endl;
+}
+
 GCSize metaLabel::intrinsicSize(){
 	GCSize s=GCSize();
 	GraphicsContext::setFont(_font);
 	GraphicsContext::setTextSize(_textSize);
-	s = GraphicsContext::stringSize(_label->c_str());
+	s = GraphicsContext::stringSize(_label.c_str());
 	if(_visualizeState){
 		s.w +=_indicatorSpace;
 	}
@@ -281,24 +300,26 @@ void metaLabel::redraw(){
 		//drawRect(_insets.w,_insets.h,_indicatorSpace,_frame.size.h-2*_insets.h);
 
 	}
-//	Serial << *_label<<" TP: "<<tp<<endl;
+	//	Serial << *_label<<" TP: "<<tp<<endl;
 	GraphicsContext::setCursor(tp);
 	GraphicsContext::setFont(_font);
 	//Serial << "[Label] ("<<*_label<<") "<<(int)_font<<","<<_textColor<<","<<_backgroundColor<<endl;
 	if(_opaque){
 		GraphicsContext::setTextColor(_textColor,_backgroundColor);
-//		Serial << "opaque"<<endl;
+		//		Serial << "opaque"<<endl;
 	}else{
 		GraphicsContext::setTextColor(_textColor);
 	}
 	GraphicsContext::setTextSize(_textSize);
-	(*this) << *_label<<endl;
+	(*this) << _label<<endl;
 	resetFlags();
-//	Serial << "<<<<<<Label Redraw"<<endl;
+	//Serial << ">>>>>>>Label Redraw "<<_label<<" done"<<endl;
 }
 
-/** metaValue **/
-
+/**********************************************
+ *									metaValue 								*
+ **********************************************/
+#if 0
 void metaValue::initValue(metaTFT* tft, GCRect frame){
 	metaView::initView(tft, frame);
 	setBackgroundColor(ILI9341_BLACK);
@@ -369,7 +390,7 @@ void metaValue::initValue(metaTFT* tft, GCRect frame){
 
 }
 
-void metaValue::initValue(metaTFT* tft, GCRect frame, String* label, String *value){
+void metaValue::initValue(metaTFT* tft, GCRect frame, String label, String value){
 	_label = label;
 	_value = value;
 	initValue(tft,frame);
@@ -441,24 +462,32 @@ void metaValue::sizeToFit(){
 
 	setSize(ownSize);
 }
+#endif
 
-/** metaList **/
-metaList::~metaList()
-{
+/**********************************************
+ *									metaList 									*
+ **********************************************/
 
-}
 void metaList::addSubview(metaView* aView){
 	metaView::addSubview(aView);
-	//aView->setVisualizeState(true);
-
 	aView->sizeToFit();
 	GCSize l = aView->getSize();
 	Serial << " View: "<<l<<endl;
 	_maxElementSize.w = MAX(aView->getSize().w,_maxElementSize.w);
 	_maxElementSize.h = MAX(aView->getSize().h,_maxElementSize.h);
 }
-void metaList::sizeToFit()
-{
+
+void metaList::addEntry(const String b){
+	metaLabel *k = new metaLabel(b);
+	k->initView(_display,GCRect());
+	if(_ll){
+		k->setLayout(*_ll);
+	}
+	addSubview(k);
+	//Serial << "added: "<<_HEX((long int)k)<<" "<<_subViews.size()<<endl;
+}
+
+void metaList::sizeToFit(){
 	GCSize resultSize ;
 	if(!_subViews.size()){
 		return;
@@ -472,11 +501,11 @@ void metaList::sizeToFit()
 	tS+=_borderInset*2;
 
 	resultSize += tS;
-	Serial << "Size: "<< resultSize<<endl;
+	//Serial << "Size: "<< resultSize<<endl;
 	setSize(tS);
 }
-void metaList::layoutList()
-{
+
+void metaList::layoutList(){
 	GCPoint currentLine;
 	currentLine.x = _borderInset.w;
 	currentLine.y = _borderInset.h;
@@ -509,25 +538,24 @@ metaView* metaList::selectedSubview(){
 	}
 	return NULL;
 }
-void metaList::drawConnectionFor(metaView* v, uint16_t lineColor)
-{
+
+void metaList::drawConnectionFor(metaView* v, uint16_t lineColor){
 	if(v){
 		GCPoint vo = v->getOrigin();
-//		vo+=_frame.origin;
 		GCSize  vs = v->getSize();
-		// Serial << "DrawConnection: "<<vo<<", "<<vs<<endl;
+
 		vo.x+=vs.w;
 		vo.y+=vs.h/2-1;
-		// Serial << "Start: "<<vo<<endl;
-		// Serial << "Base: "<<_gc._base<<endl;
 		GraphicsContext::setStrokeColor(lineColor);
-		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-1,vo.y));
+		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-2,vo.y));
+
 		vo.y++;
 		GraphicsContext::setStrokeColor(_backgroundColor);
-		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-1,vo.y));
+		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-2,vo.y));
+
 		vo.y++;
 		GraphicsContext::setStrokeColor(lineColor);
-		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-1,vo.y));
+		GraphicsContext::drawLine(vo,GCPoint(_frame.size.w-2,vo.y));
 	}
 }
 
@@ -546,20 +574,6 @@ void metaList::redraw(){
 	//Serial << "<<<<<metaList"<<endl;
 }
 
-int8_t metaList::selectedIndex(){
-	vector<metaView*>::iterator subIter = _subViews.begin();
-	int8_t result = -1;
-	int8_t c = 0;
-	while(subIter != _subViews.end()){
-		if((*subIter)->getDrawsOutline()){
-			result = c;
-			break;
-		}
-		subIter ++;
-		c++;
-	}
-	return result;
-}
 vector<metaView*>::iterator metaList::onIterator(){
 	vector<metaView*>::iterator result = _subViews.begin();
 	while(result != _subViews.end()){
@@ -570,6 +584,7 @@ vector<metaView*>::iterator metaList::onIterator(){
 	}
 	return result;
 }
+
 vector<metaView*>::iterator metaList::selectedIterator(){
 	vector<metaView*>::iterator result = _subViews.begin();
 	while(result != _subViews.end()){
@@ -581,7 +596,19 @@ vector<metaView*>::iterator metaList::selectedIterator(){
 	return result;
 }
 
-void metaList::selectIndex(int8_t idx){
+int16_t metaList::selectedIndex(){
+	int16_t result = -1;
+	vector<metaView*>::iterator l = selectedIterator();
+	if(l!=_subViews.end()){
+		result = l-_subViews.begin();
+	}
+	return result;
+}
+
+void metaList::selectIndex(int16_t idx){
+	if(idx <0){
+		return;
+	}
 	vector<metaView*>::iterator subIter = _subViews.begin();
 	if(selectedIndex() != idx){
 		if(_lastSelectedView){
@@ -593,59 +620,105 @@ void metaList::selectIndex(int8_t idx){
 		}
 	}
 }
+
+void metaList::clearAllStates(){
+	vector<metaView*>::iterator l = _subViews.begin();
+	while(l!=_subViews.end()){
+		(*l)->setState(metaView::State::Off);
+		l++;
+	}
+}
+
+int16_t metaList::activeIndex(){
+	int16_t result = -1;
+	vector<metaView*>::iterator l = onIterator();
+	if(l!=_subViews.end()){
+		result = l-_subViews.begin();
+	}
+	return result;
+}
+
+void metaList::activateIndex(int16_t idx){
+	if(idx<0){
+		return;
+	}
+	vector<metaView*>::iterator l = _subViews.begin();
+	l +=idx;
+	if(l != _subViews.end()){
+		clearAllStates();
+		(*l)->setState(metaView::State::On);
+	}
+}
+
 void metaList::initResponder(UserEventQueue* queue){
 	metaResponder::initResponder(queue);
 }
 
+bool metaList::switchSelectedOn(){
+	vector<metaView*>::iterator oldIter = onIterator();
+	vector<metaView*>::iterator newIter = selectedIterator();
+	bool k = false;
+	if(oldIter == newIter){
+		return true;
+	}
+	if (oldIter != _subViews.end() ){
+		Serial << "Old: "<<(oldIter-_subViews.begin())<<endl;
+		(*oldIter)->setState(metaView::State::Off);
+		k=true;
+	}
+	if (newIter != _subViews.end()) {
+		Serial << "New: "<<(newIter-_subViews.begin())<<endl;
+		(*newIter)->setState(metaView::State::On);
+		k=true;
+	}
+	return k;
+}
+
 int16_t metaList::processEvent(UserEvent* k){
-	if(k->getType() == UserEvent::EventType::EventTypeKey){
-		UserEvent::ButtonData bData = k->getData().buttonData;
+	int16_t result = ResponderResult::ChangedNothing;
+	if(k->getType() == EventType::EventTypeButton){
+		ButtonData bData = k->getData().buttonData;
 		// Serial << k<<endl;
 		int8_t step = 0;
 		switch(bData.id){
-			case UserEvent::ButtonID::DownButton: if(bData.state == UserEvent::ButtonState::ButtonDown){step = 1;} break;
-			case UserEvent::ButtonID::UpButton: if(bData.state == UserEvent::ButtonState::ButtonDown){step = -1;} break;
-			case UserEvent::ButtonID::CenterButton: if(bData.state == UserEvent::ButtonState::ButtonDown){
-				vector<metaView*>::iterator oldIter = onIterator();
-				vector<metaView*>::iterator newIter = selectedIterator();
-				if (oldIter != _subViews.end() ){
-					(*oldIter)->setState(metaView::State::Off);
+			case ButtonID::DownButton:
+			if(bData.state == ButtonState::ButtonDown){step = 1;} break;
+
+			case ButtonID::UpButton:
+			if(bData.state == ButtonState::ButtonDown){step = -1;} break;
+
+			case ButtonID::CenterButton:
+			if(bData.state == ButtonState::ButtonDown){
+				if(switchSelectedOn()){
+					result = ResponderResult::ChangedVisual;
 				}
-				if (newIter != _subViews.end()) {
-					(*newIter)->setState(metaView::State::On);
+			}else if (bData.state == ButtonState::ButtonUp){
+				if(switchSelectedOn()){
+					result = ResponderResult::ChangedState;
 				}
 			} break;
+
 			default: break;
 		}
 		if(step){
 			vector<metaView*>::iterator subIter = selectedIterator();
 			vector<metaView*>::iterator k = subIter+step;
 			if( (k>=_subViews.begin()) && (k<_subViews.end()) ) {
-				//(*subIter)->setState(metaView::State::Off);
 				(*subIter)->setDrawsOutline(false);
-				//(*k)->setState(metaView::State::On);
 				(*k)->setDrawsOutline(true);
-				//setNeedsRedraw();
+				result = k-_subViews.begin();
 			}
 		}
-	}else if(k->getType() == UserEvent::EventType::EventTypeEncoder){
-		// Serial <<"processEvent "<<k<<endl;
+	}else if(k->getType() == EventType::EventTypeEncoder){
 		vector<metaView*>::iterator subIter = selectedIterator();
-		// const String *label = ((metaLabel*) *subIter)->getLabel();
-		// Serial <<"SelectedIter: "<<*label<<endl;
-		UserEvent::EncoderData eData =k->getData().encoderData;
+		EncoderData eData =k->getData().encoderData;
 		int8_t offSet = eData.absSteps;
-		// Serial <<"Offset: "<<offSet<<endl;
 		vector<metaView*>::iterator k = subIter+offSet;
 		if( (k>=_subViews.begin()) && (k<_subViews.end()) ) {
-			// label = ((metaLabel*) *k)->getLabel();
-			// Serial << "NextSelect: "<<*label<<endl;
-			//(*subIter)->setState(metaView::State::Off);
 			(*subIter)->setDrawsOutline(false);
-			//(*k)->setState(metaView::State::On);
 			(*k)->setDrawsOutline(true);
-			//setNeedsRedraw();
+			result = k-_subViews.begin();
 		}
 	}
-	return selectedIndex();
+	return result;
 }

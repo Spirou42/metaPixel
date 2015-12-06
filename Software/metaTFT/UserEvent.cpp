@@ -3,6 +3,61 @@
 
 #include "UserEvent.h"
 
+Print& operator<<(Print& out,EventType type){
+  switch(type){
+    case EventTypeButton: out << "Key";break;
+    case EventTypeEncoder: out << "Enc";break;
+  }
+  return out;
+}
+Print& operator<<(Print& out, ButtonID id){
+  switch(id){
+    case LeftButton:    out << "[L]";break;
+    case UpButton:      out << "[U]";break;
+    case DownButton:    out << "[D]";break;
+    case RightButton:   out << "[R]";break;
+    case CenterButton:  out << "[C]";break;
+    default: break;
+  }
+  return out;
+}
+Print& operator<<(Print& out, ButtonState state){
+  switch(state){
+    case NoState:           out<<"None";  break;
+    case ButtonDown:        out<<"Down";  break;
+    case ButtonUp:          out<<"Up";    break;
+    case ButtonClick:       out<<"Click"; break;
+    case ButtonLongClick:   out<<"Long";  break;
+    case ButtonDoubleClick: out<<"Double";break;
+  }
+  return out;
+}
+Print& operator<<(Print& out, EncoderID id){
+  switch(id){
+    case Encoder0:  out << "[0]";break;
+    default: break;
+  }
+  return out;
+}
+
+Print& operator<<(Print& out, EncoderDirection dir){
+    switch(dir){
+      case NoDirection:   out<<"Undefined"; break;
+      case EncoderLeft:   out <<"Left";   break;
+      case EncoderRight:  out <<"Right";  break;
+    }
+  return out;
+}
+Print& operator<<(Print& out, ButtonData data){
+  out << data.id<<", "<<data.state;
+  return out;
+}
+Print& operator<<(Print& out, EncoderData data){
+  out << data.id <<", "<<data.direction<<", "<<data.steps<<", "<<data.position<<", "<<data.speed;
+  return out;
+}
+
+
 uint16_t UserEvent::eventMask()
 {
   uint16_t result = 0;
@@ -10,7 +65,7 @@ uint16_t UserEvent::eventMask()
     case EventType::EventTypeEncoder:
       result |= EventMask::EncoderEvents;
       break;
-    case EventType::EventTypeKey: {
+    case EventType::EventTypeButton: {
       result |= EventMask::ButtonEvents;
       ButtonData bData = getData().buttonData;
       switch(bData.id){
@@ -60,15 +115,15 @@ bool UserEvent::matchesMask(uint16_t mask){
   return result;
 }
 
-UserEvent::ButtonID UserEvent::getButtonID(){
-  if(_type != EventTypeKey){
+ButtonID UserEvent::getButtonID(){
+  if(_type != EventTypeButton){
     return NoButton;
   }
   return _data.buttonData.id;
 }
 
-UserEvent::ButtonState UserEvent::getButtonState(){
-  if(_type !=EventTypeKey){
+ButtonState UserEvent::getButtonState(){
+  if(_type !=EventTypeButton){
     return NoState;
   }
   return _data.buttonData.state;
@@ -115,30 +170,27 @@ void UserEventQueue::addEvent(UserEvent* evnt)
 bool UserEventQueue::consolidateEvent(UserEvent* evnt)
 {
   if( (evnt->getType() == _queueEnd->getType()) &&
-      (evnt->getType() == UserEvent::EventType::EventTypeEncoder)){
-    UserEvent::EventData dOld = _queueEnd->getData();
-    UserEvent::EventData dNew = evnt->getData();
+      (evnt->getType() == EventType::EventTypeEncoder)){
+    EventData dOld = _queueEnd->getData();
+    EventData dNew = evnt->getData();
     if( (dOld.encoderData.direction == dNew.encoderData.direction) &&
         (dOld.encoderData.id == dNew.encoderData.id)){
       dOld.encoderData.steps ++;
       _queueEnd->setData(dOld);
       return true;
     }
-  }else if( (evnt->getType() == UserEvent::EventType::EventTypeKey) &&
-            (_queueEnd->getType() == UserEvent::EventType::EventTypeKey)){
-    UserEvent::EventData dOld = _queueEnd->getData();
-    UserEvent::EventData dNew = evnt->getData();
+  }else if( (evnt->getType() == EventType::EventTypeButton) &&
+            (_queueEnd->getType() == EventType::EventTypeButton)){
+    EventData dOld = _queueEnd->getData();
+    EventData dNew = evnt->getData();
     if( (dOld.buttonData.id == dNew.buttonData.id) &&
-        (dOld.buttonData.state == UserEvent::ButtonState::ButtonClick) &&
-        (dNew.buttonData.state == UserEvent::ButtonState::ButtonDoubleClick)){
-      dOld.buttonData.state = UserEvent::ButtonState::ButtonDoubleClick;
+        (dOld.buttonData.state == ButtonState::ButtonClick) &&
+        (dNew.buttonData.state == ButtonState::ButtonDoubleClick)){
+      dOld.buttonData.state = ButtonState::ButtonDoubleClick;
       _queueEnd->setData(dOld);
       return true;
-
     }
-
   }
-
   return false;
 }
 

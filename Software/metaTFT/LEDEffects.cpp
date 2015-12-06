@@ -15,7 +15,9 @@ uint8_t gHue = 0;
 void rainbow()
 {
   // FastLED's built-in rainbow generator
-  fill_rainbow( leds, NUM_LEDS, gHue, 7);
+  CRGBPalette16 p = (*currentSystemPalette)->second;
+  fill_palette(leds,NUM_LEDS,gHue,255/NUM_LEDS,p,255,LINEARBLEND);
+  //fill_rainbow( leds, NUM_LEDS, gHue, 7);
 }
 
 void addGlitter( fract8 chanceOfGlitter)
@@ -37,7 +39,8 @@ void confetti()
   // random colored speckles that blink in and fade smoothly
   fadeToBlackBy( leds, NUM_LEDS, 10);
   int pos = random16(NUM_LEDS);
-  leds[pos] += CHSV( gHue + random8(64), 200, 255);
+  CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue + random8(64),255);
+  leds[pos] += color;
 }
 
 void sinelon()
@@ -45,17 +48,17 @@ void sinelon()
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds, NUM_LEDS, 20);
   int pos = beatsin16(13,0,NUM_LEDS);
-  leds[pos] += CHSV( gHue, 255, 192);
+  CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue,192);
+  leds[pos] += color;
 }
 
 void bpm()
 {
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
   uint8_t BeatsPerMinute = 62;
-  CRGBPalette16 palette = PartyColors_p;
   uint8_t beat = beatsin8( BeatsPerMinute, 64, 255);
   for( int i = 0; i < NUM_LEDS; i++) { //9948
-    leds[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
+    leds[i] = ColorFromPalette((*currentSystemPalette)->second, gHue+(i*2), beat-gHue+(i*10));
   }
 }
 
@@ -64,14 +67,27 @@ void juggle() {
   fadeToBlackBy( leds, NUM_LEDS, 20);
   byte dothue = 0;
   for( int i = 0; i < 8; i++) {
-    leds[beatsin16(i+7,0,NUM_LEDS)] |= CHSV(dothue, 200, 255);
+    CRGB color = ColorFromPalette((*currentSystemPalette)->second,dothue + random8(64),255);
+    leds[beatsin16(i+7,0,NUM_LEDS)] |= color;
     dothue += 32;
   }
 }
 
-void nextPattern()
-{
+void nextPattern(){
   // add one to the current pattern number, and wrap around at the end
-  currentPatternNumber = (currentPatternNumber + 1) % numberOfPatterns;
-  //Serial << "Pattern: "<<currentPatternNumber<<" "<<patternNames[currentPatternNumber]<<endl;
+  EffectList::iterator l = currentSystemEffect+1;
+  if(l==systemEffects.end()){
+    l=systemEffects.begin();
+  }
+  currentSystemEffect = l;
+  Serial << "Pattern: "<<(currentSystemEffect - systemEffects.begin())<<" "<<((*currentSystemEffect)->first)<<endl;
+}
+
+void nextPalette(){
+  PaletteList::iterator l = currentSystemPalette+1;
+  if(l==systemPalettes.end()){
+    l=systemPalettes.begin();
+  }
+  currentSystemPalette = l;
+  Serial << "Palette: "<<(currentSystemPalette - systemPalettes.begin())<<" "<<((*currentSystemPalette)->first)<<endl;
 }
