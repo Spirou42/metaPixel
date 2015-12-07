@@ -355,55 +355,30 @@ void metaValue::initValue(metaTFT* tft, GCRect frame){
 	setCornerRadius(_cornerRadius);
 	setDrawsOutline(false);
 
+
 	_labelView.initView(tft,0,0,100,100);
-	_labelView.setLabel("");
-	//_labelView.setFont(_labelFont);
+
 	_labelView.setTextSize(2);
 	_labelView.setBackgroundColor(_backgroundColor);
+	_labelView.setVisualizeState(false);
 	#if DEBUG_LAYOUT_VALUE
 	_labelView.setBackgroundColor(DEBUG_LAYOUT_COLOR_BACKGROUND_INNER);
 	#endif
-	//_labelView.setTextColor(_labelColor);
-	//_labelView.setOutlineColor(_labelColor);
-	_labelView.setCornerRadius(_labelOutlineCornerRadius);
-	_labelView.setDrawsOutline(_labelDrawOutline);
 	_labelView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
 	_labelView.sizeToFit();
 
-	GCSize ls = _labelView.getSize();
-	ls.h = _labelView.getFont()->line_space;
-	if(_labelView.getDrawsOutline()){
-		ls.h+=2*_labelOutlineInset;
-	}
-	ls.w+=4*_labelOutlineInset;
-	_labelView.setSize(ls);
-
-	GCPoint lo =_labelView.getOrigin();
-	lo.x = _horizontalLabelInset;
-	_frameInset =   ls.h/2 ;
-
-	_labelView.setOrigin(lo);
 	_valueView.initView(tft,0,0,120,120);
-	//_valueView.setLabel(_value);
 	_valueView.setTextSize(3);
-	//_valueView.setFont(_valueFont);
 	_valueView.setBackgroundColor(_backgroundColor);
 	#if DEBUG_LAYOUT_VALUE
 	_valueView.setBackgroundColor(DEBUG_LAYOUT_COLOR_BACKGROUND_INNER);
 	#endif
-	//_valueView.setTextColor(_valueColor);
+
 	_valueView.sizeToFit();
 	_valueView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
 	_valueView.setTextPosition(1,1);
 	_valueView.setNeedsRedraw();
-	GCSize s= _valueView.getSize();
-	s+=4;
-	_valueView.setSize(s);
 
-	GCPoint valOr = GCPoint();
-	valOr.x =((getSize().w-2*_horizontalValueInset)/2 - s.w/2)+_horizontalValueInset;
-	valOr.y = (getSize().h/2 - s.h/2)+_frameInset/2;
-	_valueView.setOrigin(valOr);
 	//Serial << "ValuePos "<<valOr.x<<", "<<valOr.y<<"("<<s.w<<","<<s.h<<")"<<endl;
 	//	value->remove(0);
 
@@ -425,9 +400,9 @@ void metaValue::redraw(){
 		GCRect p=getBounds();
 		p.origin.y+=_frameInset;
 		p.size.h-=_frameInset;
-		//Serial << "TopBorderOffset: "<<_frameInset<<endl;
-		//Serial << "Rect: "<<p<<endl;
-		//Serial<< "Base: "<<_gc._base<<endl;
+		Serial << "TopBorderOffset: "<<_frameInset<<endl;
+		Serial << "Rect: "<<p<<endl;
+		Serial<< "Base: "<<_base<<endl;
 		#if DEBUG_LAYOUT_VALUEBACKGROUND
 		GraphicsContext::setFillColor(DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER);
 		GraphicsContext::fillRoundRect(getBounds(),_cornerRadius);
@@ -447,17 +422,40 @@ void metaValue::redraw(){
 	#endif
 }
 
-void metaValue::sizeToFit(){
-	GCSize valueSize = _valueView.getSize();
-	Serial << "valueSize: "<<valueSize<<endl;
+GCSize metaValue::resizeLabel(){
+	_labelView.sizeToFit();
 	GCSize labelSize = _labelView.getSize();
+
+	labelSize.h = _labelView.getFont()->line_space;
+	if(_labelView.getDrawsOutline()){
+		labelSize.h+=2*_labelOutlineInset;
+	}
+	labelSize.w+=4*_labelOutlineInset;
+	_labelView.setSize(labelSize);
+	return labelSize;
+}
+
+GCSize metaValue::resizeValue(){
+	_valueView.sizeToFit();
+	GCSize valueSize = _valueView.getSize();
+	valueSize+=4;
+	_valueView.setSize(valueSize);
+	return valueSize;
+}
+
+void metaValue::sizeToFit(){
+
+	GCSize labelSize = resizeLabel();
+	GCSize valueSize = resizeValue();
+	_frameInset =   labelSize.h/2 ;
+	Serial << "valueSize: "<<valueSize<<endl;
 	int16_t baslineCorrection = (_labelView.getFont()->line_space - _labelView.getFont()->cap_height-3);
 	//	baslineCorrection = 0;
 	Serial << "labelSize: "<<labelSize;
 	Serial << "baseLine Correction "<<baslineCorrection<<endl;
 	GCSize ownSize = _frame.size;
 	Serial << "ownSize: "<<ownSize<<endl;
-	valueSize.h+=(2*_verticalValueInset)+(2*_frameInset);//baslineCorrection;
+	valueSize.h+=labelSize.h+(2*_verticalValueInset)+(2*_frameInset);//baslineCorrection;
 	valueSize.w+=2*_horizontalValueInset;
 	//labelSize.h+=2*VALUE_VERTICAL_INSET;
 	labelSize.w+=2*_horizontalLabelInset;
@@ -468,6 +466,18 @@ void metaValue::sizeToFit(){
 	// 	ownSize.h = ownSize.w/1.6180;
 	// }
 	Serial << "resultSize: "<<ownSize<<endl;
+	{
+		GCPoint lo = GCPoint();
+		lo.x = _horizontalLabelInset;
+
+		_labelView.setOrigin(lo);
+	}
+	/*{
+		GCPoint valOr = GCPoint();
+		valOr.x =((ownSize.w-2*_horizontalValueInset)/2 - valueSize.w/2)+_horizontalValueInset;
+		valOr.y = (ownSize.h/2 - valueSize.h/2)+_frameInset/2;
+		_valueView.setOrigin(valOr);
+	}*/
 
 	// relayout the Value<
 	GCRect p;
@@ -487,7 +497,36 @@ void metaValue::sizeToFit(){
 	setSize(ownSize);
 }
 
+void metaValue::setLayout(ValueLayout definition){
+	setLabelFont(definition.labelFont);
+	setValueFont(definition.valueFont);
+	setLabelColor(definition.labelColor);
+	setValueColor(definition.valueColor);
+	setDrawLabelOutline(definition.labelDrawOutline);
+	setLabelOutlineInset(definition.labelOutlineInset);
+	setLabelOulineCornerRadius(definition.labelOutlineCornerRadius);
+	setCornerRadius(definition.cornerRadius);
+	setHorizontalLabelInset(definition.horizontalLabelInset);
+	setHorizontalValueInset(definition.horizontalValueInset);
+	setVerticalValueInset(definition.verticalValueInset);
+}
 
+uint16_t metaValue::respondsToEvents(){
+	if(_processEvents){
+		return EventMask::ButtonEvents | EventMask::ButtonEvent_Up | EventMask::ButtonEvent_Down | EventMask::ButtonEvent_Center |
+		EventMask::EncoderEvents | EventMask::ButtonState_Down | EventMask::ButtonState_Up;
+	}
+	return 0;
+}
+
+int16_t metaValue::processEvent(UserEvent *evnt){
+	Serial << "metaValue::processEvent "<<evnt<<endl;
+	if(!_numericValue){
+		return ResponderResult::ChangedNothing;
+	}
+
+	return ResponderResult::ChangedNothing;
+}
 /**********************************************
  *									metaList 									*
  **********************************************/

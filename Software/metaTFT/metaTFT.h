@@ -29,10 +29,10 @@
 #define COLOR_ORDER       GRB
 #define CHIPSET           WS2812
 #define COLOR_CORRECTION  0xffeeff
-#define LED_BRIGHTNESS    80
+#define LED_BRIGHTNESS    30
 
 #define LED_PIN           4
-#define NUM_LEDS 180
+#define NUM_LEDS 120
 #include <FastLED.h>
 extern CRGB leds[];
 

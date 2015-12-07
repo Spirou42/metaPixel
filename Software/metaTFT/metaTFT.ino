@@ -79,6 +79,7 @@ metaList  SystemMenu;
 metaView	SecondView;
 metaList	EffectsMenu;
 metaList 	PalettesMenu;
+metaValue ValueView;
 
 metaLabel::LabelLayout*  getListLayout(){
 	static metaView::ViewLayout viewLayout;
@@ -99,6 +100,25 @@ metaLabel::LabelLayout*  getListLayout(){
 		isInitialized=true;
 	}
 	return &labelLayout;
+}
+
+metaValue::ValueLayout getValueLayout(){
+	static metaValue::ValueLayout valueLayout;
+	static bool isInitialized = false;
+	if(!isInitialized){
+		Serial << "getValueLayout" <<endl;
+		valueLayout.labelFont = &Arial_16;
+		valueLayout.valueFont = &Arial_40;
+		valueLayout.labelOutlineCornerRadius = 5;
+		valueLayout.labelOutlineInset = 3;
+		valueLayout.labelDrawOutline=false;
+		valueLayout.verticalValueInset=0;
+		valueLayout.horizontalLabelInset=18;
+		valueLayout.horizontalValueInset=0;
+		valueLayout.valueColor = ILI9341_DARKGREEN;
+		isInitialized = true;
+	}
+	return valueLayout;
 }
 
 void initListVisual(metaList &k){
@@ -172,12 +192,36 @@ void initPalettesMenu(){
 	PalettesMenu.sizeToFit();
 }
 
+String labelStr = String("Brightness");
+
+String valueStr = String("-55");
+
+
+void initValueView(){
+	Serial <<"initValueView"<<endl;
+	ValueView.initValue(&tft,GCRect(130,00,13,8), labelStr, valueStr);
+
+	metaValue::ValueLayout k = getValueLayout();
+
+	ValueView.setLayout(k);
+
+	ValueView.sizeToFit();
+	ValueView.setProcessEvents(true);
+
+	ValueView.allignInSuperView(HALLIGN_CENTER | VALLIGN_CENTER);
+	valueStr.remove(0);
+	valueStr+=String("10");
+	ValueView.setValue(valueStr);
+
+}
+
 
 void initUI()
 {
 	initSystemMenu();
 	initPalettesMenu();
 	initEffectsMenu();
+	initValueView();
 }
 elapsedMillis firstTime = elapsedMillis(0);
 
@@ -199,11 +243,12 @@ int processLEDEffects(unsigned long now,void* data){
 	return 0;
 }
 
-#if 0
+
 void adjustBrightness()
 {
 	int8_t uValue = log(256-tft.getLuminance())*10;
 	tft.fillScreen(ILI9341_BLACK);
+
 	String labelStr = String("Brightness");
 	String valueStr = String("-55 ");
 	String blubberStr = String ("-UU ");
@@ -239,7 +284,7 @@ void adjustBrightness()
 			int8_t kValue = uValue;
 			UserEvent *evnt = eventQueue.popEvent();
 			if(evnt->getType()==EventType::EventTypeButton){
-				UserEvent::ButtonData data = evnt->getData().buttonData;
+				ButtonData data = evnt->getData().buttonData;
 				if(data.id==ButtonID::CenterButton &&
 					data.state == ButtonState::ButtonClick){
 					break;
@@ -258,7 +303,7 @@ void adjustBrightness()
 				}
 
 			}else if(evnt->getType() ==EventType::EventTypeEncoder){
-				UserEvent::EncoderData data = evnt->getData().encoderData;
+				EncoderData data = evnt->getData().encoderData;
 				int8_t steps = data.absSteps;
 				uValue +=steps;
 				lastAdjust=0;
@@ -284,9 +329,9 @@ void adjustBrightness()
 				//Serial <<"Brightness: "<<tft.getLuminance()<<"    "<<endl;
 			}
 		}
-	}while(true/*lastAdjust<5000*/);
+	}while(true/*lastg<5000*/);
 }
-#endif
+
 
 
 /** todo: re-move this functionalityto a generic implementation */
@@ -392,7 +437,7 @@ void loop() {
 	if(firstTime>1000 && !skipMask){
 		tft.fillScreen(ILI9341_BLACK);
 		SecondView.redraw();
-		responderStack.push(&SystemMenu);
+		responderStack.push(&ValueView);
 		responderStack.top()->redraw();
 
 

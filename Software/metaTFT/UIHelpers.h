@@ -13,7 +13,7 @@
 #define DEBUG_LAYOUT                  (1)
 #define DEBUG_LAYOUT_VALUE            (0)
 #define DEBUG_LAYOUT_VALUEBACKGROUND  (0 && DEBUG_LAYOUT_VALUE)
-#define DEBUG_LAYOUT_VALUESIZE        (0 /*&& DEBUG_LAYOUT_VALUE*/)
+#define DEBUG_LAYOUT_VALUESIZE        (0 && DEBUG_LAYOUT_VALUE)
 
 
 /** @todo: rework */
@@ -30,6 +30,7 @@ using namespace std;
 
 class UserEvent;
 class metaView;
+class metaValue;
 typedef std::stack<metaView*,std::vector<metaView*>> ResponderStack;
 /**
 the Responder is the base class for all event processing related stuff
@@ -42,7 +43,6 @@ typedef enum _responderResult{
   ResponderExit   = -4,
 }ResponderResult;
 
-class metaView;
 
 class metaAction
 {
@@ -64,10 +64,10 @@ class metaResponder
   void initResponder(ResponderStack* rS){
     _responderStack = rS;}
 
-  void setRespondsToEvents(uint16_t m){
+  virtual void setRespondsToEvents(uint16_t m){
     _respondsToEvents = m;}
 
-  uint16_t respondsToEvents(){
+  virtual uint16_t respondsToEvents(){
     return _respondsToEvents;}
 
   void setAction(metaAction* action){_action = action;}
@@ -219,6 +219,7 @@ class metaView : public GraphicsContext, public metaResponder
 /** class for displaying a simple String*/
 class metaLabel : public metaView
 {
+  friend metaValue;
   public:
   typedef struct _labelLayout{
    public:
@@ -304,12 +305,30 @@ class metaLabel : public metaView
   String _label = String();
 };
 
-/** compleate rectangular display unit with label and value */
 
+/** simple wrapper for values */
+class valueWrapper{
+ public:
+   valueWrapper(int16_t* val, int16_t min, int16_t max, String name):_value(val),_min(min),_max(max),_name(name){}
+
+   int16_t getValue(){return *_value;}
+   void setValue(int16_t val){*_value = val;}
+
+   int16_t getMinValue(){return _min;}
+   int16_t getMaxValue(){return _max;}
+   String& getName(){return _name;}
+
+ protected:
+   int16_t* _value;
+   int16_t _min;
+   int16_t _max;
+   String _name;
+};
+/** compleate rectangular display unit with label and value */
 class metaValue : public metaView{
   public:
   typedef struct _valueLayout{
-  public:
+   public:
     const ILI9341_t3_font_t *labelFont;
     const ILI9341_t3_font_t *valueFont;
     uint16_t labelColor;
@@ -332,28 +351,17 @@ class metaValue : public metaView{
   }ValueLayout;
 
   metaValue():metaView(),_frameInset(),
-  _labelDrawOutline(false),_labelOutlineInset(3),_labelOutlineCornerRadius(6){};
+  _labelOutlineInset(3){};
   metaValue(String label, String value):metaView(),_frameInset(),
-  _labelDrawOutline(false),_labelOutlineInset(6),_labelOutlineCornerRadius(6){};
+  _labelOutlineInset(6){};
 
   void initValue(metaTFT* tft, GCRect frame, String label, String value);
 
   void initValue(metaTFT* tft, GCRect frame);
+  void setLayout(ValueLayout definition);
 
-  void setLayout(ValueLayout &definition){
-    setLabelFont(definition.labelFont);
-    setValueFont(definition.valueFont);
-    setLabelColor(definition.labelColor);
-    setValueColor(definition.valueColor);
-    setDrawLabelOutline(definition.labelDrawOutline);
-    setLabelOutlineInset(definition.labelOutlineInset);
-    setLabelOulineCornerRadius(definition.labelOutlineCornerRadius);
-    setCornerRadius(definition.cornerRadius);
-    setHorizontalLabelInset(definition.horizontalLabelInset);
-    setHorizontalValueInset(definition.horizontalValueInset);
-    setVerticalValueInset(definition.verticalValueInset);
-  }
-
+  GCSize resizeValue();
+  GCSize resizeLabel();
   void setLabel(String label){
     Serial<<"Value: setLabel "<<label<<endl;
     _labelView.setLabel(label);
@@ -384,12 +392,12 @@ class metaValue : public metaView{
     return _labelOutlineInset;}
 
   void setLabelOulineCornerRadius(uint8_t r){
-    _labelOutlineCornerRadius=r;setNeedsLayout();}
+    _labelView.setCornerRadius(r);setNeedsLayout();}
   uint8_t getLabelOutlineCornerRadius(){
-    return _labelOutlineCornerRadius;}
+    return _labelView.getCornerRadius();}
 
   void setLabelColor(uint16_t c){
-    _outlineColor=c; _labelView.setTextColor(c);setNeedsRedraw();}
+    _outlineColor=c; _labelView.setTextColor(c);_labelView.setOutlineColor(c);setNeedsRedraw();}
 
   void setValueColor(uint16_t c){
     _valueView.setTextColor(c); setNeedsRedraw();};
@@ -403,20 +411,45 @@ class metaValue : public metaView{
   void valueUpdate(){
     _valueView.setNeedsRedraw();};
 
+  void setNumericValue(int16_t k){
+    _valueView._label = k;
+    _valueView.setNeedsRedraw();
+    if(_numericValue){
+      _numericValue->setValue(k);
+    }
+  }
+
+  void setValueWrapper(valueWrapper* valWrap){
+    _numericValue = valWrap;
+  }
+  int16_t numericValue(){
+    if(_numericValue){
+      return _numericValue->getValue();
+    }
+    return 0;
+  }
+
+  void setProcessEvents(bool f){_processEvents=f;}
+  bool getProcessEvents(){return _processEvents;}
+  virtual void setRespondsToEvents(uint16_t m){}
+  virtual uint16_t respondsToEvents();
+
+  virtual int16_t processEvent(UserEvent *evnt);
+
   virtual void redraw();
   virtual void sizeToFit();
+
   protected:
   metaLabel _labelView;
   metaLabel _valueView;
   int16_t  _frameInset;
+  valueWrapper *_numericValue;
 
-
-  bool _labelDrawOutline;
   uint8_t _labelOutlineInset;
-  uint8_t _labelOutlineCornerRadius;
   uint8_t _horizontalLabelInset;
   uint8_t _horizontalValueInset;
   uint8_t _verticalValueInset;
+  bool _processEvents;
 };
 
 class metaList : public metaView{
