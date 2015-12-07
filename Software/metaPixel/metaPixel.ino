@@ -120,23 +120,23 @@ const char * SystemParameterName[]={
 Parameter16_t parameterArray[] = {
 	// global scope parameters.
 	// these parameters for Program, framerate etc.
-	/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,		&EffectProgram),
-	/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,	&Delay),
-	/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,		&Palette),
-	/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,	&Brightness),
-	/* 04 */  Parameter16_t('Q',(int16_t)0,(int16_t)5,		&MirrorParam),
-	/* 05 */	Parameter16_t('Z',(int16_t)1,(int16_t)14,		&BlendParam),
-	/* 06 */	Parameter16_t('A',(int16_t)0,(int16_t)1,		&ResolutionParam),
+	/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,		&EffectProgram,String("Program")),
+	/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,	&Delay,String("Delay")),
+	/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,		&Palette,String("Palette")),
+	/* 03 */	Parameter16_t('B',(int16_t)0,(int16_t)255,	&Brightness,String("Brightness")),
+	/* 04 */  Parameter16_t('Q',(int16_t)0,(int16_t)5,		&MirrorParam,String("Mirror")),
+	/* 05 */	Parameter16_t('Z',(int16_t)1,(int16_t)14,		&BlendParam,String("Blend")),
+	/* 06 */	Parameter16_t('A',(int16_t)0,(int16_t)1,		&ResolutionParam,String("Resolution")),
 
 	// local parameters. These parameters have a different meening for each  Effect program.
-	/* 07 */	Parameter16_t('U',(int16_t)0,(int16_t)0,		&genericSpeed1),
-	/* 08 */  Parameter16_t('V',(int16_t)0,(int16_t)0,		&genericSpeed2),
-	/* 09 */	Parameter16_t('R',(int16_t)0,(int16_t)0,		&genericScale1),
-	/* 10 */	Parameter16_t('I',(int16_t)0,(int16_t)0,		&genericScale2),
-	/* 11 */	Parameter16_t('O',(int16_t)0,(int16_t)0,		&genericParam1),
-	/* 12 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,		&genericParam2),
-	/* 13 */	Parameter16_t('M',(int16_t)0,(int16_t)255,	&genericEffectMask1),
-	/* 14 */	Parameter16_t('N',(int16_t)0,(int16_t)255,	&genericEffectMask2),
+	/* 07 */	Parameter16_t('U',(int16_t)0,(int16_t)0,		&genericSpeed1,String()),
+	/* 08 */  Parameter16_t('V',(int16_t)0,(int16_t)0,		&genericSpeed2,String()),
+	/* 09 */	Parameter16_t('R',(int16_t)0,(int16_t)0,		&genericScale1,String()),
+	/* 10 */	Parameter16_t('I',(int16_t)0,(int16_t)0,		&genericScale2,String()),
+	/* 11 */	Parameter16_t('O',(int16_t)0,(int16_t)0,		&genericParam1,String()),
+	/* 12 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,		&genericParam2,String()),
+	/* 13 */	Parameter16_t('M',(int16_t)0,(int16_t)255,	&genericEffectMask1,String()),
+	/* 14 */	Parameter16_t('N',(int16_t)0,(int16_t)255,	&genericEffectMask2,String()),
 
 };
 

@@ -174,12 +174,13 @@ Parameter16_t enriches an AnimationValue with a simple char mnemonic and a min- 
 */
 class Parameter16_t{
 public:
-	char code;								// char, naming the parameter
+	char code;								// char, naming the parameter for the command line interface
 	int16_t minValue;					// min value of the parameter
 	int16_t maxValue;					// max value of the parameter
 	AnimationValue *value;
-	Parameter16_t():code(0x00),minValue(),maxValue(),value(NULL){};
-	Parameter16_t(char c, int16_t minVal, int16_t maxVal,AnimationValue* val): code(c),minValue(minVal),maxValue(maxVal),value(val){};
+	String name;							// name for the UI
+	Parameter16_t():code(0x00),minValue(),maxValue(),value(NULL),name(){};
+	Parameter16_t(char c, int16_t minVal, int16_t maxVal,AnimationValue* val,String na): code(c),minValue(minVal),maxValue(maxVal),value(val),name(na){};
 	int16_t clampValue(int16_t v){
 		if(v<minValue){
 			v = minValue;

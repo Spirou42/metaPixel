@@ -32,7 +32,7 @@
 #define LED_BRIGHTNESS    80
 
 #define LED_PIN           4
-#define NUM_LEDS 60
+#define NUM_LEDS 180
 #include <FastLED.h>
 extern CRGB leds[];
 
