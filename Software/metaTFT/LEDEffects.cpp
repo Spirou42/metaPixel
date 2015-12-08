@@ -51,9 +51,9 @@ void confetti()
 void sinelon()
 {
   // a colored dot sweeping back and forth, with fading trails
-  fadeToBlackBy( leds, NUM_LEDS, 20);
-  int pos = beatsin16(10,0,NUM_LEDS);
-  CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue,192);
+  fadeToBlackBy( leds, NUM_LEDS, 1);
+  int pos = beatsin16(5,0,NUM_LEDS);
+  CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue,255);
   leds[pos] += color;
 }
 

@@ -35,6 +35,44 @@ CRGB  leds[NUM_LEDS];
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
 UserEventQueue eventQueue = UserEventQueue();
 using namespace std;
+class brightnessWrapper : public valueWrapper{
+public:
+	brightnessWrapper(int16_t *val):valueWrapper(val,0,20,"Brightness"){}
+	virtual void setValue(int16_t k){
+		if(k>_max){k=_max;}
+		if(k<_min){k=_min;}
+
+		if(k!=*_value){
+			*_value = k;
+			int8_t p = displayFromVal(*_value);
+			tft.setLuminance(p);
+
+		}
+	}
+	virtual int16_t getValue(){
+		int16_t lum = tft.getLuminance();
+		int16_t p =valFromDisplay(lum);
+		if(p>_max){p=_max;}
+		if(p<_min){p=_min;}
+		return *_value;
+	}
+protected:
+	int8_t displayFromVal(int16_t k){
+		int16_t p = mapInto(GCSize(_min,_max),GCSize(6,554),k);
+		uint8_t v= exp(p/100.0);
+		return 256 -v;
+	}
+	int16_t valFromDisplay(int16_t k){
+		int16_t uValue = log(256-k)*100.0;
+		int16_t p= mapInto(GCSize(6,554),GCSize(_min,_max),uValue);
+		return p;
+	}
+
+};
+int16_t tftBrightness = 0;
+
+brightnessWrapper TFTBrightness(&tftBrightness);
+
 
 PaletteList initializeSystemPalettes(){
 	PaletteList tmp;
@@ -55,10 +93,10 @@ PaletteList initializeSystemPalettes(){
 
 EffectList initializeSystemEffects(){
 	EffectList tmp;
-	tmp.push_back(new EffectPair("Sinelon",&sinelon));
 	tmp.push_back(new EffectPair("Rainbow",rainbow));
 	tmp.push_back(new EffectPair("Rainbow Glitter",&rainbowWithGlitter));
 	tmp.push_back(new EffectPair("Confetti",&confetti));
+	tmp.push_back(new EffectPair("Sinelon",&sinelon));
 	tmp.push_back(new EffectPair("Juggle",&juggle));
 	tmp.push_back(new EffectPair("BPM",&bpm));
 	return tmp;
@@ -132,6 +170,7 @@ void initListVisual(metaList &k){
 
 void initializeTFT(){
 	tft.start();
+	TFTBrightness.setValue(5);
 }
 
 void initializeLEDs(){
@@ -192,9 +231,11 @@ void initPalettesMenu(){
 	PalettesMenu.sizeToFit();
 }
 
-String labelStr = String("Brightness");
+String labelStr = String("Hulga");
 
 String valueStr = String("-55");
+
+
 
 
 void initValueView(){
@@ -204,14 +245,15 @@ void initValueView(){
 	metaValue::ValueLayout k = getValueLayout();
 
 	ValueView.setLayout(k);
-
+	ValueView.setValueWrapper(&TFTBrightness);
 	ValueView.sizeToFit();
 	ValueView.setProcessEvents(true);
+	ValueView.setValue(TFTBrightness.getValue());
 
 	ValueView.allignInSuperView(HALLIGN_CENTER | VALLIGN_CENTER);
-	valueStr.remove(0);
-	valueStr+=String("10");
-	ValueView.setValue(valueStr);
+	// valueStr.remove(0);
+	// valueStr+=String("10");
+	// ValueView.setValue(valueStr);
 
 }
 
@@ -393,6 +435,8 @@ int processUserEvents(unsigned long now, void * userdata){
 
 					case ResponderResult::ResponderExit:
 					Serial << "List will exit"<< endl;
+					responderStack.pop();
+
 					break;
 
 				}

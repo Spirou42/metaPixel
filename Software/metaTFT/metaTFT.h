@@ -4,7 +4,7 @@
 #ifndef __METATFT_H__
 #define __METATFT_H__
 #define FASTLED_INTERNAL
-
+//#define FASTLED_ALLOW_INTERRUPTS 0
 #include <stack>
 #include <deque>
 #include <vector>

@@ -513,19 +513,52 @@ void metaValue::setLayout(ValueLayout definition){
 
 uint16_t metaValue::respondsToEvents(){
 	if(_processEvents){
-		return EventMask::ButtonEvents | EventMask::ButtonEvent_Up | EventMask::ButtonEvent_Down | EventMask::ButtonEvent_Center |
-		EventMask::EncoderEvents | EventMask::ButtonState_Down | EventMask::ButtonState_Up;
+		return 	EventMask::ButtonEvents | EventMask::ButtonEvent_Up | EventMask::ButtonEvent_Down |
+						EventMask::ButtonEvent_Center | EventMask::ButtonEvent_Left | EventMask::ButtonEvent_Right |
+						EventMask::EncoderEvents | EventMask::ButtonState_Down | EventMask::ButtonState_Up;
 	}
 	return 0;
 }
 
 int16_t metaValue::processEvent(UserEvent *evnt){
+	int16_t result = ResponderResult::ChangedNothing;
 	Serial << "metaValue::processEvent "<<evnt<<endl;
 	if(!_numericValue){
 		return ResponderResult::ChangedNothing;
+	}else{
+		int16_t val = _numericValue->getValue();
+		Serial <<"we got a Value named "<<_numericValue->getName()<<" ("<<val<<")"<<endl;
+		switch(evnt->getType()){
+			case EventType::EventTypeEncoder: {
+				int16_t steps = evnt->getAbsEncoderSteps();
+				Serial << "Encoder with "<< steps<<endl;
+				float k = evnt->getEncoderSpeed();
+				Serial <<"with Speed: "<<k<<" "<<log(k)<<endl;
+				val += steps;
+				Serial << "Setting: "<<val<<endl;
+				_numericValue->setValue(val);
+				val = _numericValue->getValue();
+				Serial << "and got "<<val<<endl;
+				_valueView._label = String(val);
+				_valueView.setNeedsRedraw();
+				result = ResponderResult::ChangedVisual;
+
+			}
+			break;
+			case EventType::EventTypeButton:{
+				switch(evnt->getButtonID()){
+					case ButtonID::UpButton: break;
+					case ButtonID::DownButton: break;
+					case ButtonID::LeftButton: break;
+					case ButtonID::RightButton: break;
+					case ButtonID::CenterButton: result = ResponderResult::ResponderExit;break;
+				}
+			}
+			break;
+		}
 	}
 
-	return ResponderResult::ChangedNothing;
+	return result;
 }
 /**********************************************
  *									metaList 									*

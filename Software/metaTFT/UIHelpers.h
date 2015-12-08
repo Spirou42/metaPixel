@@ -43,7 +43,30 @@ typedef enum _responderResult{
   ResponderExit   = -4,
 }ResponderResult;
 
+/** simple wrapper for values */
+class valueWrapper{
+ public:
+   valueWrapper(int16_t* val, int16_t min, int16_t max, String name):_value(val),_min(min),_max(max),_name(name){}
 
+   virtual int16_t getValue(){return *_value;}
+   virtual void setValue(int16_t val){*_value = val;}
+
+   virtual int16_t getMinValue(){return _min;}
+   virtual int16_t getMaxValue(){return _max;}
+   virtual String& getName(){return _name;}
+   int16_t mapInto(GCSize source, GCSize target, int16_t input){
+   float inp = (100.0/(source.h-source.w)) * (input -source.w);
+   int16_t out = (target.h-target.w)*inp/100.0 + target.w;
+    return out;
+   }
+ protected:
+   int16_t* _value;
+   int16_t _min;
+   int16_t _max;
+   String _name;
+};
+
+/** wraper for simple actions */
 class metaAction
 {
  public:
@@ -306,24 +329,6 @@ class metaLabel : public metaView
 };
 
 
-/** simple wrapper for values */
-class valueWrapper{
- public:
-   valueWrapper(int16_t* val, int16_t min, int16_t max, String name):_value(val),_min(min),_max(max),_name(name){}
-
-   int16_t getValue(){return *_value;}
-   void setValue(int16_t val){*_value = val;}
-
-   int16_t getMinValue(){return _min;}
-   int16_t getMaxValue(){return _max;}
-   String& getName(){return _name;}
-
- protected:
-   int16_t* _value;
-   int16_t _min;
-   int16_t _max;
-   String _name;
-};
 /** compleate rectangular display unit with label and value */
 class metaValue : public metaView{
   public:
@@ -421,6 +426,8 @@ class metaValue : public metaView{
 
   void setValueWrapper(valueWrapper* valWrap){
     _numericValue = valWrap;
+    setLabel(_numericValue->getName());
+    setValue(_numericValue->getMaxValue());
   }
   int16_t numericValue(){
     if(_numericValue){

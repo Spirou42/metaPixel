@@ -24,6 +24,6 @@ void nextPattern();
 void nextPalette();
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
-#define FRAMES_PER_SECOND  60
+#define FRAMES_PER_SECOND 20
 
 #endif

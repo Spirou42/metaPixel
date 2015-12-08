@@ -32,7 +32,9 @@ void encoderHandler(size_t idx){
 }
 
 void encoder0Handler(){
-  __disable_irq();
+//  __disable_irq();
+encoders[0].disable();
   encoderHandler(0);
-  __enable_irq();
+encoders[0].enable();
+//  __enable_irq();
 }

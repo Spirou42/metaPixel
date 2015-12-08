@@ -127,6 +127,13 @@ public:
   bool matchesMask(uint16_t mask);
   ButtonID getButtonID();
   ButtonState getButtonState();
+  int16_t getAbsEncoderSteps(){
+    return _data.encoderData.absSteps;
+  }
+
+  float getEncoderSpeed(){
+    return _data.encoderData.speed;
+  }
 
   friend Print& operator<<(Print& out,UserEvent* event){
     out << "Event{"<<event->_type<<", ";
