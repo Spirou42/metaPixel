@@ -16,7 +16,12 @@ void rainbow()
 {
   // FastLED's built-in rainbow generator
   CRGBPalette16 p = (*currentSystemPalette)->second;
-  fill_palette(leds,NUM_LEDS,gHue,255/NUM_LEDS,p,255,LINEARBLEND);
+  uint8_t step = 1;
+  if(NUM_LEDS < 255){
+    step = 255/NUM_LEDS;
+  }
+
+  fill_palette(leds,NUM_LEDS,gHue,step,p,255,LINEARBLEND);
   //fill_rainbow( leds, NUM_LEDS, gHue, 7);
 }
 
@@ -47,7 +52,7 @@ void sinelon()
 {
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds, NUM_LEDS, 20);
-  int pos = beatsin16(13,0,NUM_LEDS);
+  int pos = beatsin16(10,0,NUM_LEDS);
   CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue,192);
   leds[pos] += color;
 }
