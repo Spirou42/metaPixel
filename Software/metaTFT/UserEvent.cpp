@@ -176,6 +176,7 @@ bool UserEventQueue::consolidateEvent(UserEvent* evnt)
     if( (dOld.encoderData.direction == dNew.encoderData.direction) &&
         (dOld.encoderData.id == dNew.encoderData.id)){
       dOld.encoderData.steps ++;
+      dOld.encoderData.absSteps +=dNew.encoderData.absSteps;
       _queueEnd->setData(dOld);
       return true;
     }

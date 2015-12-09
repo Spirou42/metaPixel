@@ -46,19 +46,24 @@ typedef enum _responderResult{
 /** simple wrapper for values */
 class valueWrapper{
  public:
-   valueWrapper(int16_t* val, int16_t min, int16_t max, String name):_value(val),_min(min),_max(max),_name(name){}
+  valueWrapper(int16_t* val, int16_t min, int16_t max, String name):_value(val),_min(min),_max(max),_name(name){}
 
-   virtual int16_t getValue(){return *_value;}
-   virtual void setValue(int16_t val){*_value = val;}
+  virtual int16_t getValue(){return *_value;}
+  virtual void setValue(int16_t val){*_value = val;}
 
-   virtual int16_t getMinValue(){return _min;}
-   virtual int16_t getMaxValue(){return _max;}
-   virtual String& getName(){return _name;}
-   int16_t mapInto(GCSize source, GCSize target, int16_t input){
-   float inp = (100.0/(source.h-source.w)) * (input -source.w);
-   int16_t out = (target.h-target.w)*inp/100.0 + target.w;
+  virtual int16_t getMinValue(){return _min;}
+  virtual int16_t getMaxValue(){return _max;}
+  virtual String& getName(){return _name;}
+  int16_t mapInto(GCSize source, GCSize target, int16_t input){
+    float inp = (100.0/(source.h-source.w)) * (input -source.w);
+    int16_t out = (target.h-target.w)*inp/100.0 + target.w;
     return out;
-   }
+  }
+  friend Print& operator<<(Print& obj,valueWrapper* v){
+    obj << "["<<v->_name<<"]{"<<*(v->_value)<<", "<<v->_min<<", "<<v->_max<<"}";
+    return obj;
+  }
+
  protected:
    int16_t* _value;
    int16_t _min;
@@ -70,14 +75,20 @@ class valueWrapper{
 class metaAction
 {
  public:
-   metaAction(metaView* mask,String label,int16_t *value);
+   metaAction(metaView* mask,valueWrapper *value);
    void operator()(void)const;
    void operator()(int16_t value)const;
+   friend Print& operator<<(Print& obj, metaAction* a){
+     Serial << "[Action]"<<(a->_value)<<_HEX((unsigned long)a->_mask);
+     return obj;
+   }
+   metaView* getView(){return _mask;}
+   valueWrapper* getValue(){return _value;}
   protected:
    metaView* _mask;                         /// this is the next responder
-   String _label;                           /// the optional label if the responer is a ValueResponder
-   int16_t *_value;                          /// pointer to a concrete int16_t
+   valueWrapper *_value;                          /// pointer to a concrete int16_t
 };
+
 
 class metaResponder
 {
@@ -105,11 +116,28 @@ class metaResponder
 
   virtual int16_t processEvent(UserEvent *k){return ChangedNothing;};
 
+  virtual void setValueWrapper(valueWrapper* val){
+    _valueWrapper = val;
+  }
+  valueWrapper* getValueWrapper(){return _valueWrapper;}
 
+  virtual int16_t getNumericValue(){
+    if(_valueWrapper){
+      return _valueWrapper->getValue();
+    }
+    return 0;
+  }
+
+  virtual void setNumericValue(int16_t k){
+    if(_valueWrapper){
+      _valueWrapper->setValue(k);
+    }
+  }
  protected:
     ResponderStack * _responderStack;
     uint16_t _respondsToEvents;
     metaAction* _action;
+    valueWrapper* _valueWrapper;
 };
 
 /** baseclass for UI elements */
@@ -416,24 +444,16 @@ class metaValue : public metaView{
   void valueUpdate(){
     _valueView.setNeedsRedraw();};
 
-  void setNumericValue(int16_t k){
+  virtual void setNumericValue(int16_t k){
     _valueView._label = k;
     _valueView.setNeedsRedraw();
-    if(_numericValue){
-      _numericValue->setValue(k);
-    }
+    metaResponder::setNumericValue(k);
   }
 
-  void setValueWrapper(valueWrapper* valWrap){
-    _numericValue = valWrap;
-    setLabel(_numericValue->getName());
-    setValue(_numericValue->getMaxValue());
-  }
-  int16_t numericValue(){
-    if(_numericValue){
-      return _numericValue->getValue();
-    }
-    return 0;
+  virtual void setValueWrapper(valueWrapper* valWrap){
+    metaResponder::setValueWrapper(valWrap);
+    setLabel(_valueWrapper->getName());
+    setValue(_valueWrapper->getMaxValue());
   }
 
   void setProcessEvents(bool f){_processEvents=f;}
@@ -450,7 +470,6 @@ class metaValue : public metaView{
   metaLabel _labelView;
   metaLabel _valueView;
   int16_t  _frameInset;
-  valueWrapper *_numericValue;
 
   uint8_t _labelOutlineInset;
   uint8_t _horizontalLabelInset;

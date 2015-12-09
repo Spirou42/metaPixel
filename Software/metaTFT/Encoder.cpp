@@ -29,7 +29,7 @@ EventData Encoder::encoderData(bool state,int8_t steps,float vel)
   data.position = _position;
   data.speed = vel;
   result.encoderData = data;
-  //  Serial << data<<endl;
+  Serial << data<<endl;
   return result;
 }
 

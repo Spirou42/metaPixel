@@ -69,10 +69,6 @@ protected:
 	}
 
 };
-int16_t tftBrightness = 0;
-
-brightnessWrapper TFTBrightness(&tftBrightness);
-
 
 PaletteList initializeSystemPalettes(){
 	PaletteList tmp;
@@ -108,16 +104,32 @@ PaletteList::iterator currentSystemPalette = systemPalettes.begin();
 EffectList systemEffects = initializeSystemEffects();
 EffectList::iterator currentSystemEffect = systemEffects.begin();
 
+int16_t tftBrightness = 0;
+brightnessWrapper TFTBrightness(&tftBrightness);
+
+int16_t hueStep = 1;
+valueWrapper hueStepWrapper(&hueStep,-10,10,"Hue Step");
+
+int16_t programIndex = 0;
+valueWrapper programIndexWrapper(&programIndex,0,systemEffects.size()-1,"Program");
+
+
+
+
 ResponderStack responderStack;
 
 Queue taskQueue;
 
 /**					Global UI Elements				**/
 metaList  SystemMenu;
-metaView	SecondView;
+//metaView	SecondView;
 metaList	EffectsMenu;
 metaList 	PalettesMenu;
 metaValue ValueView;
+/** gloabal Actions */
+metaAction tftBrightnessAction(&ValueView,&TFTBrightness);
+metaAction hueStepAction(&ValueView,&hueStepWrapper);
+
 
 metaLabel::LabelLayout*  getListLayout(){
 	static metaView::ViewLayout viewLayout;
@@ -168,17 +180,7 @@ void initListVisual(metaList &k){
 	k.setOpaque(false);
 }
 
-void initializeTFT(){
-	tft.start();
-	TFTBrightness.setValue(5);
-}
 
-void initializeLEDs(){
-	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
-	FastLED.clear(true);
-	FastLED.setBrightness( LED_BRIGHTNESS );
-	FastLED.show();
-}
 
 void initSystemMenu(){
 	// visual them definition for a single list entry
@@ -186,8 +188,10 @@ void initSystemMenu(){
 	SystemMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
 	initListVisual(SystemMenu);
 
-	SystemMenu.addEntry( String("Brightness"));
-	SystemMenu.addEntry( String("Program"));
+	metaLabel* l = SystemMenu.addEntry( String("Brightness"));
+	l->setAction(&tftBrightnessAction);
+	l=SystemMenu.addEntry( String("Hue Speed"));
+	l->setAction(&hueStepAction);
 	SystemMenu.addEntry( String("Pallette"));
 	SystemMenu.addEntry( String("Test"));
 	SystemMenu.addEntry( String("Tast"));
@@ -196,15 +200,17 @@ void initSystemMenu(){
 	SystemMenu.sizeToFit();
 
 	// Layout the second view
-	GCPoint selO = SystemMenu.getOrigin();
+	/*GCPoint selO = SystemMenu.getOrigin();
 	GCSize 	selS = SystemMenu.getSize();
 	int seVx = selO.x+selS.w + 2;
+
 	SecondView.initView(&tft,GCRect(seVx, selO.y,
 	tft.width()-seVx-selO.x,selS.h));
 	SecondView.setDrawsOutline(true);
 	SecondView.setCornerRadius(3);
 	SecondView.setOutlineColor(ILI9341_NAVY);
 	SecondView.setOpaque(false);
+	*/
 }
 
 void initEffectsMenu(){
@@ -240,7 +246,7 @@ String valueStr = String("-55");
 
 void initValueView(){
 	Serial <<"initValueView"<<endl;
-	ValueView.initValue(&tft,GCRect(130,00,13,8), labelStr, valueStr);
+	ValueView.initValue(&tft,GCRect(130,00,13,8));
 
 	metaValue::ValueLayout k = getValueLayout();
 
@@ -257,31 +263,36 @@ void initValueView(){
 
 }
 
-
-void initUI()
-{
+void initUI(){
 	initSystemMenu();
 	initPalettesMenu();
 	initEffectsMenu();
 	initValueView();
 }
-elapsedMillis firstTime = elapsedMillis(0);
 
-elapsedMillis displayTimer ;
-elapsedMillis ledTimer;
+void initializeTFT(){
+	tft.start();
+	TFTBrightness.setValue(5);
+}
 
+void initializeLEDs(){
+	FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(COLOR_CORRECTION);
+	FastLED.clear(true);
+	FastLED.setBrightness( LED_BRIGHTNESS );
+	FastLED.show();
+}
 
 int processLEDEffects(unsigned long now,void* data){
-	if(ledTimer > (1000/FRAMES_PER_SECOND)){
+	//if(ledTimer > (1000/FRAMES_PER_SECOND)){
 		EffectPair *l = *currentSystemEffect;
 		effectHandler h = l->second;
 		h();
 		//patterns[currentPatternNumber]();
 		FastLED.show();
-		EVERY_N_MILLISECONDS( 20 ) { gHue--; } // slowly cycle the "base color" through the rainbow
+		{ gHue+=hueStep; } // slowly cycle the "base color" through the rainbow
 		EVERY_N_SECONDS( 120 ) { nextPattern(); } // change patterns periodically
 		EVERY_N_SECONDS(30){nextPalette();}
-	}
+
 	return 0;
 }
 
@@ -387,11 +398,11 @@ int processUserEvents(unsigned long now, void * userdata){
 		UserEvent *evnt = eventQueue.popEvent();
 		//uint16_t l = evnt->eventMask();
 		uint16_t k = resp->respondsToEvents();
-		int16_t oldSelectedElement =resp->selectedIndex();
+		//int16_t oldSelectedElement =resp->selectedIndex();
 		if((evnt->matchesMask(k)) ){
 			int16_t result = resp->processEvent(evnt);
 			if(result > ResponderResult::ChangedValue){
-				Serial << "List changed Value x = "<<result<<endl;
+				Serial << "Responder changed Value x = "<<result<<endl;
 				metaAction *a = resp->getAction();
 				if(a){
 					Serial << "Responder got a value action"<<endl;
@@ -402,21 +413,21 @@ int processUserEvents(unsigned long now, void * userdata){
 			}else{
 				switch(result){
 					case ResponderResult::ChangedNothing:
-					Serial << "List did not change"<< endl;
+					Serial << "Responder did not change"<< endl;
 					break;
 
 					case ResponderResult::ChangedVisual:
-					Serial << "List changed visualy"<< endl;
+					Serial << "Responder changed visualy"<< endl;
 					resp->redraw();
 					break;
 
 					case ResponderResult::ChangedState:			/// this only is send if there was a list select
 					{
 						int16_t idx =resp->activeIndex();
-						Serial << "List changed state selected "<<idx<<endl;
+						Serial << "Responder changed state selected "<<idx<<endl;
 						metaAction *a = resp->getAction();
 						if(a){
-							Serial << "resp has a action for this"<< endl;
+							Serial << "Responder has a action for this"<< endl;
 						}else{
 							// check if the list entry has an metaAction added;
 							metaView * p = resp->activeElement();
@@ -424,6 +435,16 @@ int processUserEvents(unsigned long now, void * userdata){
 								metaAction *a = p->getAction();
 								if(a){
 									Serial << "got an action on the active Elements"<<endl;
+									Serial << a<<endl;
+									metaView* aView = a->getView();
+									valueWrapper* val = a->getValue();
+									if(aView){
+										if(val){
+											aView->setValueWrapper(val);
+										}
+										responderStack.push(aView);
+										aView->redraw();
+									}
 								}else{
 									Serial << "on element does not have a action"<<endl;
 								}
@@ -434,9 +455,13 @@ int processUserEvents(unsigned long now, void * userdata){
 					break;
 
 					case ResponderResult::ResponderExit:
-					Serial << "List will exit"<< endl;
-					responderStack.pop();
-
+						Serial << "Responder has exited"<< endl;
+						responderStack.pop();
+						if(responderStack.size()){
+							metaView * k=responderStack.top();
+							k->setNeedsRedraw();
+							k->redraw();
+						}
 					break;
 
 				}
@@ -475,16 +500,14 @@ void setup() {
 	taskQueue.scheduleFunction(processUserEvents,NULL,"USER",0,100);
 }
 
-bool skipMask = false;
+
 void loop() {
-	// put your main code here, to run repeatedly:
-	if(firstTime>1000 && !skipMask){
+	static bool skipMask = false;
+
+	if(!skipMask){
 		tft.fillScreen(ILI9341_BLACK);
-		SecondView.redraw();
 		responderStack.push(&ValueView);
 		responderStack.top()->redraw();
-
-
 		Serial << "Draw"<<endl;
 		Serial.flush();
 		skipMask = true;

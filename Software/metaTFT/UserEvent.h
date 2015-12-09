@@ -127,7 +127,7 @@ public:
   bool matchesMask(uint16_t mask);
   ButtonID getButtonID();
   ButtonState getButtonState();
-  int16_t getAbsEncoderSteps(){
+  int8_t getAbsEncoderSteps(){
     return _data.encoderData.absSteps;
   }
 

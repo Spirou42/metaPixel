@@ -15,11 +15,9 @@
  *									metaAction								*
  **********************************************/
 
-metaAction::metaAction(metaView* view, String label, int16_t *value){
+metaAction::metaAction(metaView* view, valueWrapper *value){
 	_mask = view;
 	_value = value;
-	_label.remove(0);
-	_label.append(label);
 }
 void metaAction::operator()(void) const {
 	Serial << "action called with nothing "<<endl;
@@ -29,7 +27,7 @@ void metaAction::operator()(void) const {
 void metaAction::operator()(int16_t val) const{
 	Serial <<"action called with "<<val<<endl;
 	if(_value){
-		*_value = val;
+		_value->setValue(val);
 	}
 	return;
 }
@@ -523,21 +521,21 @@ uint16_t metaValue::respondsToEvents(){
 int16_t metaValue::processEvent(UserEvent *evnt){
 	int16_t result = ResponderResult::ChangedNothing;
 	Serial << "metaValue::processEvent "<<evnt<<endl;
-	if(!_numericValue){
+	if(!_valueWrapper){
 		return ResponderResult::ChangedNothing;
 	}else{
-		int16_t val = _numericValue->getValue();
-		Serial <<"we got a Value named "<<_numericValue->getName()<<" ("<<val<<")"<<endl;
+		int16_t val = getNumericValue();
+		Serial <<"we got a Value named "<<_valueWrapper->getName()<<" ("<<val<<")"<<endl;
 		switch(evnt->getType()){
 			case EventType::EventTypeEncoder: {
-				int16_t steps = evnt->getAbsEncoderSteps();
+				int8_t steps = evnt->getAbsEncoderSteps();
 				Serial << "Encoder with "<< steps<<endl;
 				float k = evnt->getEncoderSpeed();
 				Serial <<"with Speed: "<<k<<" "<<log(k)<<endl;
 				val += steps;
 				Serial << "Setting: "<<val<<endl;
-				_numericValue->setValue(val);
-				val = _numericValue->getValue();
+				setNumericValue(val);
+				val = getNumericValue();
 				Serial << "and got "<<val<<endl;
 				_valueView._label = String(val);
 				_valueView.setNeedsRedraw();
@@ -551,7 +549,12 @@ int16_t metaValue::processEvent(UserEvent *evnt){
 					case ButtonID::DownButton: break;
 					case ButtonID::LeftButton: break;
 					case ButtonID::RightButton: break;
-					case ButtonID::CenterButton: result = ResponderResult::ResponderExit;break;
+					case ButtonID::CenterButton:
+						if(evnt->getButtonState() == ButtonState::ButtonUp){
+							result = ResponderResult::ResponderExit;
+						}
+						break;
+					default: break;
 				}
 			}
 			break;
