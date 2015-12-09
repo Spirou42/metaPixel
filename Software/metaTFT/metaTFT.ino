@@ -1,4 +1,5 @@
 #define FASTLED_INTERNAL
+
 #include <stack>
 #include <vector>
 #include <tuple>
@@ -35,28 +36,25 @@ CRGB  leds[NUM_LEDS];
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
 UserEventQueue eventQueue = UserEventQueue();
 using namespace std;
-class brightnessWrapper : public valueWrapper{
-public:
-	brightnessWrapper(int16_t *val):valueWrapper(val,0,20,"Brightness"){}
+class TFTBrightnessWrapper : public ValueWrapper{
+ public:
+	TFTBrightnessWrapper(int16_t *val):ValueWrapper(val,0,20,"TFT Brightness"){}
 	virtual void setValue(int16_t k){
-		if(k>_max){k=_max;}
-		if(k<_min){k=_min;}
-
-		if(k!=*_value){
-			*_value = k;
+		int16_t old = *_value;
+		ValueWrapper::setValue(k);
+		if(*_value!=old){
 			int8_t p = displayFromVal(*_value);
 			tft.setLuminance(p);
-
 		}
 	}
 	virtual int16_t getValue(){
-		int16_t lum = tft.getLuminance();
-		int16_t p =valFromDisplay(lum);
-		if(p>_max){p=_max;}
-		if(p<_min){p=_min;}
+		//int16_t lum = tft.getLuminance();
+		//int16_t p =valFromDisplay(lum);
+		// if(p>_max){p=_max;}
+		// if(p<_min){p=_min;}
 		return *_value;
 	}
-protected:
+ protected:
 	int8_t displayFromVal(int16_t k){
 		int16_t p = mapInto(GCSize(_min,_max),GCSize(6,554),k);
 		uint8_t v= exp(p/100.0);
@@ -67,7 +65,18 @@ protected:
 		int16_t p= mapInto(GCSize(6,554),GCSize(_min,_max),uValue);
 		return p;
 	}
+};
 
+class LEDBrightnessWrapper : public ValueWrapper{
+ public:
+	LEDBrightnessWrapper(int16_t * val):ValueWrapper(val,0,255,"LED Brightness"){}
+	virtual void setValue(int16_t k){
+		int16_t old = *_value;
+		ValueWrapper::setValue(k);
+		if(old!=*_value){
+			FastLED.setBrightness(*_value);
+		}
+	}
 };
 
 PaletteList initializeSystemPalettes(){
@@ -105,13 +114,16 @@ EffectList systemEffects = initializeSystemEffects();
 EffectList::iterator currentSystemEffect = systemEffects.begin();
 
 int16_t tftBrightness = 0;
-brightnessWrapper TFTBrightness(&tftBrightness);
+TFTBrightnessWrapper TFTBrightness(&tftBrightness);
+
+int16_t ledBrightness = LED_BRIGHTNESS;
+LEDBrightnessWrapper ledBrightnessWrapper(&ledBrightness);
 
 int16_t hueStep = 1;
-valueWrapper hueStepWrapper(&hueStep,-10,10,"Hue Step");
+ValueWrapper hueStepWrapper(&hueStep,-10,10,"Hue Step");
 
 int16_t programIndex = 0;
-valueWrapper programIndexWrapper(&programIndex,0,systemEffects.size()-1,"Program");
+ValueWrapper programIndexWrapper(&programIndex,0,systemEffects.size()-1,"Program");
 
 
 
@@ -129,7 +141,7 @@ metaValue ValueView;
 /** gloabal Actions */
 metaAction tftBrightnessAction(&ValueView,&TFTBrightness);
 metaAction hueStepAction(&ValueView,&hueStepWrapper);
-
+metaAction ledBrightnessAction(&ValueView,&ledBrightnessWrapper);
 
 metaLabel::LabelLayout*  getListLayout(){
 	static metaView::ViewLayout viewLayout;
@@ -146,7 +158,7 @@ metaLabel::LabelLayout*  getListLayout(){
 		labelLayout.indicatorSize = GCSize(6,6);
 		labelLayout.textSize=1;
 		labelLayout.textColor=ILI9341_GREEN;
-		viewLayout.visualizeState=true;
+		viewLayout.visualizeState=false;
 		isInitialized=true;
 	}
 	return &labelLayout;
@@ -188,8 +200,12 @@ void initSystemMenu(){
 	SystemMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
 	initListVisual(SystemMenu);
 
-	metaLabel* l = SystemMenu.addEntry( String("Brightness"));
+	metaLabel* l = SystemMenu.addEntry( String("TFT Brightness"));
 	l->setAction(&tftBrightnessAction);
+
+	l = SystemMenu.addEntry(String("LED Brightness"));
+	l->setAction(&ledBrightnessAction);
+
 	l=SystemMenu.addEntry( String("Hue Speed"));
 	l->setAction(&hueStepAction);
 	SystemMenu.addEntry( String("Pallette"));
@@ -237,9 +253,9 @@ void initPalettesMenu(){
 	PalettesMenu.sizeToFit();
 }
 
-String labelStr = String("Hulga");
-
-String valueStr = String("-55");
+// String labelStr = String("Hulga");
+//
+// String valueStr = String("-55");
 
 
 
@@ -390,7 +406,9 @@ void adjustBrightness()
 /** todo: re-move this functionalityto a generic implementation */
 int processUserEvents(unsigned long now, void * userdata){
 	if(responderStack.size()==0){
+		#if DEBUG_RESPONDER
 		Serial << "There is no top responder"<<endl;
+		#endif
 		return 0;
 	}
 	metaView *resp = responderStack.top();
@@ -402,6 +420,7 @@ int processUserEvents(unsigned long now, void * userdata){
 		if((evnt->matchesMask(k)) ){
 			int16_t result = resp->processEvent(evnt);
 			if(result > ResponderResult::ChangedValue){
+				#if DEBUG_RESPONDER
 				Serial << "Responder changed Value x = "<<result<<endl;
 				metaAction *a = resp->getAction();
 				if(a){
@@ -409,44 +428,58 @@ int processUserEvents(unsigned long now, void * userdata){
 				}else{
 					Serial << "Responder did not have a value action"<<endl;
 				}
+				#endif
 				resp->redraw();
 			}else{
 				switch(result){
 					case ResponderResult::ChangedNothing:
+					#if DEBUG_RESPONDER
 					Serial << "Responder did not change"<< endl;
+					#endif
 					break;
 
 					case ResponderResult::ChangedVisual:
+					#if DEBUG_RESPONDER
 					Serial << "Responder changed visualy"<< endl;
+					#endif
 					resp->redraw();
 					break;
 
 					case ResponderResult::ChangedState:			/// this only is send if there was a list select
 					{
+						#if DEBUG_RESPONDER
 						int16_t idx =resp->activeIndex();
 						Serial << "Responder changed state selected "<<idx<<endl;
+						#endif
 						metaAction *a = resp->getAction();
 						if(a){
+							#if DEBUG_RESPONDER
 							Serial << "Responder has a action for this"<< endl;
+							#endif
 						}else{
 							// check if the list entry has an metaAction added;
 							metaView * p = resp->activeElement();
 							if(p){
 								metaAction *a = p->getAction();
 								if(a){
+									#if DEBUG_RESPONDER
 									Serial << "got an action on the active Elements"<<endl;
 									Serial << a<<endl;
+									#endif
 									metaView* aView = a->getView();
-									valueWrapper* val = a->getValue();
+									ValueWrapper* val = a->getValue();
 									if(aView){
 										if(val){
 											aView->setValueWrapper(val);
 										}
 										responderStack.push(aView);
+										aView->prepareForDisplay();
 										aView->redraw();
 									}
 								}else{
+									#if DEBUG_RESPONDER
 									Serial << "on element does not have a action"<<endl;
+									#endif
 								}
 							}
 						}
@@ -455,8 +488,11 @@ int processUserEvents(unsigned long now, void * userdata){
 					break;
 
 					case ResponderResult::ResponderExit:
+						#if DEBUG_RESPONDER
 						Serial << "Responder has exited"<< endl;
+						#endif
 						responderStack.pop();
+						resp->removeFromScreen();
 						if(responderStack.size()){
 							metaView * k=responderStack.top();
 							k->setNeedsRedraw();

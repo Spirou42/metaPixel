@@ -33,7 +33,9 @@
 
 #define LED_PIN           4
 #define NUM_LEDS 360
-#include <FastLED.h>
+
+#define DEBUG_RESPONDER 0
+
 extern CRGB leds[];
 
 typedef void(*effectHandler)(void);

@@ -10,11 +10,14 @@
 #include "metaTFTDisplay.h"
 #include "font_Arial.h"
 
-#define DEBUG_LAYOUT                  (1)
+#define DEBUG_LAYOUT                  (0)
 #define DEBUG_LAYOUT_VALUE            (0)
 #define DEBUG_LAYOUT_VALUEBACKGROUND  (0 && DEBUG_LAYOUT_VALUE)
-#define DEBUG_LAYOUT_VALUESIZE        (0 && DEBUG_LAYOUT_VALUE)
+#define DEBUG_LAYOUT_VALUESIZE        (1 && DEBUG_LAYOUT_VALUE)
 
+#define DEBUG_EVENTS       1
+#define DEBUG_VALUE_EVENTS (0 && DEBUG_EVENTS)
+#define DEBUG_LIST_EVENTS  (0 && DEBUG_EVENTS)
 
 /** @todo: rework */
 /** AllignmentMasks terms*/
@@ -44,12 +47,19 @@ typedef enum _responderResult{
 }ResponderResult;
 
 /** simple wrapper for values */
-class valueWrapper{
+class ValueWrapper{
  public:
-  valueWrapper(int16_t* val, int16_t min, int16_t max, String name):_value(val),_min(min),_max(max),_name(name){}
+  ValueWrapper(int16_t* val, int16_t min, int16_t max, String name):_value(val),_min(min),_max(max),_name(name){}
 
   virtual int16_t getValue(){return *_value;}
-  virtual void setValue(int16_t val){*_value = val;}
+  virtual void setValue(int16_t val){
+    if(val < _min){
+      val = _min;
+    }else if(val>_max){
+      val = _max;
+    }
+    *_value = val;
+  }
 
   virtual int16_t getMinValue(){return _min;}
   virtual int16_t getMaxValue(){return _max;}
@@ -59,7 +69,7 @@ class valueWrapper{
     int16_t out = (target.h-target.w)*inp/100.0 + target.w;
     return out;
   }
-  friend Print& operator<<(Print& obj,valueWrapper* v){
+  friend Print& operator<<(Print& obj,ValueWrapper* v){
     obj << "["<<v->_name<<"]{"<<*(v->_value)<<", "<<v->_min<<", "<<v->_max<<"}";
     return obj;
   }
@@ -75,7 +85,7 @@ class valueWrapper{
 class metaAction
 {
  public:
-   metaAction(metaView* mask,valueWrapper *value);
+   metaAction(metaView* mask,ValueWrapper *value);
    void operator()(void)const;
    void operator()(int16_t value)const;
    friend Print& operator<<(Print& obj, metaAction* a){
@@ -83,10 +93,10 @@ class metaAction
      return obj;
    }
    metaView* getView(){return _mask;}
-   valueWrapper* getValue(){return _value;}
+   ValueWrapper* getValue(){return _value;}
   protected:
    metaView* _mask;                         /// this is the next responder
-   valueWrapper *_value;                          /// pointer to a concrete int16_t
+   ValueWrapper *_value;                          /// pointer to a concrete int16_t
 };
 
 
@@ -116,28 +126,28 @@ class metaResponder
 
   virtual int16_t processEvent(UserEvent *k){return ChangedNothing;};
 
-  virtual void setValueWrapper(valueWrapper* val){
-    _valueWrapper = val;
+  virtual void setValueWrapper(ValueWrapper* val){
+    _ValueWrapper = val;
   }
-  valueWrapper* getValueWrapper(){return _valueWrapper;}
+  ValueWrapper* getValueWrapper(){return _ValueWrapper;}
 
   virtual int16_t getNumericValue(){
-    if(_valueWrapper){
-      return _valueWrapper->getValue();
+    if(_ValueWrapper){
+      return _ValueWrapper->getValue();
     }
     return 0;
   }
 
   virtual void setNumericValue(int16_t k){
-    if(_valueWrapper){
-      _valueWrapper->setValue(k);
+    if(_ValueWrapper){
+      _ValueWrapper->setValue(k);
     }
   }
  protected:
     ResponderStack * _responderStack;
     uint16_t _respondsToEvents;
     metaAction* _action;
-    valueWrapper* _valueWrapper;
+    ValueWrapper* _ValueWrapper;
 };
 
 /** baseclass for UI elements */
@@ -234,6 +244,8 @@ class metaView : public GraphicsContext, public metaResponder
   virtual GCSize intrinsicSize(){return GCSize();};
 
   virtual void redraw();
+  virtual void removeFromScreen();
+  virtual void prepareForDisplay();
 
   void allignInSuperView(uint8_t allignmentMask);
 
@@ -393,7 +405,7 @@ class metaValue : public metaView{
   void initValue(metaTFT* tft, GCRect frame);
   void setLayout(ValueLayout definition);
 
-  GCSize resizeValue();
+  GCSize resizeValue( bool dontResize=false);
   GCSize resizeLabel();
   void setLabel(String label){
     Serial<<"Value: setLabel "<<label<<endl;
@@ -401,9 +413,7 @@ class metaValue : public metaView{
     setNeedsRedraw();
   };
 
-  void setValue(String label){
-    _valueView.setLabel(label);
-    Serial<<"newValue "<<_valueView.getLabel()<<endl;};
+  void setValue(String label);
 
   void setLabelFont(const ILI9341_t3_font_t* f){
     _labelView.setFont(f);setNeedsLayout();}
@@ -450,10 +460,12 @@ class metaValue : public metaView{
     metaResponder::setNumericValue(k);
   }
 
-  virtual void setValueWrapper(valueWrapper* valWrap){
+  virtual void setValueWrapper(ValueWrapper* valWrap){
     metaResponder::setValueWrapper(valWrap);
-    setLabel(_valueWrapper->getName());
-    setValue(_valueWrapper->getMaxValue());
+    setLabel(_ValueWrapper->getName());
+    setValue(_ValueWrapper->getMaxValue());
+    sizeToFit();
+    setValue(getNumericValue());
   }
 
   void setProcessEvents(bool f){_processEvents=f;}
@@ -465,11 +477,16 @@ class metaValue : public metaView{
 
   virtual void redraw();
   virtual void sizeToFit();
+  virtual void prepareForDisplay();
 
   protected:
+  GCRect valueLayoutRect();
+  GCRect valueLayoutRect(GCSize fs);
+  int16_t calcBaselineCorrection();
   metaLabel _labelView;
   metaLabel _valueView;
   int16_t  _frameInset;
+  GCRect _lastValueRect;
 
   uint8_t _labelOutlineInset;
   uint8_t _horizontalLabelInset;

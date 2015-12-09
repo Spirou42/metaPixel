@@ -15,7 +15,7 @@
  *									metaAction								*
  **********************************************/
 
-metaAction::metaAction(metaView* view, valueWrapper *value){
+metaAction::metaAction(metaView* view, ValueWrapper *value){
 	_mask = view;
 	_value = value;
 }
@@ -218,7 +218,12 @@ void metaView::redraw(){
 	#endif
 }
 
+void metaView::prepareForDisplay(){}
 
+void metaView::removeFromScreen(){
+	setFillColor(_backgroundColor);
+	fillRect(GCPoint(0,0),_frame.size);
+}
 /**********************************************
  *									metaLabel 								*
  **********************************************/
@@ -376,7 +381,7 @@ void metaValue::initValue(metaTFT* tft, GCRect frame){
 	_valueView.setAllignmentMask(VALLIGN_CENTER | HALLIGN_CENTER);
 	_valueView.setTextPosition(1,1);
 	_valueView.setNeedsRedraw();
-
+	_lastValueRect=_valueView._frame;
 	//Serial << "ValuePos "<<valOr.x<<", "<<valOr.y<<"("<<s.w<<","<<s.h<<")"<<endl;
 	//	value->remove(0);
 
@@ -393,8 +398,40 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, String label, String value
 	initValue(tft,frame);
 }
 
+void metaValue::setValue(String label){
+	Serial << "[mV] setValue: "<<label<<endl;
+	bool relayout = false;
+	if(_valueView.getLabel().length() != label.length()){
+		Serial << "[mV] Value Changed Length"<<endl;
+		relayout = true;
+	}
+	_valueView.setLabel(label);
+	GCSize ns = resizeValue(true);
+	GCSize cs = _valueView.getSize();
+	if((ns.w>cs.w) || (ns.h>cs.h)){
+		Serial << "[mV] Value changed Size"<<endl;
+		relayout = true;
+	}
+
+	if(relayout){
+		_valueView.setSize(ns);
+		GCRect p = valueLayoutRect();
+		#if DEBUG_LAYOUT_VALUESIZE
+		this->debugRect =_valueView._frame;
+		this->drawDebugRect = true;
+		#endif
+
+		_valueView.allignInRect(HALLIGN_CENTER | VALLIGN_CENTER,p);
+		//_lastValueRect = _valueView._frame;
+	}
+
+	Serial<<"newValue "<<_valueView.getLabel()<<endl;
+}
+
 void metaValue::redraw(){
-	if(_needsRedraw || childNeedsLayout()){
+	bool cnl= childNeedsLayout();
+	Serial << "[mV] redraw "<<_needsRedraw<<", "<<cnl<<endl;
+	if(_needsRedraw /*|| cnl*/){
 		GCRect p=getBounds();
 		p.origin.y+=_frameInset;
 		p.size.h-=_frameInset;
@@ -402,8 +439,8 @@ void metaValue::redraw(){
 		Serial << "Rect: "<<p<<endl;
 		Serial<< "Base: "<<_base<<endl;
 		#if DEBUG_LAYOUT_VALUEBACKGROUND
-		GraphicsContext::setFillColor(DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER);
-		GraphicsContext::fillRoundRect(getBounds(),_cornerRadius);
+		GraphicsContext::setStrokeColor(DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER);
+		GraphicsContext::drawRoundRect(getBounds(),_cornerRadius);
 		#endif
 		GraphicsContext::setFillColor(_backgroundColor);
 		GraphicsContext::setStrokeColor(_outlineColor);
@@ -412,14 +449,29 @@ void metaValue::redraw(){
 		GraphicsContext::drawRoundRect(p,_cornerRadius);
 		resetFlags();
 		redrawChildren(true);
+		_lastValueRect = _valueView._frame;
 	}else{
-		redrawChildren();
+		if(_valueView._needsRedraw){
+			setFillColor(_backgroundColor);
+			fillRect(_lastValueRect);
+			_valueView.redraw();
+			_lastValueRect=_valueView._frame;
+		}
+		if(_labelView._needsRedraw){
+			_labelView.redraw();
+		}
+		//redrawChildren();
 	}
 	#if DEBUG_LAYOUT
 	drawDebug();
 	#endif
 }
 
+void metaValue::prepareForDisplay(){
+	setSize(10,10);
+	sizeToFit();
+	allignInSuperView(HALLIGN_CENTER | VALLIGN_CENTER);
+}
 GCSize metaValue::resizeLabel(){
 	_labelView.sizeToFit();
 	GCSize labelSize = _labelView.getSize();
@@ -433,12 +485,32 @@ GCSize metaValue::resizeLabel(){
 	return labelSize;
 }
 
-GCSize metaValue::resizeValue(){
+GCSize metaValue::resizeValue(bool dontResize){
 	_valueView.sizeToFit();
 	GCSize valueSize = _valueView.getSize();
 	valueSize+=4;
-	_valueView.setSize(valueSize);
+	if(!dontResize){
+		_valueView.setSize(valueSize);
+	}
 	return valueSize;
+}
+
+GCRect metaValue::valueLayoutRect(GCSize fSize){
+	GCRect p(GCPoint(0,0),fSize);
+	p.size.h=(p.size.h - (2*_frameInset))-(2*_verticalValueInset);
+	p.size.w=p.size.w - (2*_horizontalValueInset);
+	p.origin.x = _horizontalValueInset;
+	p.origin.y = 2*_frameInset+_verticalValueInset -calcBaselineCorrection();
+	return p;
+}
+
+GCRect metaValue::valueLayoutRect(){
+	return valueLayoutRect(_frame.size);
+}
+
+int16_t metaValue::calcBaselineCorrection(){
+	int16_t baslineCorrection = (_labelView.getFont()->line_space - _labelView.getFont()->cap_height-3);
+	return baslineCorrection;
 }
 
 void metaValue::sizeToFit(){
@@ -447,7 +519,7 @@ void metaValue::sizeToFit(){
 	GCSize valueSize = resizeValue();
 	_frameInset =   labelSize.h/2 ;
 	Serial << "valueSize: "<<valueSize<<endl;
-	int16_t baslineCorrection = (_labelView.getFont()->line_space - _labelView.getFont()->cap_height-3);
+	int16_t baslineCorrection = calcBaselineCorrection();
 	//	baslineCorrection = 0;
 	Serial << "labelSize: "<<labelSize;
 	Serial << "baseLine Correction "<<baslineCorrection<<endl;
@@ -478,13 +550,8 @@ void metaValue::sizeToFit(){
 	}*/
 
 	// relayout the Value<
-	GCRect p;
-	p.size = ownSize;
-	//p.size.w-=2*VALUE_HORIZONTAL_INSET;
-	p.size.h=(p.size.h - (2*_frameInset))-(2*_verticalValueInset);
-	p.size.w=p.size.w - (2*_horizontalValueInset);
-	p.origin.x = _horizontalValueInset;
-	p.origin.y = 2*_frameInset+_verticalValueInset -baslineCorrection;
+	GCRect p = valueLayoutRect(ownSize);
+
 	Serial << "layoutRect: "<<p<<endl;
 	#if DEBUG_LAYOUT_VALUESIZE
 	this->debugRect =p;
@@ -520,27 +587,36 @@ uint16_t metaValue::respondsToEvents(){
 
 int16_t metaValue::processEvent(UserEvent *evnt){
 	int16_t result = ResponderResult::ChangedNothing;
+	#if DEBUG_VALUE_EVENTS
 	Serial << "metaValue::processEvent "<<evnt<<endl;
-	if(!_valueWrapper){
+	#endif
+	if(!_ValueWrapper){
 		return ResponderResult::ChangedNothing;
 	}else{
 		int16_t val = getNumericValue();
-		Serial <<"we got a Value named "<<_valueWrapper->getName()<<" ("<<val<<")"<<endl;
+		#if DEBUG_VALUE_EVENTS
+		Serial <<"we got a Value named "<<_ValueWrapper->getName()<<" ("<<val<<")"<<endl;
+		#endif
 		switch(evnt->getType()){
 			case EventType::EventTypeEncoder: {
 				int8_t steps = evnt->getAbsEncoderSteps();
+				#if DEBUG_VALUE_EVENTS
 				Serial << "Encoder with "<< steps<<endl;
 				float k = evnt->getEncoderSpeed();
 				Serial <<"with Speed: "<<k<<" "<<log(k)<<endl;
+				#endif
 				val += steps;
+				#if DEBUG_VALUE_EVENTS
 				Serial << "Setting: "<<val<<endl;
+				#endif
 				setNumericValue(val);
 				val = getNumericValue();
+				#if DEBUG_VALUE_EVENTS
 				Serial << "and got "<<val<<endl;
-				_valueView._label = String(val);
-				_valueView.setNeedsRedraw();
+				#endif
+				setValue(String(val));
+				//_valueView.setNeedsRedraw();
 				result = ResponderResult::ChangedVisual;
-
 			}
 			break;
 			case EventType::EventTypeButton:{
