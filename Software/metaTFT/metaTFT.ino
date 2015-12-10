@@ -79,6 +79,50 @@ class LEDBrightnessWrapper : public ValueWrapper{
 	}
 };
 
+
+class ProgramIndexWrapper: public ValueWrapper{
+	public:
+		ProgramIndexWrapper(EffectList* list, EffectList::iterator *iter):ValueWrapper(0,0,list->size()-1,"Program"),
+											 _effectIter(iter),_effectList(list){}
+
+		virtual void setValue(int16_t k){
+			if(k>_max){
+				k=_max;
+			}else if(k<_min){
+				k=_min;
+			}
+			*_effectIter = _effectList->begin()+k;
+		}
+		virtual int16_t getValue(){
+			return (*_effectIter) - _effectList->begin();
+		}
+
+	protected:
+		EffectList::iterator *_effectIter;
+		EffectList 					 *_effectList;
+};
+class PaletteIndexWrapper: public ValueWrapper{
+	public:
+		PaletteIndexWrapper(PaletteList* list, PaletteList::iterator *iter):ValueWrapper(0,0,list->size()-1,"Program"),
+											 _paletteIter(iter),_paletteList(list){}
+
+		virtual void setValue(int16_t k){
+			if(k>_max){
+				k=_max;
+			}else if(k<_min){
+				k=_min;
+			}
+			*_paletteIter = _paletteList->begin()+k;
+		}
+		virtual int16_t getValue(){
+			return (*_paletteIter) - _paletteList->begin();
+		}
+
+	protected:
+		PaletteList::iterator *_paletteIter;
+		PaletteList 					*_paletteList;
+};
+
 PaletteList initializeSystemPalettes(){
 	PaletteList tmp;
 	tmp.push_back(new PalettePair("Rainbow",RainbowColors_p));
@@ -101,6 +145,7 @@ EffectList initializeSystemEffects(){
 	tmp.push_back(new EffectPair("Rainbow",rainbow));
 	tmp.push_back(new EffectPair("Rainbow Glitter",&rainbowWithGlitter));
 	tmp.push_back(new EffectPair("Confetti",&confetti));
+	tmp.push_back(new EffectPair("Minelon",&minelon));
 	tmp.push_back(new EffectPair("Sinelon",&sinelon));
 	tmp.push_back(new EffectPair("Juggle",&juggle));
 	tmp.push_back(new EffectPair("BPM",&bpm));
@@ -123,8 +168,9 @@ int16_t hueStep = 1;
 ValueWrapper hueStepWrapper(&hueStep,-10,10,"Hue Step");
 
 int16_t programIndex = 0;
-ValueWrapper programIndexWrapper(&programIndex,0,systemEffects.size()-1,"Program");
+ProgramIndexWrapper programIndexWrapper(&systemEffects,&currentSystemEffect);
 
+PaletteIndexWrapper paletteIndexWrapper(&systemPalettes,&currentSystemPalette);
 
 
 
@@ -142,6 +188,8 @@ metaValue ValueView;
 metaAction tftBrightnessAction(&ValueView,&TFTBrightness);
 metaAction hueStepAction(&ValueView,&hueStepWrapper);
 metaAction ledBrightnessAction(&ValueView,&ledBrightnessWrapper);
+metaAction programAction(&EffectsMenu,&programIndexWrapper);
+metaAction paletteAction(&PalettesMenu,&paletteIndexWrapper);
 
 metaLabel::LabelLayout*  getListLayout(){
 	static metaView::ViewLayout viewLayout;
@@ -199,6 +247,7 @@ void initSystemMenu(){
 
 	SystemMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
 	initListVisual(SystemMenu);
+	SystemMenu.setIsSelectList(false);
 
 	metaLabel* l = SystemMenu.addEntry( String("TFT Brightness"));
 	l->setAction(&tftBrightnessAction);
@@ -208,10 +257,15 @@ void initSystemMenu(){
 
 	l=SystemMenu.addEntry( String("Hue Speed"));
 	l->setAction(&hueStepAction);
-	SystemMenu.addEntry( String("Pallette"));
-	SystemMenu.addEntry( String("Test"));
-	SystemMenu.addEntry( String("Tast"));
 
+	l=SystemMenu.addEntry(String("Effect"));
+	l->setAction(&programAction);
+
+	l=SystemMenu.addEntry( String("Pallette"));
+	l->setAction(&paletteAction);
+
+ /*	SystemMenu.addEntry( String("Test"));
+	SystemMenu.addEntry( String("Tast"));*/
 	SystemMenu.layoutList();
 	SystemMenu.sizeToFit();
 
@@ -231,6 +285,7 @@ void initSystemMenu(){
 
 void initEffectsMenu(){
 	EffectsMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
+	EffectsMenu.setIsSelectList(true);
 	initListVisual(EffectsMenu);
 	EffectList::iterator iter = systemEffects.begin();
 	while(iter != systemEffects.end()){
@@ -243,6 +298,7 @@ void initEffectsMenu(){
 
 void initPalettesMenu(){
 	PalettesMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
+	PalettesMenu.setIsSelectList(true);
 	initListVisual(PalettesMenu);
 	PaletteList::iterator iter = systemPalettes.begin();
 	while(iter != systemPalettes.end()){
@@ -288,7 +344,7 @@ void initUI(){
 
 void initializeTFT(){
 	tft.start();
-	TFTBrightness.setValue(5);
+	TFTBrightness.setValue(13);
 }
 
 void initializeLEDs(){
@@ -306,8 +362,8 @@ int processLEDEffects(unsigned long now,void* data){
 		//patterns[currentPatternNumber]();
 		FastLED.show();
 		{ gHue+=hueStep; } // slowly cycle the "base color" through the rainbow
-		EVERY_N_SECONDS( 120 ) { nextPattern(); } // change patterns periodically
-		EVERY_N_SECONDS(30){nextPalette();}
+		// EVERY_N_SECONDS( 120 ) { nextPattern(); } // change patterns periodically
+		// EVERY_N_SECONDS(30){nextPalette();}
 
 	return 0;
 }
@@ -550,6 +606,8 @@ void loop() {
 	}
 	if(responderStack.empty()){ // this is not good
 		responderStack.push(&SystemMenu);
+		SystemMenu.prepareForDisplay();
+		SystemMenu.redraw();
 	}
 
 	/** run all sequence tasks */

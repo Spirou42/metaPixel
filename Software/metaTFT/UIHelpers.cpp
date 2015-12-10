@@ -218,7 +218,7 @@ void metaView::redraw(){
 	#endif
 }
 
-void metaView::prepareForDisplay(){}
+void metaView::prepareForDisplay(){_needsRedraw=true;}
 
 void metaView::removeFromScreen(){
 	setFillColor(_backgroundColor);
@@ -645,12 +645,17 @@ int16_t metaValue::processEvent(UserEvent *evnt){
 
 void metaList::initView(metaTFT* tft, GCRect frame ){
 	metaView::initView(tft,frame);
-	setRespondsToEvents(EventMask::EncoderEvents | EventMask::ButtonEvents |
-		 EventMask::ButtonEvent_Down |
-		 EventMask::ButtonEvent_Up |
-		 EventMask::ButtonEvent_Center | EventMask::ButtonState_All);
-}
 
+}
+uint16_t metaList::respondsToEvents(){
+	uint16_t result = EventMask::EncoderEvents | EventMask::ButtonEvents |
+										EventMask::ButtonEvent_Down | EventMask::ButtonEvent_Up |
+										EventMask::ButtonEvent_Center | EventMask::ButtonState_All;
+	if(_isSelectList){
+		result |= EventMask::ButtonEvent_Left;
+	}
+	return result;
+}
 void metaList::addSubview(metaView* aView){
 	metaView::addSubview(aView);
 	aView->sizeToFit();
@@ -662,9 +667,15 @@ void metaList::addSubview(metaView* aView){
 
 metaLabel* metaList::addEntry(const String b){
 	metaLabel *k = new metaLabel(b);
+
 	k->initView(_display,GCRect());
 	if(_ll){
 		k->setLayout(*_ll);
+	}
+	if(_isSelectList){
+		k->setVisualizeState(true);
+	}else{
+		k->setVisualizeState(false);
 	}
 	addSubview(k);
 	return k;
@@ -865,6 +876,9 @@ bool metaList::switchSelectedOn(){
 
 int16_t metaList::processEvent(UserEvent* k){
 	int16_t result = ResponderResult::ChangedNothing;
+	if(_isSelectList &&!_ValueWrapper){
+		return ResponderResult::ChangedNothing;
+	}
 	if(k->getType() == EventType::EventTypeButton){
 		ButtonData bData = k->getData().buttonData;
 		// Serial << k<<endl;
@@ -883,10 +897,15 @@ int16_t metaList::processEvent(UserEvent* k){
 				}
 			}else if (bData.state == ButtonState::ButtonUp){
 				if(switchSelectedOn()){
+					if(_isSelectList && _ValueWrapper){
+						_ValueWrapper->setValue(activeIndex());
+					}
 					result = ResponderResult::ChangedState;
 				}
 			} break;
-
+			case ButtonID::LeftButton:
+			if(k->getButtonState()==ButtonState::ButtonUp){result = ResponderResult::ResponderExit;}
+			break;
 			default: break;
 		}
 		if(step){

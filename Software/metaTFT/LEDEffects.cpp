@@ -47,12 +47,30 @@ void confetti()
   CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue + random8(64),255);
   leds[pos] += color;
 }
+void minelon(){
+// a colored dot sweeping back and forth, with fading trails
+  fadeToBlackBy( leds, NUM_LEDS, 30);
+
+  for(int phase = 1;phase<6;phase++){
+    int pos = beatsin16((phase<<8),0,NUM_LEDS,10);
+    int hue = gHue + 25*(phase-1);
+    for(int i=-1;i<=1;i++){
+      int val = i==0?255:127;
+      CRGB color = ColorFromPalette((*currentSystemPalette)->second,hue,val);
+      int l = pos + i;
+      if((l>=0)&&(l<NUM_LEDS)){
+        leds[l] += color;
+      }
+    }
+  }
+}
 
 void sinelon()
 {
   // a colored dot sweeping back and forth, with fading trails
-  fadeToBlackBy( leds, NUM_LEDS, 1);
-  int pos = beatsin16(5,0,NUM_LEDS);
+  fadeToBlackBy( leds, NUM_LEDS, 15);
+
+  int pos = beatsin16((2<<8),0,NUM_LEDS);
   CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue,255);
   leds[pos] += color;
 }

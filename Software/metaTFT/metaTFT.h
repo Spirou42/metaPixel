@@ -34,7 +34,7 @@
 #define LED_PIN           4
 #define NUM_LEDS 360
 
-#define DEBUG_RESPONDER 0
+#define DEBUG_RESPONDER 1
 
 extern CRGB leds[];
 

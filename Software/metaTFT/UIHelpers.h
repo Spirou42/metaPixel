@@ -512,12 +512,13 @@ class metaList : public metaView{
   virtual void activateIndex(int16_t idx);
   virtual void selectIndex(int16_t idx);
   virtual metaView* activeElement();
-
+  virtual uint16_t respondsToEvents();
   void forgetSelection(){_lastSelectedView = NULL;}
   metaView* addEntry(const String *k);
   virtual void sizeToFit();
   void setLabelLayout(metaLabel::LabelLayout *l){_ll = l;}
-
+  void setIsSelectList(bool f){_isSelectList = f;}
+  bool isSelectList(){return _isSelectList;}
  protected:
   void drawConnectionFor(metaView* view, uint16_t lineColor);
   metaView* selectedSubview();
@@ -530,5 +531,6 @@ class metaList : public metaView{
   metaView* _lastSelectedView;
   GCSize _maxElementSize;
   metaLabel::LabelLayout *_ll ;
+  bool _isSelectList;
 };
 #endif
