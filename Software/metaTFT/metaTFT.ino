@@ -142,10 +142,11 @@ PaletteList initializeSystemPalettes(){
 
 EffectList initializeSystemEffects(){
 	EffectList tmp;
+tmp.push_back(new EffectPair("Minelon",&minelon));
 	tmp.push_back(new EffectPair("Rainbow",rainbow));
 	tmp.push_back(new EffectPair("Rainbow Glitter",&rainbowWithGlitter));
 	tmp.push_back(new EffectPair("Confetti",&confetti));
-	tmp.push_back(new EffectPair("Minelon",&minelon));
+
 	tmp.push_back(new EffectPair("Sinelon",&sinelon));
 	tmp.push_back(new EffectPair("Juggle",&juggle));
 	tmp.push_back(new EffectPair("BPM",&bpm));
@@ -164,7 +165,7 @@ TFTBrightnessWrapper TFTBrightness(&tftBrightness);
 int16_t ledBrightness = LED_BRIGHTNESS;
 LEDBrightnessWrapper ledBrightnessWrapper(&ledBrightness);
 
-int16_t hueStep = 1;
+int16_t hueStep = 0;
 ValueWrapper hueStepWrapper(&hueStep,-10,10,"Hue Step");
 
 int16_t programIndex = 0;
@@ -598,7 +599,7 @@ void loop() {
 
 	if(!skipMask){
 		tft.fillScreen(ILI9341_BLACK);
-		responderStack.push(&ValueView);
+		responderStack.push(&SystemMenu);
 		responderStack.top()->redraw();
 		Serial << "Draw"<<endl;
 		Serial.flush();

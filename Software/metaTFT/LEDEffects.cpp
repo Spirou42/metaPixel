@@ -51,13 +51,17 @@ void minelon(){
 // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds, NUM_LEDS, 30);
 
-  for(int phase = 1;phase<6;phase++){
-    int pos = beatsin16((phase<<8),0,NUM_LEDS,10);
+  for(int phase = 1;phase<10;phase++){
+    int result = beatsin16(1,0,NUM_LEDS,phase*3000,phase*100);
+    // uint16_t pos = beat16(1,phase*3000);
+    // uint16_t rangewidth = NUM_LEDS - 0;
+    // uint16_t scaledbeat = scale16( pos+ 32768, rangewidth);
+    // uint16_t result = 0 + scaledbeat;
     int hue = gHue + 25*(phase-1);
     for(int i=-1;i<=1;i++){
-      int val = i==0?255:127;
+      int val = i==0?255:64;
       CRGB color = ColorFromPalette((*currentSystemPalette)->second,hue,val);
-      int l = pos + i;
+      int l = result + i;
       if((l>=0)&&(l<NUM_LEDS)){
         leds[l] += color;
       }
