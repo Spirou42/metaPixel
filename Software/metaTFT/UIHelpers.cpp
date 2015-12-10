@@ -151,7 +151,7 @@ void metaView::allignInSuperView(uint8_t allignmentMask){
 		p.size = _superView->getSize();
 	}else{
 		p.size = GraphicsContext::displaySize();
-		Serial << "Allign: "<<p<<endl;
+		//Serial << "Allign: "<<p<<endl;
 	}
 	allignInRect(allignmentMask, p);
 }
@@ -237,7 +237,6 @@ void metaLabel::setLabel(const String &label){
 	_label.remove(0);
 	_label.append(label);
 	_needsRedraw=true;
-	Serial <<"Label ("<<_label<<")"<<endl;
 }
 
 GCSize metaLabel::intrinsicSize(){
@@ -399,17 +398,23 @@ void metaValue::initValue(metaTFT* tft, GCRect frame, String label, String value
 }
 
 void metaValue::setValue(String label){
+	#if DEBUG_VALUE_VALUE
 	Serial << "[mV] setValue: "<<label<<endl;
+	#endif
 	bool relayout = false;
 	if(_valueView.getLabel().length() != label.length()){
+		#if DEBUG_VALUE_VALUE
 		Serial << "[mV] Value Changed Length"<<endl;
+		#endif
 		relayout = true;
 	}
 	_valueView.setLabel(label);
 	GCSize ns = resizeValue(true);
 	GCSize cs = _valueView.getSize();
 	if((ns.w>cs.w) || (ns.h>cs.h)){
+		#if DEBUG_VALUE_VALUE
 		Serial << "[mV] Value changed Size"<<endl;
+		#endif
 		relayout = true;
 	}
 
@@ -424,20 +429,25 @@ void metaValue::setValue(String label){
 		_valueView.allignInRect(HALLIGN_CENTER | VALLIGN_CENTER,p);
 		//_lastValueRect = _valueView._frame;
 	}
-
+	#if DEBUG_VALUE_VALUE
 	Serial<<"newValue "<<_valueView.getLabel()<<endl;
+	#endif
 }
 
 void metaValue::redraw(){
 	bool cnl= childNeedsLayout();
+	#if DEBUG_VALUE_REDRAW
 	Serial << "[mV] redraw "<<_needsRedraw<<", "<<cnl<<endl;
+	#endif
 	if(_needsRedraw /*|| cnl*/){
 		GCRect p=getBounds();
 		p.origin.y+=_frameInset;
 		p.size.h-=_frameInset;
+		#if DEBUG_VALUE_REDRAW
 		Serial << "TopBorderOffset: "<<_frameInset<<endl;
 		Serial << "Rect: "<<p<<endl;
 		Serial<< "Base: "<<_base<<endl;
+		#endif
 		#if DEBUG_LAYOUT_VALUEBACKGROUND
 		GraphicsContext::setStrokeColor(DEBUG_LAYOUT_COLOR_BACKGROUND_OUTER);
 		GraphicsContext::drawRoundRect(getBounds(),_cornerRadius);
@@ -518,13 +528,19 @@ void metaValue::sizeToFit(){
 	GCSize labelSize = resizeLabel();
 	GCSize valueSize = resizeValue();
 	_frameInset =   labelSize.h/2 ;
+	#if DEBUG_LAYOUT_VALUE
 	Serial << "valueSize: "<<valueSize<<endl;
+	#endif
 	int16_t baslineCorrection = calcBaselineCorrection();
 	//	baslineCorrection = 0;
+	#if DEBUG_LAYOUT_VALUE
 	Serial << "labelSize: "<<labelSize;
 	Serial << "baseLine Correction "<<baslineCorrection<<endl;
+	#endif
 	GCSize ownSize = _frame.size;
+	#if DEBUG_LAYOUT_VALUE
 	Serial << "ownSize: "<<ownSize<<endl;
+	#endif
 	valueSize.h+=labelSize.h+(2*_verticalValueInset)+(2*_frameInset);//baslineCorrection;
 	valueSize.w+=2*_horizontalValueInset;
 	//labelSize.h+=2*VALUE_VERTICAL_INSET;
@@ -535,7 +551,9 @@ void metaValue::sizeToFit(){
 	// if(( (float)ownSize.w/(float)ownSize.h)>1.8){
 	// 	ownSize.h = ownSize.w/1.6180;
 	// }
+	#if DEBUG_LAYOUT_VALUE
 	Serial << "resultSize: "<<ownSize<<endl;
+	#endif
 	{
 		GCPoint lo = GCPoint();
 		lo.x = _horizontalLabelInset;
@@ -551,8 +569,9 @@ void metaValue::sizeToFit(){
 
 	// relayout the Value<
 	GCRect p = valueLayoutRect(ownSize);
-
+	#if DEBUG_LAYOUT_VALUE
 	Serial << "layoutRect: "<<p<<endl;
+	#endif
 	#if DEBUG_LAYOUT_VALUESIZE
 	this->debugRect =p;
 	this->drawDebugRect = true;
@@ -600,11 +619,21 @@ int16_t metaValue::processEvent(UserEvent *evnt){
 		switch(evnt->getType()){
 			case EventType::EventTypeEncoder: {
 				int8_t steps = evnt->getAbsEncoderSteps();
-				#if DEBUG_VALUE_EVENTS
-				Serial << "Encoder with "<< steps<<endl;
 				float k = evnt->getEncoderSpeed();
-				Serial <<"with Speed: "<<k<<" "<<log(k)<<endl;
+				#if DEBUG_VALUE_EVENTS
+				Serial << "Encoder with "<< steps<<" with Speed: "<<k<<" "<<log(k*10)<<endl;
 				#endif
+				if(k>10){
+					float d = (_ValueWrapper->getMaxValue()-_ValueWrapper->getMinValue())/25.0;
+					if (d==0.0){
+						d=0.001;
+					}
+					float p =log(k*(exp(d)/4));
+					#if 1
+					Serial << "d "<<d<<", "<<p<<endl;
+					#endif
+					steps *=p;
+				}
 				val += steps;
 				#if DEBUG_VALUE_EVENTS
 				Serial << "Setting: "<<val<<endl;
@@ -721,6 +750,7 @@ void metaList::layoutList(){
 		currentLine.y+=_maxElementSize.h+_cellInset.h;
 		subIter++;
 	}
+
 }
 
 metaView* metaList::selectedSubview(){
@@ -862,12 +892,16 @@ bool metaList::switchSelectedOn(){
 		return true;
 	}
 	if (oldIter != _subViews.end() ){
+		#if DEBUG_LIST_VALUE
 		Serial << "Old: "<<(oldIter-_subViews.begin())<<endl;
+		#endif
 		(*oldIter)->setState(metaView::State::Off);
 		k=true;
 	}
 	if (newIter != _subViews.end()) {
+		#if DEBUG_LIST_VALUE
 		Serial << "New: "<<(newIter-_subViews.begin())<<endl;
+		#endif
 		(*newIter)->setState(metaView::State::On);
 		k=true;
 	}

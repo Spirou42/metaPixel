@@ -40,12 +40,14 @@ void Encoder::doEncoderStep()
   uint8_t p1val = digitalReadFast(_aPin);
   uint8_t p2val = digitalReadFast(_bPin);
   uint8_t s = _state & 3;
+  static float oldmean=0.0;
+  uint16_t n=1;
   if (p1val) s |= 4;
   if (p2val) s |= 8;
   _state = (s >> 2);
   int8_t step = 0;
   bool shouldCountPhase = true;
-  float velocity = 0;
+  float velocity = 0, newmean =0.0;
   if(_divider){
     shouldCountPhase = false;
     --_idiv ;
@@ -54,6 +56,8 @@ void Encoder::doEncoderStep()
       shouldCountPhase = true;
     }
     velocity = (60.0/30.0) / ((wallClock - _lastTick)/1000.0);
+    newmean = oldmean * (n-1)/n +velocity/n;
+    oldmean = newmean;
   }
   if(shouldCountPhase){
     switch (s) {
@@ -74,7 +78,7 @@ void Encoder::doEncoderStep()
       _position += step;
       //Serial << "Encoder: "<<_id<< "got a Step in "<<(step>0)<<endl;
       UserEvent *evnt = new UserEvent(EventType::EventTypeEncoder);
-      EventData data = encoderData(step>0,step,velocity);
+      EventData data = encoderData(step>0,step,newmean);
       _lastTick = wallClock;
       evnt->setData(data);
       _eventQueue->addEvent(evnt);

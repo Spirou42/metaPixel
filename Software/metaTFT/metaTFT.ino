@@ -142,11 +142,11 @@ PaletteList initializeSystemPalettes(){
 
 EffectList initializeSystemEffects(){
 	EffectList tmp;
-tmp.push_back(new EffectPair("Minelon",&minelon));
+
 	tmp.push_back(new EffectPair("Rainbow",rainbow));
 	tmp.push_back(new EffectPair("Rainbow Glitter",&rainbowWithGlitter));
 	tmp.push_back(new EffectPair("Confetti",&confetti));
-
+tmp.push_back(new EffectPair("Minelon",&minelon));
 	tmp.push_back(new EffectPair("Sinelon",&sinelon));
 	tmp.push_back(new EffectPair("Juggle",&juggle));
 	tmp.push_back(new EffectPair("BPM",&bpm));
@@ -262,26 +262,12 @@ void initSystemMenu(){
 	l=SystemMenu.addEntry(String("Effect"));
 	l->setAction(&programAction);
 
-	l=SystemMenu.addEntry( String("Pallette"));
+	l=SystemMenu.addEntry( String("Palette"));
 	l->setAction(&paletteAction);
 
- /*	SystemMenu.addEntry( String("Test"));
-	SystemMenu.addEntry( String("Tast"));*/
+
 	SystemMenu.layoutList();
 	SystemMenu.sizeToFit();
-
-	// Layout the second view
-	/*GCPoint selO = SystemMenu.getOrigin();
-	GCSize 	selS = SystemMenu.getSize();
-	int seVx = selO.x+selS.w + 2;
-
-	SecondView.initView(&tft,GCRect(seVx, selO.y,
-	tft.width()-seVx-selO.x,selS.h));
-	SecondView.setDrawsOutline(true);
-	SecondView.setCornerRadius(3);
-	SecondView.setOutlineColor(ILI9341_NAVY);
-	SecondView.setOpaque(false);
-	*/
 }
 
 void initEffectsMenu(){

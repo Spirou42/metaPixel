@@ -15,10 +15,13 @@
 #define DEBUG_LAYOUT_VALUEBACKGROUND  (0 && DEBUG_LAYOUT_VALUE)
 #define DEBUG_LAYOUT_VALUESIZE        (1 && DEBUG_LAYOUT_VALUE)
 
-#define DEBUG_EVENTS       1
+#define DEBUG_EVENTS       0
 #define DEBUG_VALUE_EVENTS (0 && DEBUG_EVENTS)
 #define DEBUG_LIST_EVENTS  (0 && DEBUG_EVENTS)
 
+#define DEBUG_VALUE_VALUE 0
+#define DEBUG_VALUE_REDRAW 0
+#define DEBUG_LIST_VALUE 0
 /** @todo: rework */
 /** AllignmentMasks terms*/
 #define HALLIGN_LEFT    (1<<1)
@@ -82,8 +85,7 @@ class ValueWrapper{
 };
 
 /** wraper for simple actions */
-class metaAction
-{
+class metaAction{
  public:
    metaAction(metaView* mask,ValueWrapper *value);
    void operator()(void)const;
@@ -100,8 +102,7 @@ class metaAction
 };
 
 
-class metaResponder
-{
+class metaResponder{
  public:
 
   metaResponder():_responderStack(NULL),_respondsToEvents(),_action(NULL){}
@@ -152,8 +153,7 @@ class metaResponder
 
 /** baseclass for UI elements */
 
-class metaView : public GraphicsContext, public metaResponder
-{
+class metaView : public GraphicsContext, public metaResponder{
  public:
 
   typedef enum _states{
@@ -280,8 +280,7 @@ class metaView : public GraphicsContext, public metaResponder
 };
 
 /** class for displaying a simple String*/
-class metaLabel : public metaView
-{
+class metaLabel : public metaView{
   friend metaValue;
   public:
   typedef struct _labelLayout{
