@@ -29,10 +29,10 @@
 #define COLOR_ORDER       GRB
 #define CHIPSET           WS2812
 #define COLOR_CORRECTION  0xffeeff
-#define LED_BRIGHTNESS    60
+#define LED_BRIGHTNESS    180
 
 #define LED_PIN           4
-#define NUM_LEDS 360
+#define NUM_LEDS 158
 
 #define DEBUG_RESPONDER 0
 
@@ -56,4 +56,5 @@ extern EffectList::iterator currentSystemEffect;
 typedef std::stack<metaView*,std::vector<metaView*>> ResponderStack;
 extern ResponderStack responderStack;
 
+//extern CHSV rgb2hsv(const CRGB& rgb);
 #endif

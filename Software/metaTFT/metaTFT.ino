@@ -31,7 +31,7 @@
 #include "LEDEffects.h"
 #include "metaTFT.h"
 
-CRGB  leds[NUM_LEDS];
+CRGB leds[NUM_LEDS];
 
 metaTFT tft = metaTFT(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO,TFT_LED,3);
 UserEventQueue eventQueue = UserEventQueue();
@@ -142,11 +142,11 @@ PaletteList initializeSystemPalettes(){
 
 EffectList initializeSystemEffects(){
 	EffectList tmp;
-
+tmp.push_back(new EffectPair("Minelon",&minelon));
 	tmp.push_back(new EffectPair("Rainbow",rainbow));
 	tmp.push_back(new EffectPair("Rainbow Glitter",&rainbowWithGlitter));
 	tmp.push_back(new EffectPair("Confetti",&confetti));
-tmp.push_back(new EffectPair("Minelon",&minelon));
+
 	tmp.push_back(new EffectPair("Sinelon",&sinelon));
 	tmp.push_back(new EffectPair("Juggle",&juggle));
 	tmp.push_back(new EffectPair("BPM",&bpm));
@@ -578,6 +578,7 @@ void setup() {
 	taskQueue.scheduleFunction(processLEDEffects,NULL,"EFFC",0,1000/FRAMES_PER_SECOND);
 	taskQueue.scheduleFunction(processUserEvents,NULL,"USER",0,100);
 }
+
 
 
 void loop() {
