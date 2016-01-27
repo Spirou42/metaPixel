@@ -4650,130 +4650,6 @@ DIN A3, landscape with location and doc. field</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="2.2&quot;tft">
-<packages>
-<package name="2.2_TFT_LCD">
-<pad name="VCC" x="0" y="0" drill="0.5" shape="square"/>
-<pad name="GND" x="0" y="-2.54" drill="0.5"/>
-<pad name="CS" x="0" y="-5.08" drill="0.5"/>
-<pad name="RST" x="0" y="-7.62" drill="0.5"/>
-<pad name="DC" x="0" y="-10.16" drill="0.5"/>
-<pad name="MOSI" x="0" y="-12.7" drill="0.5"/>
-<pad name="SCK" x="0" y="-15.24" drill="0.5"/>
-<pad name="LED" x="0" y="-17.78" drill="0.5"/>
-<pad name="MISO" x="0" y="-20.32" drill="0.5"/>
-<pad name="SD_CS" x="63.5" y="-6.35" drill="0.5" shape="square"/>
-<pad name="SD_MOSI" x="63.5" y="-8.89" drill="0.5"/>
-<pad name="SD_MISO" x="63.5" y="-11.43" drill="0.5"/>
-<pad name="SD_SCK" x="63.5" y="-13.97" drill="0.5"/>
-<wire x1="-1.5" y1="9.89" x2="65.7" y2="9.89" width="0.127" layer="21"/>
-<wire x1="65.7" y1="9.89" x2="65.7" y2="-30.21" width="0.127" layer="21"/>
-<wire x1="65.7" y1="-30.21" x2="-1.5" y2="-30.21" width="0.127" layer="21"/>
-<wire x1="-1.5" y1="-30.21" x2="-1.5" y2="9.89" width="0.127" layer="21"/>
-<circle x="1.5" y="6.89" radius="1.5" width="0.127" layer="21"/>
-<circle x="62.7" y="6.89" radius="1.5" width="0.127" layer="21"/>
-<circle x="62.7" y="-27.21" radius="1.5" width="0.127" layer="21"/>
-<circle x="1.5" y="-27.21" radius="1.5" width="0.127" layer="21"/>
-<text x="35.56" y="-27.94" size="1.5" layer="21" font="vector" rot="MR0">2.2 TFT SPI 240x320</text>
-<text x="0" y="10.795" size="1.27" layer="21" font="vector">&gt;NAME</text>
-</package>
-<package name="2.2_TFT_LCD_LEDSEE">
-<wire x1="-33.6" y1="20.05" x2="33.6" y2="20.05" width="0.127" layer="21"/>
-<wire x1="33.6" y1="20.05" x2="33.6" y2="-20.05" width="0.127" layer="21"/>
-<wire x1="33.6" y1="-20.05" x2="-33.6" y2="-20.05" width="0.127" layer="21"/>
-<wire x1="-33.6" y1="-20.05" x2="-33.6" y2="20.05" width="0.127" layer="21"/>
-<hole x="-30.6" y="17.05" drill="3.2"/>
-<hole x="30.6" y="17.05" drill="3.2"/>
-<hole x="30.6" y="-17.05" drill="3.2"/>
-<hole x="-30.6" y="-17.05" drill="3.2"/>
-<pad name="P$1_DC" x="-31.6" y="0" drill="0.8"/>
-<pad name="P$2_RESET" x="-31.6" y="2.54" drill="0.8"/>
-<pad name="P$3_CS" x="-31.6" y="5.08" drill="0.8"/>
-<pad name="P$4_GND" x="-31.6" y="7.62" drill="0.8"/>
-<pad name="P$5_VCC" x="-31.6" y="10.16" drill="0.8" shape="square"/>
-<pad name="P$6_MOSI" x="-31.6" y="-2.54" drill="0.8"/>
-<pad name="P$7_SCK" x="-31.6" y="-5.08" drill="0.8"/>
-<pad name="P$8_LED" x="-31.6" y="-7.62" drill="0.8"/>
-<pad name="P$9_MISO" x="-31.6" y="-10.16" drill="0.8"/>
-<pad name="P$1_SD_MOSI" x="31.6" y="1.27" drill="0.8"/>
-<pad name="P$2_SD_CS" x="31.6" y="3.81" drill="0.8" shape="square"/>
-<pad name="P$3_SD_MISO" x="31.6" y="-1.27" drill="0.8"/>
-<pad name="P$4_SD_SCK" x="31.6" y="-3.81" drill="0.8"/>
-</package>
-</packages>
-<symbols>
-<symbol name="2.2_TFT_LCD">
-<wire x1="-17.78" y1="12.7" x2="17.78" y2="12.7" width="0.254" layer="94"/>
-<wire x1="17.78" y1="12.7" x2="17.78" y2="-12.7" width="0.254" layer="94"/>
-<wire x1="17.78" y1="-12.7" x2="-17.78" y2="-12.7" width="0.254" layer="94"/>
-<wire x1="-17.78" y1="-12.7" x2="-17.78" y2="12.7" width="0.254" layer="94"/>
-<pin name="MISO" x="-20.32" y="-10.16" visible="pin" length="short"/>
-<pin name="LED" x="-20.32" y="-7.62" visible="pin" length="short"/>
-<pin name="SCK" x="-20.32" y="-5.08" visible="pin" length="short"/>
-<pin name="MOSI" x="-20.32" y="-2.54" visible="pin" length="short"/>
-<pin name="DC" x="-20.32" y="0" visible="pin" length="short"/>
-<pin name="RST" x="-20.32" y="2.54" visible="pin" length="short"/>
-<pin name="CS" x="-20.32" y="5.08" visible="pin" length="short"/>
-<pin name="GND" x="-20.32" y="7.62" visible="pin" length="short" direction="pwr"/>
-<pin name="VCC" x="-20.32" y="10.16" visible="pin" length="short" direction="pwr"/>
-<pin name="SD_CS" x="20.32" y="3.81" visible="pin" length="short" rot="R180"/>
-<pin name="SD_MOSI" x="20.32" y="1.27" visible="pin" length="short" rot="R180"/>
-<pin name="SD_MISO" x="20.32" y="-1.27" visible="pin" length="short" rot="R180"/>
-<pin name="SD_SCK" x="20.32" y="-3.81" visible="pin" length="short" rot="R180"/>
-<text x="-17.78" y="13.97" size="1.778" layer="95" font="vector">&gt;NAME</text>
-<text x="-17.78" y="-15.24" size="1.778" layer="96" font="vector">2.2 TFT LCD</text>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="2.2_TFT_LCD">
-<gates>
-<gate name="G$1" symbol="2.2_TFT_LCD" x="33.02" y="-5.08"/>
-</gates>
-<devices>
-<device name="" package="2.2_TFT_LCD">
-<connects>
-<connect gate="G$1" pin="CS" pad="CS"/>
-<connect gate="G$1" pin="DC" pad="DC"/>
-<connect gate="G$1" pin="GND" pad="GND"/>
-<connect gate="G$1" pin="LED" pad="LED"/>
-<connect gate="G$1" pin="MISO" pad="MISO"/>
-<connect gate="G$1" pin="MOSI" pad="MOSI"/>
-<connect gate="G$1" pin="RST" pad="RST"/>
-<connect gate="G$1" pin="SCK" pad="SCK"/>
-<connect gate="G$1" pin="SD_CS" pad="SD_CS"/>
-<connect gate="G$1" pin="SD_MISO" pad="SD_MISO"/>
-<connect gate="G$1" pin="SD_MOSI" pad="SD_MOSI"/>
-<connect gate="G$1" pin="SD_SCK" pad="SD_SCK"/>
-<connect gate="G$1" pin="VCC" pad="VCC"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-<device name="NEW" package="2.2_TFT_LCD_LEDSEE">
-<connects>
-<connect gate="G$1" pin="CS" pad="P$3_CS"/>
-<connect gate="G$1" pin="DC" pad="P$1_DC"/>
-<connect gate="G$1" pin="GND" pad="P$4_GND"/>
-<connect gate="G$1" pin="LED" pad="P$8_LED"/>
-<connect gate="G$1" pin="MISO" pad="P$9_MISO"/>
-<connect gate="G$1" pin="MOSI" pad="P$6_MOSI"/>
-<connect gate="G$1" pin="RST" pad="P$2_RESET"/>
-<connect gate="G$1" pin="SCK" pad="P$7_SCK"/>
-<connect gate="G$1" pin="SD_CS" pad="P$2_SD_CS"/>
-<connect gate="G$1" pin="SD_MISO" pad="P$3_SD_MISO"/>
-<connect gate="G$1" pin="SD_MOSI" pad="P$1_SD_MOSI"/>
-<connect gate="G$1" pin="SD_SCK" pad="P$4_SD_SCK"/>
-<connect gate="G$1" pin="VCC" pad="P$5_VCC"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="rcl">
 <packages>
 <package name="C0402">
@@ -7352,6 +7228,124 @@ Source: AVX .. aphvc.pdf</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="con-lumberg">
+<description>&lt;b&gt;Lumberg Connectors&lt;/b&gt;&lt;p&gt;
+include con-mfs.lbr - 2001.03.22&lt;br&gt;
+Jack connectors - 2005.11.23&lt;p&gt;
+http://www.lumberg.de&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="MICS-14">
+<description>&lt;b&gt;CONNECTOR&lt;/b&gt;</description>
+<wire x1="10.7" y1="-3.4" x2="-10.7" y2="-3.4" width="0.2032" layer="21"/>
+<wire x1="-10.7" y1="-3.4" x2="-10.7" y2="3.4" width="0.2032" layer="21"/>
+<wire x1="10.7" y1="3.4" x2="10.7" y2="-3.4" width="0.2032" layer="21"/>
+<wire x1="-10.7" y1="3.4" x2="10.7" y2="3.4" width="0.2032" layer="21"/>
+<pad name="1" x="-8.255" y="-1.27" drill="0.85" diameter="1.397"/>
+<pad name="2" x="-6.985" y="1.27" drill="0.85" diameter="1.397"/>
+<pad name="3" x="-5.715" y="-1.27" drill="0.85" diameter="1.397"/>
+<pad name="4" x="-4.445" y="1.27" drill="0.85" diameter="1.397"/>
+<pad name="5" x="-3.175" y="-1.27" drill="0.85" diameter="1.397"/>
+<pad name="6" x="-1.905" y="1.27" drill="0.85" diameter="1.397"/>
+<pad name="7" x="-0.635" y="-1.27" drill="0.85" diameter="1.397"/>
+<pad name="8" x="0.635" y="1.27" drill="0.85" diameter="1.397"/>
+<pad name="9" x="1.905" y="-1.27" drill="0.85" diameter="1.397"/>
+<pad name="10" x="3.175" y="1.27" drill="0.85" diameter="1.397"/>
+<pad name="11" x="4.445" y="-1.27" drill="0.85" diameter="1.397"/>
+<pad name="12" x="5.715" y="1.27" drill="0.85" diameter="1.397"/>
+<pad name="13" x="6.985" y="-1.27" drill="0.85" diameter="1.397"/>
+<pad name="14" x="8.255" y="1.27" drill="0.85" diameter="1.397"/>
+<text x="-5.08" y="-5.08" size="1.27" layer="25">&gt;NAME</text>
+<text x="-5.08" y="3.81" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="8.6" y1="3.5" x2="12.3" y2="6.5" layer="39"/>
+<rectangle x1="5.6" y1="3.5" x2="8.65" y2="5" layer="39"/>
+<rectangle x1="-12.3" y1="3.5" x2="-8.6" y2="6.5" layer="39"/>
+<rectangle x1="-8.65" y1="3.5" x2="-5.6" y2="5" layer="39"/>
+<rectangle x1="-12.3" y1="-6.5" x2="-8.6" y2="-3.5" layer="39"/>
+<rectangle x1="-8.65" y1="-5" x2="-5.6" y2="-3.5" layer="39"/>
+<rectangle x1="8.6" y1="-6.5" x2="12.3" y2="-3.5" layer="39"/>
+<rectangle x1="5.6" y1="-5" x2="8.65" y2="-3.5" layer="39"/>
+<rectangle x1="-12.3" y1="-3.55" x2="-10.8" y2="3.55" layer="39"/>
+<rectangle x1="10.8" y1="-3.55" x2="12.3" y2="3.55" layer="39"/>
+<hole x="10.055" y="-2.75" drill="1.5"/>
+<hole x="-10.055" y="-2.75" drill="1.5"/>
+</package>
+</packages>
+<symbols>
+<symbol name="14BLOCK">
+<wire x1="1.27" y1="-20.32" x2="-2.54" y2="-20.32" width="0.4064" layer="94"/>
+<wire x1="-1.27" y1="12.7" x2="0" y2="12.7" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="10.16" x2="0" y2="10.16" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="7.62" x2="0" y2="7.62" width="0.6096" layer="94"/>
+<wire x1="-2.54" y1="17.78" x2="-2.54" y2="-20.32" width="0.4064" layer="94"/>
+<wire x1="1.27" y1="-20.32" x2="1.27" y2="17.78" width="0.4064" layer="94"/>
+<wire x1="-2.54" y1="17.78" x2="1.27" y2="17.78" width="0.4064" layer="94"/>
+<wire x1="-1.27" y1="15.24" x2="0" y2="15.24" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="5.08" x2="0" y2="5.08" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="2.54" x2="0" y2="2.54" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="0" x2="0" y2="0" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="-2.54" x2="0" y2="-2.54" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="-5.08" x2="0" y2="-5.08" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="-7.62" x2="0" y2="-7.62" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="-10.16" x2="0" y2="-10.16" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="-12.7" x2="0" y2="-12.7" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="-15.24" x2="0" y2="-15.24" width="0.6096" layer="94"/>
+<wire x1="-1.27" y1="-17.78" x2="0" y2="-17.78" width="0.6096" layer="94"/>
+<text x="-2.54" y="-22.86" size="1.778" layer="96">&gt;VALUE</text>
+<text x="-2.54" y="18.542" size="1.778" layer="95">&gt;NAME</text>
+<pin name="1" x="5.08" y="15.24" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="2" x="5.08" y="12.7" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="3" x="5.08" y="10.16" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="4" x="5.08" y="7.62" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="5" x="5.08" y="5.08" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="6" x="5.08" y="2.54" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="7" x="5.08" y="0" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="8" x="5.08" y="-2.54" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="9" x="5.08" y="-5.08" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="10" x="5.08" y="-7.62" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="11" x="5.08" y="-10.16" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="12" x="5.08" y="-12.7" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="13" x="5.08" y="-15.24" visible="pad" length="middle" direction="pas" rot="R180"/>
+<pin name="14" x="5.08" y="-17.78" visible="pad" length="middle" direction="pas" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="MICS-14" prefix="X">
+<description>&lt;b&gt;CONNECTOR&lt;/b&gt;</description>
+<gates>
+<gate name="G$1" symbol="14BLOCK" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="MICS-14">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="10" pad="10"/>
+<connect gate="G$1" pin="11" pad="11"/>
+<connect gate="G$1" pin="12" pad="12"/>
+<connect gate="G$1" pin="13" pad="13"/>
+<connect gate="G$1" pin="14" pad="14"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="4" pad="4"/>
+<connect gate="G$1" pin="5" pad="5"/>
+<connect gate="G$1" pin="6" pad="6"/>
+<connect gate="G$1" pin="7" pad="7"/>
+<connect gate="G$1" pin="8" pad="8"/>
+<connect gate="G$1" pin="9" pad="9"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="unknown" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -7370,7 +7364,6 @@ Source: AVX .. aphvc.pdf</description>
 <part name="HOST" library="con-harting-ml" deviceset="ML20" device="L"/>
 <part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="FRAME2" library="frames" deviceset="A4L-LOC" device=""/>
-<part name="U$1" library="2.2&quot;tft" deviceset="2.2_TFT_LCD" device="NEW" value="2.2_TFT_LCDNEW"/>
 <part name="C9" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="R14" library="resistor" deviceset="R-EU_" device="0204/7" value="15k"/>
 <part name="R15" library="resistor" deviceset="R-EU_" device="0204/7" value="82k"/>
@@ -7398,6 +7391,7 @@ Source: AVX .. aphvc.pdf</description>
 <part name="KEYBOARD" library="con-harting-ml" deviceset="ML10" device="L"/>
 <part name="C7" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="C8" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
+<part name="X1" library="con-lumberg" deviceset="MICS-14" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -7410,7 +7404,7 @@ Source: AVX .. aphvc.pdf</description>
 <instance part="HOST" gate="1" x="63.5" y="73.66"/>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
 <instance part="FRAME2" gate="G$1" x="0" y="0"/>
-<instance part="U$1" gate="G$1" x="132.08" y="132.08"/>
+<instance part="X1" gate="G$1" x="132.08" y="137.16" rot="MR0"/>
 </instances>
 <busses>
 </busses>
@@ -7434,7 +7428,6 @@ Source: AVX .. aphvc.pdf</description>
 </segment>
 <segment>
 <wire x1="93.98" y1="139.7" x2="111.76" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="U$1" gate="G$1" pin="GND"/>
 <label x="93.98" y="139.7" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
@@ -7466,7 +7459,6 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <wire x1="111.76" y1="137.16" x2="93.98" y2="137.16" width="0.1524" layer="91"/>
 <label x="93.98" y="137.16" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="CS"/>
 </segment>
 </net>
 <net name="MISO" class="0">
@@ -7478,12 +7470,10 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <wire x1="111.76" y1="121.92" x2="93.98" y2="121.92" width="0.1524" layer="91"/>
 <label x="93.98" y="121.92" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="MISO"/>
 </segment>
 <segment>
-<wire x1="152.4" y1="130.81" x2="165.1" y2="130.81" width="0.1524" layer="91"/>
-<label x="165.1" y="130.81" size="1.27" layer="95" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="SD_MISO"/>
+<wire x1="106.68" y1="148.59" x2="93.98" y2="148.59" width="0.1524" layer="91"/>
+<label x="93.98" y="148.59" size="1.27" layer="95" rot="MR0" xref="yes"/>
 </segment>
 </net>
 <net name="+3.3V" class="1">
@@ -7503,7 +7493,6 @@ Source: AVX .. aphvc.pdf</description>
 <junction x="203.2" y="86.36"/>
 </segment>
 <segment>
-<pinref part="U$1" gate="G$1" pin="VCC"/>
 <wire x1="111.76" y1="142.24" x2="93.98" y2="142.24" width="0.1524" layer="91"/>
 <label x="93.98" y="142.24" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
@@ -7517,7 +7506,6 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <wire x1="93.98" y1="134.62" x2="111.76" y2="134.62" width="0.1524" layer="91"/>
 <label x="93.98" y="134.62" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="RST"/>
 </segment>
 </net>
 <net name="MOSI" class="0">
@@ -7529,12 +7517,10 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <wire x1="93.98" y1="129.54" x2="111.76" y2="129.54" width="0.1524" layer="91"/>
 <label x="93.98" y="129.54" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="MOSI"/>
 </segment>
 <segment>
-<wire x1="152.4" y1="133.35" x2="165.1" y2="133.35" width="0.1524" layer="91"/>
-<label x="165.1" y="133.35" size="1.27" layer="95" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="SD_MOSI"/>
+<wire x1="106.68" y1="151.13" x2="93.98" y2="151.13" width="0.1524" layer="91"/>
+<label x="93.98" y="151.13" size="1.27" layer="95" rot="MR0" xref="yes"/>
 </segment>
 </net>
 <net name="SCLK" class="0">
@@ -7546,12 +7532,10 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <wire x1="111.76" y1="127" x2="93.98" y2="127" width="0.1524" layer="91"/>
 <label x="93.98" y="127" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="SCK"/>
 </segment>
 <segment>
-<wire x1="152.4" y1="128.27" x2="165.1" y2="128.27" width="0.1524" layer="91"/>
-<label x="165.1" y="128.27" size="1.27" layer="95" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="SD_SCK"/>
+<wire x1="106.68" y1="146.05" x2="93.98" y2="146.05" width="0.1524" layer="91"/>
+<label x="93.98" y="146.05" size="1.27" layer="95" rot="MR0" xref="yes"/>
 </segment>
 </net>
 <net name="LCD_DC" class="0">
@@ -7563,7 +7547,6 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <wire x1="111.76" y1="132.08" x2="93.98" y2="132.08" width="0.1524" layer="91"/>
 <label x="93.98" y="132.08" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="DC"/>
 </segment>
 </net>
 <net name="KEY_1" class="0">
@@ -7608,9 +7591,8 @@ Source: AVX .. aphvc.pdf</description>
 <label x="78.74" y="73.66" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
-<wire x1="152.4" y1="135.89" x2="165.1" y2="135.89" width="0.1524" layer="91"/>
-<label x="165.1" y="135.89" size="1.27" layer="95" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="SD_CS"/>
+<wire x1="106.68" y1="153.67" x2="93.98" y2="153.67" width="0.1524" layer="91"/>
+<label x="93.98" y="153.67" size="1.27" layer="95" rot="MR0" xref="yes"/>
 </segment>
 </net>
 <net name="N$19" class="0">
@@ -7638,7 +7620,6 @@ Source: AVX .. aphvc.pdf</description>
 <segment>
 <wire x1="93.98" y1="124.46" x2="111.76" y2="124.46" width="0.1524" layer="91"/>
 <label x="93.98" y="124.46" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="U$1" gate="G$1" pin="LED"/>
 </segment>
 <segment>
 <pinref part="Q1" gate="G$1" pin="C"/>

@@ -8,5 +8,12 @@ Desktop="Desktop"
 [Globals]
 AutoSaveProject=1
 
+[Win_1]
+Type="Control Panel"
+Loc="923 431 1984 1192"
+State=2
+Number=0
+
 [Desktop]
 Screen="2560 1440"
+Window="Win_1"
