@@ -114,15 +114,15 @@ void blendColor(const CRGBSet &set, CRGB color){
 }
 void minelon(){
 // a colored dot sweeping back and forth, with fading trails
-  fadeToBlackBy( leds, NUM_LEDS, 255);
-  int maxPhase =12;
+  fadeToBlackBy( leds, NUM_LEDS,50);
+  int maxPhase =10;
   float hueStep = 256.0/(maxPhase+1);
   uint16_t phaseOffset = (65536/maxPhase);
 
   for(int phase = 1;phase<=maxPhase;phase++){
     //int result = beatsin16(1,0,NUM_LEDS,phase*100,phase*100);
 
-    uint16_t pos = beat88(phase*64,phase*phaseOffset);//
+    uint16_t pos = beat88(phase*512,phase*phaseOffset);//
     uint16_t rangewidth = NUM_LEDS - 0;
     uint16_t scaledbeat = scale16( pos+ 32768, rangewidth);
     uint16_t result = 0 + scaledbeat;
@@ -149,7 +149,7 @@ void sinelon()
   // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds, NUM_LEDS, 15);
 
-  int pos = beatsin16((2<<8),0,NUM_LEDS);
+  int pos = beatsin16((2<<8),5,NUM_LEDS);
   CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue,255);
   leds[pos] += color;
 }

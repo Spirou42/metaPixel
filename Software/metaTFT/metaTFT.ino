@@ -241,8 +241,6 @@ void initListVisual(metaList &k){
 	k.setOpaque(false);
 }
 
-
-
 void initSystemMenu(){
 	// visual them definition for a single list entry
 
@@ -265,9 +263,9 @@ void initSystemMenu(){
 	l=SystemMenu.addEntry( String("Palette"));
 	l->setAction(&paletteAction);
 
-
+  SystemMenu.sizeToFit();
 	SystemMenu.layoutList();
-	SystemMenu.sizeToFit();
+
 }
 
 void initEffectsMenu(){
@@ -279,8 +277,9 @@ void initEffectsMenu(){
 		EffectsMenu.addEntry((*iter)->first );
 		iter ++;
 	}
-	EffectsMenu.layoutList();
 	EffectsMenu.sizeToFit();
+	EffectsMenu.layoutList();
+
 }
 
 void initPalettesMenu(){
@@ -292,8 +291,9 @@ void initPalettesMenu(){
 		PalettesMenu.addEntry((*iter)->first);
 		iter ++;
 	}
-	PalettesMenu.layoutList();
-	PalettesMenu.sizeToFit();
+  PalettesMenu.sizeToFit();
+  PalettesMenu.layoutList();
+
 }
 
 // String labelStr = String("Hulga");

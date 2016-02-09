@@ -21,7 +21,7 @@
 
 #define DEBUG_VALUE_VALUE 0
 #define DEBUG_VALUE_REDRAW 0
-#define DEBUG_LIST_VALUE 0
+#define DEBUG_LIST_VALUE 1
 /** @todo: rework */
 /** AllignmentMasks terms*/
 #define HALLIGN_LEFT    (1<<1)
@@ -277,6 +277,7 @@ class metaView : public GraphicsContext, public metaResponder{
   bool _visualizeState;                     // used by subclass to
   State _state;                             //
   vector<metaView*> _subViews;
+  bool _visible;                            // visibility false marked views are not drawn
 };
 
 /** class for displaying a simple String*/
@@ -501,6 +502,7 @@ class metaList : public metaView{
   GCSize getBorderInset(){return _borderInset;}
 
   void layoutList();
+  void scrollList();
   virtual void addSubview(metaView* view);
   metaLabel* addEntry(const String);
   virtual void redraw();
@@ -531,5 +533,7 @@ class metaList : public metaView{
   GCSize _maxElementSize;
   metaLabel::LabelLayout *_ll ;
   bool _isSelectList;
+  uint8_t _visibleStart;
+  uint8_t _maxVisibleEntries;
 };
 #endif

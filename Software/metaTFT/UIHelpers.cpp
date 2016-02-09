@@ -43,6 +43,7 @@ void metaView::initView(metaTFT* tft, GCRect frame){
 	_needsRedraw = true;
 	_needsLayout = true;
 	_respondsToEvents = 0;
+	_visible = true;
 }
 
 GCPoint metaView::getScreenOrigin(){
@@ -167,7 +168,7 @@ void metaView::redrawChildren(bool forceRedraw){
 			(*redrawIter)->_needsRedraw = true;
 			//			Serial << "Force:"<<endl;
 		}
-		if((*redrawIter)->_needsRedraw)
+		if((*redrawIter)->_needsRedraw && (*redrawIter)->_visible)
 			(*redrawIter)->redraw();
 		(*redrawIter)->resetFlags();
 		redrawIter++;
@@ -190,6 +191,7 @@ void metaView::drawDebug(){
 #endif
 
 void metaView::redraw(){
+	if(!this->_visible)
 	vector<metaView*>::iterator redrawIter = _subViews.begin();
 	bool cnl = childNeedsLayout();
 	if(_needsRedraw || cnl){
@@ -267,6 +269,10 @@ void metaLabel::setLayout(LabelLayout ll){
 
 void metaLabel::redraw(){
 	//Serial << ">>>>>>Label Redraw "<<_frame<<_font->line_space<<endl;
+//		Serial << "Label: "<<(this->getLabel())<<" visible: "<<(this->_visible?"YES":"NO")<<endl;
+	if(!this->_visible){
+		return;
+	}
   metaView::redraw();
 	GCPoint tp=_textPosition;
 	tp.x+=_insets.w;
@@ -674,7 +680,8 @@ int16_t metaValue::processEvent(UserEvent *evnt){
 
 void metaList::initView(metaTFT* tft, GCRect frame ){
 	metaView::initView(tft,frame);
-
+	this->_maxVisibleEntries = 6;
+	this->_visibleStart = 0;
 }
 uint16_t metaList::respondsToEvents(){
 	uint16_t result = EventMask::EncoderEvents | EventMask::ButtonEvents |
@@ -717,6 +724,9 @@ void metaList::sizeToFit(){
 		return;
 	}
 	int p = _subViews.size();
+	if(p>_maxVisibleEntries){
+		p=_maxVisibleEntries;
+	}
 	GCSize tS = _maxElementSize;
 	tS.h=_maxElementSize.h*p;
 	if(p>1){
@@ -728,17 +738,48 @@ void metaList::sizeToFit(){
 	//Serial << "Size: "<< resultSize<<endl;
 	setSize(tS);
 }
+void metaList::scrollList(){
+	GCPoint currentLine;
+	currentLine.x = _borderInset.w;
+	currentLine.y = _borderInset.h;
+	vector<metaView*>::iterator subIter = _subViews.begin();
 
+	while(subIter != _subViews.end()){
+		uint8_t currentEntry = subIter - _subViews.begin();
+
+		if ( 	(currentEntry >= this->_visibleStart) &&
+					(currentEntry <  (this->_visibleStart + this->_maxVisibleEntries))){
+			(*subIter)->_visible = true;
+			(*subIter)->setSize(_maxElementSize);
+			(*subIter)->setOrigin(currentLine);
+			currentLine.y+=_maxElementSize.h+_cellInset.h;
+		}else{
+			(*subIter)->_visible = false;
+		}
+		subIter ++;
+	}
+}
+
+
+// this method is called to intal layout the list,
+// determine the current visibility state of the list entries and position
 void metaList::layoutList(){
 	GCPoint currentLine;
 	currentLine.x = _borderInset.w;
 	currentLine.y = _borderInset.h;
 	vector<metaView*>::iterator subIter = _subViews.begin();
-	//Serial << "Layout: "<<_maxElementSize<<endl;
+
 	while(subIter != _subViews.end()){
+		uint8_t currentEntry = subIter - _subViews.begin();
+		// set initial visibility
+		if ( 	(currentEntry >= this->_visibleStart) &&
+					(currentEntry <  (this->_visibleStart + this->_maxVisibleEntries))){
+			(*subIter)->_visible = true;
+		}else{
+			(*subIter)->_visible = false;
+		}
 		(*subIter)->setSize(_maxElementSize);
 		(*subIter)->setOrigin(currentLine);
-		//(*subIter)->setVisualizeState(true);
 		if(subIter != _subViews.begin()){
 			(*subIter)->setDrawsOutline(false);
 			(*subIter)->setState(metaView::State::Off);
@@ -748,6 +789,10 @@ void metaList::layoutList(){
 			_lastSelectedView = NULL;
 		}
 		currentLine.y+=_maxElementSize.h+_cellInset.h;
+
+//		Serial << "Entry: "<<" visible:"<< ((*subIter)->_visible ? "YES":"NO")<<endl;
+		//(*subIter)->setVisualizeState(true);
+
 		subIter++;
 	}
 
@@ -785,7 +830,7 @@ void metaList::drawConnectionFor(metaView* v, uint16_t lineColor){
 }
 
 void metaList::redraw(){
-	//Serial << endl<<">>>>>metaList"<<endl;
+	Serial << endl<<">>>>>metaList"<<endl;
 	metaView::redraw();
 	metaView *sv = selectedSubview();
 	if(sv != _lastSelectedView){
@@ -834,12 +879,22 @@ void metaList::selectIndex(int16_t idx){
 	if(idx <0){
 		return;
 	}
+	Serial << "Select "<<idx<<endl;
 	vector<metaView*>::iterator subIter = _subViews.begin();
 	if(selectedIndex() != idx){
 		if(_lastSelectedView){
 			_lastSelectedView->setDrawsOutline(false);
 		}
 		subIter += idx;
+		if(idx > (this->_visibleStart + this->_maxVisibleEntries-1)){
+			this->_visibleStart = idx - (this->_maxVisibleEntries-1);
+			Serial << "Scroll up "<<_visibleStart<<endl;
+			scrollList();
+		}else if(idx<this->_visibleStart){
+			this->_visibleStart = idx;
+			Serial << "Scroll down "<<_visibleStart<<endl;
+			scrollList();
+		}
 		if(subIter != _subViews.end()){
 			(*subIter)->setDrawsOutline(true);
 		}
@@ -867,6 +922,7 @@ void metaList::activateIndex(int16_t idx){
 	if(idx<0){
 		return;
 	}
+	Serial << "activate "<<endl;
 	vector<metaView*>::iterator l = _subViews.begin();
 	l +=idx;
 	if(l != _subViews.end()){
@@ -946,9 +1002,11 @@ int16_t metaList::processEvent(UserEvent* k){
 			vector<metaView*>::iterator subIter = selectedIterator();
 			vector<metaView*>::iterator k = subIter+step;
 			if( (k>=_subViews.begin()) && (k<_subViews.end()) ) {
-				(*subIter)->setDrawsOutline(false);
-				(*k)->setDrawsOutline(true);
-				result = k-_subViews.begin();
+					result = k-_subViews.begin();
+				selectIndex(result);
+				//(*subIter)->setDrawsOutline(false);
+				//(*k)->setDrawsOutline(true);
+
 			}
 		}
 	}else if(k->getType() == EventType::EventTypeEncoder){
@@ -957,9 +1015,11 @@ int16_t metaList::processEvent(UserEvent* k){
 		int8_t offSet = eData.absSteps;
 		vector<metaView*>::iterator k = subIter+offSet;
 		if( (k>=_subViews.begin()) && (k<_subViews.end()) ) {
-			(*subIter)->setDrawsOutline(false);
-			(*k)->setDrawsOutline(true);
 			result = k-_subViews.begin();
+			selectIndex(result);
+			// (*subIter)->setDrawsOutline(false);
+			// (*k)->setDrawsOutline(true);
+			//
 		}
 	}
 	return result;
