@@ -79,8 +79,10 @@
 <layer number="254" name="cooling" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
-<description>&lt;h1&gt;QVGA TFT Display&lt;/h1&gt;
-With 4 channel switch debouncer and encoder conditioning</description>
+<description>&lt;h1&gt;Key debouncer and SPI carrier&lt;/h1&gt;
+&lt;p&gt;4 channel switch debouncer and encoder signal conditioning.&lt;/p&gt;
+&lt;p&gt;SPI for connecting a 2.2" TFT and memory card reader&lt;/p&gt;
+&lt;p&gt;Status: Rework&lt;/p&gt;</description>
 <libraries>
 <library name="transistor-pnp">
 <description>&lt;b&gt;PNP Transistors&lt;/b&gt;&lt;p&gt;

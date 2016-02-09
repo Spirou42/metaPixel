@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.4.1">
+<eagle version="7.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -60,6 +60,9 @@
 <layer number="98" name="Guide" color="6" fill="1" visible="no" active="no"/>
 </layers>
 <board>
+<description>&lt;h1&gt;EC60 A carrier board&lt;/h1&gt;
+
+&lt;p&gt;Status: corrected&lt;/p&gt;</description>
 <plain>
 <wire x1="0" y1="0" x2="66.02" y2="0" width="0" layer="20"/>
 <wire x1="66.02" y1="0" x2="66.02" y2="66.01" width="0" layer="20"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.4.1">
+<eagle version="7.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -79,9 +79,12 @@
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
 <description>&lt;h1&gt;Cursor Keypad&lt;/h1&gt;
-Simple 5 Button cursor keys for use inside an ALPR EC60A/B encoder ring.
 
-The cursor keys sit on an board that has to be suspenden by an 3D Printed frame. 4 3.2mm mounting holes are for this.</description>
+&lt;p&gt;Simple 5 Button cursor keys for use inside an ALPR EC60A/B encoder ring.&lt;/p&gt;
+
+&lt;p&gt;The cursor keys sit on an board that has to be suspenden by an 3D Printed frame. 4 3.2mm mounting holes are reserved for this.&lt;/p&gt;
+
+&lt;p&gt;Status: Working&lt;/p&gt;</description>
 <libraries>
 <library name="frames">
 <packages>

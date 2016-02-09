@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.4.1">
+<eagle version="7.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -60,6 +60,11 @@
 <layer number="98" name="Guide" color="6" fill="1" visible="yes" active="yes"/>
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
+<description>&lt;h1&gt;EC60 A carrier board &lt;/h1&gt;
+
+&lt;p&gt;Simple passive carrier board for an EC60A hollow shaft encoder&lt;/p&gt;
+&lt;p&gt;This board is the intended base for the Cursor-EC60.brd&lt;/p&gt;
+&lt;p&gt;Status: Working&lt;/p&gt;</description>
 <libraries>
 <library name="ALPS-EC60A">
 <packages>
