@@ -90,11 +90,11 @@ void blendColor(const CRGBSet &set, CRGB color){
     CRGBSet::iterator end = set.end();
     for(;pixel != end;++pixel){
       //CRGB r;
-      CRGB p = *pixel;
+      //CRGB p = *pixel;
       //r.r = ((int)p.r+(int)color.r)/2;
       //r.g = ((int)p.g+(int)color.g)/2;
       //r.b = ((int)p.b+(int)color.b)/2;
-      *pixel += color;
+      *pixel |= color;
 
 //       //CHSV tcolor = rgb2hsv(*pixel);
 //       if(tcolor.v <2){
@@ -115,9 +115,9 @@ void blendColor(const CRGBSet &set, CRGB color){
 void minelon(){
 // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds, NUM_LEDS,50);
-  int maxPhase =10;
+  int maxPhase =4;
   float hueStep = 256.0/(maxPhase+1);
-  uint16_t phaseOffset = (65536/maxPhase);
+	uint16_t phaseOffset =0;//(65536/maxPhase);
 
   for(int phase = 1;phase<=maxPhase;phase++){
     //int result = beatsin16(1,0,NUM_LEDS,phase*100,phase*100);
@@ -127,7 +127,7 @@ void minelon(){
     uint16_t scaledbeat = scale16( pos+ 32768, rangewidth);
     uint16_t result = 0 + scaledbeat;
     int hue = gHue + hueStep*(phase-1);
-    int blobLength = 8;
+    int blobLength = NUM_LEDS/(maxPhase);
     CRGB color = ColorFromPalette((*currentSystemPalette)->second,hue,255);
     if((result+blobLength)<NUM_LEDS){
       const CRGBSet p(&leds[result],blobLength);
@@ -140,14 +140,14 @@ void minelon(){
       blendColor(p,color);
       blendColor(q,color);
     }
-    blur1d(leds,NUM_LEDS,120);
+    //blur1d(leds,NUM_LEDS,120);
   }
 }
 
 void sinelon()
 {
   // a colored dot sweeping back and forth, with fading trails
-  fadeToBlackBy( leds, NUM_LEDS, 15);
+  fadeToBlackBy( leds, NUM_LEDS, 1);
 
   int pos = beatsin16((2<<8),5,NUM_LEDS);
   CRGB color = ColorFromPalette((*currentSystemPalette)->second,gHue,255);
@@ -169,7 +169,8 @@ void juggle() {
   fadeToBlackBy( leds, NUM_LEDS, 20);
   byte dothue = 0;
   for( int i = 0; i < 8; i++) {
-    CRGB color = ColorFromPalette((*currentSystemPalette)->second,dothue + random8(64),255);
+		//+ random8(64)
+    CRGB color = ColorFromPalette((*currentSystemPalette)->second,dothue ,255);
     leds[beatsin16(i+7,0,NUM_LEDS)] |= color;
     dothue += 32;
   }

@@ -834,10 +834,10 @@ void metaList::redraw(){
 	metaView::redraw();
 	metaView *sv = selectedSubview();
 	if(sv != _lastSelectedView){
-		drawConnectionFor(_lastSelectedView,_backgroundColor);
-		if(sv){
-			drawConnectionFor(sv,sv->getOutlineColor());
-		}
+		// drawConnectionFor(_lastSelectedView,_backgroundColor);
+		// if(sv){
+		// 	drawConnectionFor(sv,sv->getOutlineColor());
+		// }
 		_lastSelectedView = sv;
 	}
 	resetFlags();
