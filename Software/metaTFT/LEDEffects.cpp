@@ -122,7 +122,7 @@ void minelon(){
   for(int phase = 1;phase<=maxPhase;phase++){
     //int result = beatsin16(1,0,NUM_LEDS,phase*100,phase*100);
 
-    uint16_t pos = beat88(phase*512,phase*phaseOffset);//
+    uint16_t pos = beat88(phase*64,phase*phaseOffset);//
     uint16_t rangewidth = NUM_LEDS - 0;
     uint16_t scaledbeat = scale16( pos+ 32768, rangewidth);
     uint16_t result = 0 + scaledbeat;
@@ -140,7 +140,7 @@ void minelon(){
       blendColor(p,color);
       blendColor(q,color);
     }
-    //blur1d(leds,NUM_LEDS,120);
+    blur1d(leds,NUM_LEDS,120);
   }
 }
 

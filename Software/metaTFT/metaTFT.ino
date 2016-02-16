@@ -79,7 +79,6 @@ class LEDBrightnessWrapper : public ValueWrapper{
 	}
 };
 
-
 class ProgramIndexWrapper: public ValueWrapper{
 	public:
 		ProgramIndexWrapper(EffectList* list, EffectList::iterator *iter):ValueWrapper(0,0,list->size()-1,"Program"),
@@ -146,7 +145,6 @@ tmp.push_back(new EffectPair("Minelon",&minelon));
 	tmp.push_back(new EffectPair("Rainbow",rainbow));
 	tmp.push_back(new EffectPair("Rainbow Glitter",&rainbowWithGlitter));
 	tmp.push_back(new EffectPair("Confetti",&confetti));
-
 	tmp.push_back(new EffectPair("Sinelon",&sinelon));
 	tmp.push_back(new EffectPair("Juggle",&juggle));
 	tmp.push_back(new EffectPair("BPM",&bpm));
@@ -351,10 +349,8 @@ int processLEDEffects(unsigned long now,void* data){
 		{ gHue+=hueStep; } // slowly cycle the "base color" through the rainbow
 		// EVERY_N_SECONDS( 120 ) { nextPattern(); } // change patterns periodically
 		// EVERY_N_SECONDS(30){nextPalette();}
-
 	return 0;
 }
-
 
 void adjustBrightness()
 {

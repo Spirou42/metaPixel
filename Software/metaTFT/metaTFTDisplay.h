@@ -1,5 +1,5 @@
 /**
-* definition for metaPixel TFT interface
+* definition for metaPixel TFT interface a subclass of ILI9341_t3 
 */
 
 #ifndef __METATFTDISPLAY_H__
@@ -98,6 +98,7 @@ protected:
 graphics context encapsulates the device information of the TFT class and acts as a proxy for drawing operations
 allowing a simple coordinate system hierarchy  without the need for handling real stacks of finite transformation matrices.
 
+the GC acts as a proxy for drawing related calls.
 */
 class GraphicsContext : public Print{
   friend class metaView;
