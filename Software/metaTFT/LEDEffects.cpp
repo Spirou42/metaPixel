@@ -112,22 +112,29 @@ void blendColor(const CRGBSet &set, CRGB color){
     }
     //Serial << endl;
 }
+#define LOW_SPEED 256
+#define HIGH_SPPED 1000
+static uint16_t phaseSpeed = LOW_SPEED;
+static int16_t phaseStep = 1;
+static elapsedMillis lastPhaseSpeed;
 void minelon(){
 // a colored dot sweeping back and forth, with fading trails
   fadeToBlackBy( leds, NUM_LEDS,50);
-  int maxPhase =4;
-  float hueStep = 256.0/(maxPhase+1);
+  int maxPhase =3;
+  float hueStep = 256.0/(maxPhase);
 	uint16_t phaseOffset =0;//(65536/maxPhase);
-
+	int blobLength = NUM_LEDS/(maxPhase);
   for(int phase = 1;phase<=maxPhase;phase++){
     //int result = beatsin16(1,0,NUM_LEDS,phase*100,phase*100);
 
-    uint16_t pos = beat88(phase*64,phase*phaseOffset);//
+
+    uint16_t pos = beat88(phase*phaseSpeed,phase*phaseOffset);//
+
     uint16_t rangewidth = NUM_LEDS - 0;
     uint16_t scaledbeat = scale16( pos+ 32768, rangewidth);
     uint16_t result = 0 + scaledbeat;
     int hue = gHue + hueStep*(phase-1);
-    int blobLength = NUM_LEDS/(maxPhase);
+
     CRGB color = ColorFromPalette((*currentSystemPalette)->second,hue,255);
     if((result+blobLength)<NUM_LEDS){
       const CRGBSet p(&leds[result],blobLength);
@@ -142,6 +149,14 @@ void minelon(){
     }
     blur1d(leds,NUM_LEDS,120);
   }
+	// if(lastPhaseSpeed>250){
+	// 	phaseSpeed = (phaseSpeed + phaseStep);
+	// 	if ((phaseSpeed > HIGH_SPPED) || (phaseSpeed < LOW_SPEED)){
+	// 		phaseStep *=-1;
+	// 	}
+	// 	lastPhaseSpeed = 0;
+	// 	Serial << "Speed: "<<phaseSpeed << endl;
+	// }
 }
 
 void sinelon()
