@@ -94,7 +94,7 @@ void blendColor(const CRGBSet &set, CRGB color){
       //r.r = ((int)p.r+(int)color.r)/2;
       //r.g = ((int)p.g+(int)color.g)/2;
       //r.b = ((int)p.b+(int)color.b)/2;
-      *pixel |= color;
+      *pixel += color;
 
 //       //CHSV tcolor = rgb2hsv(*pixel);
 //       if(tcolor.v <2){
@@ -112,18 +112,19 @@ void blendColor(const CRGBSet &set, CRGB color){
     }
     //Serial << endl;
 }
-#define LOW_SPEED 256
+#define LOW_SPEED 700
 #define HIGH_SPPED 1000
 static uint16_t phaseSpeed = LOW_SPEED;
 static int16_t phaseStep = 1;
 static elapsedMillis lastPhaseSpeed;
+
 void minelon(){
 // a colored dot sweeping back and forth, with fading trails
-  fadeToBlackBy( leds, NUM_LEDS,50);
-  int maxPhase =3;
+  fadeToBlackBy( leds, NUM_LEDS,5);
+  int maxPhase =5;
   float hueStep = 256.0/(maxPhase);
 	uint16_t phaseOffset =0;//(65536/maxPhase);
-	int blobLength = NUM_LEDS/(maxPhase);
+	int blobLength = NUM_LEDS/(maxPhase*2);
   for(int phase = 1;phase<=maxPhase;phase++){
     //int result = beatsin16(1,0,NUM_LEDS,phase*100,phase*100);
 
@@ -147,17 +148,50 @@ void minelon(){
       blendColor(p,color);
       blendColor(q,color);
     }
-    blur1d(leds,NUM_LEDS,120);
+    blur1d(leds,NUM_LEDS,172);
   }
-	// if(lastPhaseSpeed>250){
-	// 	phaseSpeed = (phaseSpeed + phaseStep);
-	// 	if ((phaseSpeed > HIGH_SPPED) || (phaseSpeed < LOW_SPEED)){
-	// 		phaseStep *=-1;
-	// 	}
-	// 	lastPhaseSpeed = 0;
-	// 	Serial << "Speed: "<<phaseSpeed << endl;
-	// }
 }
+
+
+/** tine a studiy in blob motion */
+static int16_t fadeOutAmount = 5;
+static int16_t numberOfBlobs = 3;
+static int16_t startBlobSpeed = 1; ///< in beats/min
+static elapsedMillis lastCall = 0;
+void tinelon()
+{
+	fadeToBlackBy(leds, NUM_LEDS, fadeOutAmount);
+	float hueStep = 256.0/numberOfBlobs;
+	int16_t blobLength = 10;//NUM_LEDS / (numberOfBlobs*2);
+	for(int16_t blob = 0;blob <numberOfBlobs;++blob){
+		uint16_t pos = beat88((blob+1)*(startBlobSpeed<<8),lastCall);
+		uint16_t rangewidth = NUM_LEDS - 0;
+    uint16_t scaledbeat = scale16( pos+ 32768, rangewidth);
+    uint16_t result = 0 + scaledbeat;
+		int hue = gHue + hueStep*(blob)
+		;
+		CRGB pcolor = ColorFromPalette((*currentSystemPalette)->second,hue,fadeOutAmount/2);
+		CRGB bcolor = ColorFromPalette((*currentSystemPalette)->second,hue,255);
+		leds[result]+=pcolor;
+
+
+		if((result-blobLength)<0){
+			// int flen = result;
+      // int elen = (blobLength-1) - flen;
+      // const CRGBSet p(&leds[result],flen);
+      // const CRGBSet q(&leds[0],elen);
+      // blendColor(p,bcolor);
+      // blendColor(q,bcolor);
+
+    }else{
+			const CRGBSet p(&leds[result-(blobLength-1)],blobLength-1);
+      blendColor(p,bcolor);
+    }
+
+	}
+	lastCall = 0;
+}
+
 
 void sinelon()
 {

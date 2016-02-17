@@ -141,7 +141,8 @@ PaletteList initializeSystemPalettes(){
 
 EffectList initializeSystemEffects(){
 	EffectList tmp;
-tmp.push_back(new EffectPair("Minelon",&minelon));
+  tmp.push_back(new EffectPair("Tine",&tinelon));
+  tmp.push_back(new EffectPair("Minelon",&minelon));
 	tmp.push_back(new EffectPair("Rainbow",rainbow));
 	tmp.push_back(new EffectPair("Rainbow Glitter",&rainbowWithGlitter));
 	tmp.push_back(new EffectPair("Confetti",&confetti));

@@ -19,6 +19,7 @@ void rainbowWithGlitter();
 void confetti();
 void sinelon();
 void minelon();
+void tinelon();
 void bpm();
 void juggle();
 void nextPattern();
