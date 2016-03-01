@@ -243,7 +243,7 @@ void initListVisual(metaList &k){
 void initSystemMenu(){
 	// visual them definition for a single list entry
 
-	SystemMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
+	SystemMenu.initView(&tft,GCRect(30,15,tft.width()/2,tft.height()-4));
 	initListVisual(SystemMenu);
 	SystemMenu.setIsSelectList(false);
 
@@ -266,7 +266,6 @@ void initSystemMenu(){
 	SystemMenu.layoutList();
 
 }
-
 void initEffectsMenu(){
 	EffectsMenu.initView(&tft,GCRect(2,12,tft.width()/2,tft.height()-4));
 	EffectsMenu.setIsSelectList(true);
@@ -278,7 +277,6 @@ void initEffectsMenu(){
 	}
 	EffectsMenu.sizeToFit();
 	EffectsMenu.layoutList();
-
 }
 
 void initPalettesMenu(){
@@ -292,14 +290,7 @@ void initPalettesMenu(){
 	}
   PalettesMenu.sizeToFit();
   PalettesMenu.layoutList();
-
 }
-
-// String labelStr = String("Hulga");
-//
-// String valueStr = String("-55");
-
-
 
 
 void initValueView(){
