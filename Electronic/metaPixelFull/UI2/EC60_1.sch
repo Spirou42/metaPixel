@@ -64,7 +64,7 @@
 
 &lt;p&gt;Simple passive carrier board for an EC60A hollow shaft encoder&lt;/p&gt;
 &lt;p&gt;This board is the intended base for the Cursor-EC60.brd&lt;/p&gt;
-&lt;p&gt;Status: Working&lt;/p&gt;</description>
+&lt;p&gt;Status: Rework&lt;/p&gt;</description>
 <libraries>
 <library name="ALPS-EC60A">
 <packages>
