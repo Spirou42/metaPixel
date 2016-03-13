@@ -7,10 +7,12 @@ Desktop="Desktop"
 
 [Globals]
 AutoSaveProject=1
+UsedLibrary="/Users/spirou/Documents/Projekte/metaPixel/Electronic/jt-con-micromatch.lbr"
+UsedLibrary="/Users/spirou/Documents/eagle/lbr/Additionals/Other/Sparkfun/SparkFun-Connectors.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="0 -22 1076 582"
+Loc="981 37 2121 1016"
 State=2
 Number=0
 

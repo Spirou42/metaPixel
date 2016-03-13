@@ -82,7 +82,13 @@
 <description>&lt;h1&gt;Key debouncer and SPI carrier&lt;/h1&gt;
 &lt;p&gt;4 channel switch debouncer and encoder signal conditioning.&lt;/p&gt;
 &lt;p&gt;SPI for connecting a 2.2" TFT and memory card reader&lt;/p&gt;
-&lt;p&gt;Status: Rework finished&lt;/p&gt;</description>
+&lt;p&gt;Status: 
+&lt;ul&gt;
+&lt;li&gt;Rework finished&lt;/li&gt;
+&lt;li&gt;Placement final&lt;/li&gt;
+&lt;li&gt;Routing finished&lt;li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;</description>
 <libraries>
 <library name="resistor">
 <description>&lt;b&gt;Resistors, Capacitors, Inductors&lt;/b&gt;&lt;p&gt;
@@ -6544,8 +6550,7 @@ Source: AVX .. aphvc.pdf</description>
 </class>
 </classes>
 <parts>
-<part name="FRAME1" library="frames" deviceset="A4L-LOC" device=""/>
-<part name="FRAME2" library="frames" deviceset="A4L-LOC" device=""/>
+<part name="FRAME2" library="frames" deviceset="A4L-LOC" device="" value="Connectors"/>
 <part name="C9" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="R14" library="resistor" deviceset="R-EU_" device="0204/7" value="15k"/>
 <part name="R15" library="resistor" deviceset="R-EU_" device="0204/7" value="82k"/>
@@ -6562,7 +6567,7 @@ Source: AVX .. aphvc.pdf</description>
 <part name="R9" library="resistor" deviceset="R-EU_" device="0204/7" value="15k"/>
 <part name="R10" library="resistor" deviceset="R-EU_" device="0204/7" value="82k"/>
 <part name="IC1" library="74xx-eu" deviceset="74*14" device="N" technology="HCT"/>
-<part name="FRAME3" library="frames" deviceset="A3L-LOC" device=""/>
+<part name="FRAME3" library="frames" deviceset="A3L-LOC" device="" value="Debounce"/>
 <part name="R16" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
 <part name="R17" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
 <part name="C5" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
@@ -6574,14 +6579,15 @@ Source: AVX .. aphvc.pdf</description>
 <part name="C8" library="rcl" deviceset="C-EU" device="025-024X044" value=".1µ"/>
 <part name="SK1" library="jt-con-micromatch" deviceset="MMATCH-20-*" device="PTH" value="Host"/>
 <part name="SK2" library="jt-con-micromatch" deviceset="MMATCH-10-*" device="PTH" value="Display"/>
-<part name="SK3" library="jt-con-micromatch" deviceset="MMATCH-10-*" device="PTH"/>
+<part name="SK3" library="jt-con-micromatch" deviceset="MMATCH-10-*" device="PTH" value="Keyboard"/>
 </parts>
 <sheets>
 <sheet>
+<description>&lt;H1&gt;Babelfisch&lt;/h1&gt;
+&lt;p&gt; in tüten&lt;/p&gt;</description>
 <plain>
 </plain>
 <instances>
-<instance part="FRAME1" gate="G$1" x="0" y="0"/>
 <instance part="FRAME2" gate="G$1" x="0" y="0"/>
 <instance part="SK1" gate="G$1" x="53.34" y="106.68"/>
 <instance part="SK2" gate="G$1" x="157.48" y="137.16"/>
@@ -7203,27 +7209,13 @@ Simple RC Schmitt-Trigger debouncer</description>
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,111.76,142.24,U$1,VCC,+3.3V,,,"/>
-<approved hash="114,2,78.981,215.837,IC1,F,I,,,"/>
+<approved hash="114,2,78.981,93.9165,IC1,D,I,,,"/>
 <approved hash="104,2,337.82,88.9,IC1P,VCC,+3.3V,,,"/>
-<approved hash="114,2,239.001,182.817,IC2,C,I,,,"/>
-<approved hash="114,2,239.001,182.817,IC2,D,I,,,"/>
-<approved hash="114,2,239.001,182.817,IC2,E,I,,,"/>
-<approved hash="114,2,239.001,182.817,IC2,F,I,,,"/>
+<approved hash="114,2,221.221,175.197,IC2,C,I,,,"/>
+<approved hash="114,2,221.221,175.197,IC2,D,I,,,"/>
+<approved hash="114,2,221.221,175.197,IC2,E,I,,,"/>
+<approved hash="114,2,221.221,175.197,IC2,F,I,,,"/>
 <approved hash="104,2,314.96,88.9,IC2P,VCC,+3.3V,,,"/>
-<approved hash="114,2,274.32,192.977,IC3,B,CLR,,,"/>
-<approved hash="114,2,274.32,192.977,IC3,B,D,,,"/>
-<approved hash="114,2,274.32,192.977,IC3,B,CLK,,,"/>
-<approved hash="114,2,274.32,192.977,IC3,B,PRE,,,"/>
-<approved hash="104,2,294.64,88.9,IC3P,VCC,+3.3V,,,"/>
-<approved hash="106,1,71.12,63.5,+5,,,,,"/>
-<approved hash="106,1,71.12,78.74,N$19,,,,,"/>
-<approved hash="106,1,71.12,81.28,N$20,,,,,"/>
-<approved hash="113,1,63.5,73.8547,HOST,,,,,"/>
-<approved hash="113,1,130.071,89.431,FRAME1,,,,,"/>
-<approved hash="113,1,130.071,89.431,FRAME2,,,,,"/>
-<approved hash="113,2,193.571,130.071,FRAME3,,,,,"/>
-<approved hash="113,2,203.2,120.845,KEYBOARD,,,,,"/>
 </errors>
 </schematic>
 </drawing>

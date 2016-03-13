@@ -352,7 +352,7 @@ Switch 3F - Through Hole with basic matt cover&lt;br&gt;
 </class>
 </classes>
 <parts>
-<part name="FRAME2" library="frames" deviceset="A4L-LOC" device=""/>
+<part name="FRAME2" library="frames" deviceset="A4L-LOC" device="" value="Cursor Pad"/>
 <part name="KEY_LEFT" library="mec switches" deviceset="3FT1D" device=""/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="KEY_CENTER" library="mec switches" deviceset="3FT1D" device=""/>
@@ -363,15 +363,15 @@ Switch 3F - Through Hole with basic matt cover&lt;br&gt;
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="KEY_UP" library="mec switches" deviceset="3FT1D" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="JP1" library="pinhead" deviceset="PINHD-1X3" device=""/>
-<part name="JP2" library="pinhead" deviceset="PINHD-1X3" device=""/>
+<part name="JP1" library="pinhead" deviceset="PINHD-1X3" device="" value="K1"/>
+<part name="JP2" library="pinhead" deviceset="PINHD-1X3" device="" value="K2"/>
 </parts>
 <sheets>
 <sheet>
 <description>&lt;h1&gt;Cursor Keypad&lt;/h1&gt;</description>
 <plain>
-<text x="162.56" y="22.86" size="2.54" layer="94" align="top-left">Cursor Keypad for usage inside
-an ALPS EC60A/B</text>
+<text x="162.56" y="22.86" size="2.54" layer="94" align="top-left">Cursor Keypad build
+insidean ALPS EC60A/B</text>
 </plain>
 <instances>
 <instance part="FRAME2" gate="G$1" x="0" y="0" smashed="yes">
@@ -535,11 +535,6 @@ an ALPS EC60A/B</text>
 </nets>
 </sheet>
 </sheets>
-<errors>
-<approved hash="113,1,130.071,89.431,FRAME2,,,,,"/>
-<approved hash="113,1,198.357,143.641,JP1,,,,,"/>
-<approved hash="113,1,198.357,161.421,JP2,,,,,"/>
-</errors>
 </schematic>
 </drawing>
 <compatibility>

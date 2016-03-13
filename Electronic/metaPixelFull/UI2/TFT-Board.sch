@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.05" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -79,6 +79,14 @@
 <layer number="254" name="cooling" color="7" fill="1" visible="yes" active="yes"/>
 </layers>
 <schematic xreflabel="%F%N/%S.%C%R" xrefpart="/%S.%C%R">
+<description>&lt;h1&gt;TFT adaptor board&lt;/h1&gt;
+&lt;p&gt;simple adaptor from microMaTch 10 to Ledsee 2.2" TFT.&lt;/p&gt;
+&lt;p&gt;Status: 
+&lt;ul&gt;
+&lt;li&gt;Placement final&lt;/li&gt;
+&lt;li&gt;Routing finished&lt;li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;</description>
 <libraries>
 <library name="frames">
 <description>&lt;b&gt;Frames for Sheet and Layout&lt;/b&gt;</description>
@@ -3901,16 +3909,18 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <variantdefs>
 </variantdefs>
 <classes>
-<class number="0" name="default" width="0" drill="0">
+<class number="0" name="default" width="0.2032" drill="0">
+</class>
+<class number="1" name="SUPPLY" width="0.4064" drill="0">
 </class>
 </classes>
 <parts>
-<part name="FRAME1" library="frames" deviceset="A3L-LOC" device=""/>
+<part name="FRAME1" library="frames" deviceset="A3L-LOC" device="" value="TFT Board"/>
 <part name="U$1" library="2.2&quot;tft" deviceset="2.2_TFT_LCD" device="NEW"/>
 <part name="Q1" library="transistor-pnp" deviceset="2N3906" device=""/>
-<part name="R1" library="resistor" deviceset="R-EU_" device="0204/7"/>
-<part name="R2" library="resistor" deviceset="R-EU_" device="0204/7"/>
-<part name="SK1" library="jt-con-micromatch" deviceset="MMATCH-10-*" device="PTH"/>
+<part name="R1" library="resistor" deviceset="R-EU_" device="0204/7" value="100"/>
+<part name="R2" library="resistor" deviceset="R-EU_" device="0204/7" value="10k"/>
+<part name="SK1" library="jt-con-micromatch" deviceset="MMATCH-10-*" device="PTH" value="SPI"/>
 </parts>
 <sheets>
 <sheet>
@@ -3938,7 +3948,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <junction x="330.2" y="68.58"/>
 </segment>
 </net>
-<net name="+3.3V" class="0">
+<net name="+3.3V" class="1">
 <segment>
 <pinref part="R2" gate="G$1" pin="1"/>
 <wire x1="330.2" y1="83.82" x2="330.2" y2="88.9" width="0.1524" layer="91"/>
@@ -3985,7 +3995,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <pinref part="SK1" gate="G$1" pin="8"/>
 </segment>
 </net>
-<net name="GND" class="0">
+<net name="GND" class="1">
 <segment>
 <pinref part="U$1" gate="G$1" pin="GND"/>
 <wire x1="210.82" y1="193.04" x2="190.5" y2="193.04" width="0.1524" layer="91"/>
@@ -4100,6 +4110,9 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="104,1,210.82,195.58,U$1,VCC,+3.3V,,,"/>
+</errors>
 </schematic>
 </drawing>
 </eagle>
