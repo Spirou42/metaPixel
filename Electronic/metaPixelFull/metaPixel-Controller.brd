@@ -109,13 +109,13 @@
 </layers>
 <board>
 <plain>
-<hole x="2.54" y="64.77" drill="3.1"/>
+<hole x="2.54" y="66.04" drill="3.1"/>
 <hole x="2.54" y="2.54" drill="3.1"/>
-<hole x="78.74" y="64.77" drill="3.1"/>
+<hole x="78.74" y="66.04" drill="3.1"/>
 <hole x="78.74" y="2.54" drill="3.1"/>
-<wire x1="0" y1="0" x2="0" y2="67.31" width="0" layer="20"/>
-<wire x1="0" y1="67.31" x2="81.28" y2="67.31" width="0" layer="20"/>
-<wire x1="81.28" y1="67.31" x2="81.28" y2="0" width="0" layer="20"/>
+<wire x1="0" y1="0" x2="0" y2="68.58" width="0" layer="20"/>
+<wire x1="0" y1="68.58" x2="81.28" y2="68.58" width="0" layer="20"/>
+<wire x1="81.28" y1="68.58" x2="81.28" y2="0" width="0" layer="20"/>
 <wire x1="81.28" y1="0" x2="0" y2="0" width="0" layer="20"/>
 <text x="73.66" y="15.24" size="2.54" layer="25">GND</text>
 <text x="73.66" y="29.21" size="2.54" layer="25">VCC</text>
@@ -2881,8 +2881,8 @@ We've spent an enormous amount of time creating and checking these footprints an
 <attribute name="MPN" value="MAX481CPA+" x="52.07" y="39.37" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
 <element name="IC3" library="74xx-eu" package="DIL20" value="74HCT245N" x="21.59" y="45.72"/>
-<element name="LED" library="RP025xx" package="RP025-02" value="RP025-02" x="15.24" y="58.42" smashed="yes">
-<attribute name="NAME" x="11.75" y="59.55" size="2.54" layer="21" rot="R90" align="bottom-center"/>
+<element name="LED" library="RP025xx" package="RP025-02" value="RP025-02" x="15.24" y="59.69" smashed="yes">
+<attribute name="NAME" x="11.75" y="60.82" size="2.54" layer="21" rot="R90" align="bottom-center"/>
 </element>
 <element name="OK1" library="optocoupler" package="DIL08" value="6N137" x="49.53" y="25.4" rot="R180">
 <attribute name="OC_NEWARK" value="52M1895" x="49.53" y="25.4" size="1.778" layer="27" rot="R180" display="off"/>
@@ -2990,7 +2990,7 @@ We've spent an enormous amount of time creating and checking these footprints an
 <signal name="LED_OUT" class="1">
 <contactref element="IC3" pad="18"/>
 <contactref element="LED" pad="P$1"/>
-<wire x1="15.24" y1="49.53" x2="15.24" y2="58.42" width="0.4064" layer="16"/>
+<wire x1="15.24" y1="49.53" x2="15.24" y2="59.69" width="0.4064" layer="16"/>
 </signal>
 <signal name="LED_OUT3V">
 <contactref element="IC3" pad="2"/>
