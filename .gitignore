@@ -3,7 +3,12 @@
 *.s\#[1-9]
 *.b##
 *.s##
+*.l\#[1-9]
 *.brd.lck
 *.sch.lck
-
+*.job
+*.pro
 *.lck
+*.log
+
+
