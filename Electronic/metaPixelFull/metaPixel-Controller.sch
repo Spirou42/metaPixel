@@ -10972,14 +10972,14 @@ Mating wall wart : TOL-00298 (and others)</description>
 </net>
 <net name="LCD_LED" class="0">
 <segment>
-<pinref part="IC2" gate="G$1" pin="A14/DAC"/>
-<wire x1="142.24" y1="167.64" x2="162.56" y2="167.64" width="0.1524" layer="91"/>
-<label x="162.56" y="167.64" size="1.27" layer="95" xref="yes"/>
-</segment>
-<segment>
 <pinref part="SK1" gate="G$1" pin="11"/>
 <wire x1="231.14" y1="99.06" x2="215.9" y2="99.06" width="0.1524" layer="91"/>
 <label x="215.9" y="99.06" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<pinref part="IC2" gate="G$1" pin="6/PWM"/>
+<wire x1="96.52" y1="177.8" x2="78.74" y2="177.8" width="0.1524" layer="91"/>
+<label x="78.74" y="177.8" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="KEY_1" class="0">

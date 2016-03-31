@@ -3112,16 +3112,9 @@ We've spent an enormous amount of time creating and checking these footprints an
 <wire x1="25.4" y1="13.97" x2="24.13" y2="12.7" width="0.254" layer="1"/>
 </signal>
 <signal name="LCD_LED">
-<contactref element="IC2" pad="RESET/DAC"/>
 <contactref element="SK1" pad="11"/>
-<wire x1="25.4" y1="10.16" x2="26.67" y2="11.43" width="0.254" layer="16"/>
-<wire x1="26.67" y1="11.43" x2="29.845" y2="11.43" width="0.254" layer="16"/>
-<wire x1="29.845" y1="11.43" x2="30.48" y2="12.065" width="0.254" layer="16"/>
-<wire x1="30.48" y1="12.065" x2="30.48" y2="13.97" width="0.254" layer="16"/>
-<wire x1="30.48" y1="13.97" x2="33.02" y2="16.51" width="0.254" layer="16"/>
-<via x="33.02" y="16.51" extent="1-16" drill="0.6" shape="square"/>
-<wire x1="33.02" y1="16.51" x2="33.02" y2="31.75" width="0.254" layer="1"/>
-<wire x1="33.02" y1="31.75" x2="34.29" y2="33.02" width="0.254" layer="1"/>
+<contactref element="IC2" pad="6"/>
+<wire x1="25.4" y1="10.16" x2="19.05" y2="20.32" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="KEY_1">
 <contactref element="SK1" pad="1"/>
