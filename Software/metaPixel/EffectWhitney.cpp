@@ -41,7 +41,7 @@ void EffectWhitney::frame(unsigned long now)
   //Serial <<clearLineRight<<"W:"<<display.displayWidth()<<" h:"<<display.displayHeight()<<endl;
   speed = (2*PI*numberOfPixels)/cycleLength->value->currentValue();
   double timer = (millisSinceStart / 1000.0)*speed;
-  float minR=1000,maxR=0,maxL=0,minL=1000;
+  float /*minR=1000,maxR=0,*/maxL=0,minL=1000;
   uint8_t minH=255,maxH=0;
   for (uint16_t i = 0; i < numberOfPixels; i++) {
     float r = 1 - (i/ ((float)numberOfPixels *1.0));
@@ -78,7 +78,7 @@ void EffectWhitney::frame(unsigned long now)
     // }
     CRGB c = ColorFromPalette(colorPalettes[Palette.currentValue()],h);
     CHSV hC = rgb2hsv(c);
-    uint8_t k = lum*255;
+    //uint8_t k = lum*255;
     // while(k>255){
     //   k-=255;
     // }

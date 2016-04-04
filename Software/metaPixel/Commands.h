@@ -12,13 +12,6 @@
 
 #define SERIAL_BUFFER_LENGTH 512
 //** reads lines from Serial
-extern int serialReader(unsigned long now, void* userData);
-extern int getParameterIdxFor(char p);
-extern Parameter16_t * getParameterFor(char p);
-//* processes lines
-extern void commandProcessor(const char* line_buffer,bool executeImediately = false);
-//* line buffer
-extern char serial_buffer[SERIAL_BUFFER_LENGTH];
 
 #define ANIMATE_COMMAND   '@'
 #define BOUNCE_COMMAND    '~'
@@ -26,13 +19,14 @@ extern char serial_buffer[SERIAL_BUFFER_LENGTH];
 #define WAITTIME_COMMAND  '&'
 #define WAITANIM_COMMAND  '%'
 #define DUMP_COMMAND      '?'
-#define DEMO_COMMAND      '#'
+#define MACRO_COMMAND     '#'
 
 typedef enum _commandType {
   commandParameter,
   commandAnimation,
   commandDump,
   commandWait,
+  commandMacro,
 } commandType_t;
 
 typedef struct _parameterSet
@@ -59,9 +53,10 @@ typedef struct _CommandWait
 
 typedef union _commandData
 {
-   CommandParameterSet_t parameterSetData;
+  CommandParameterSet_t parameterSetData;
   CommandParameterAnimation_t parameterAnimationData;
   CommandWait_t commandWaitData;
+  uint16_t macroIndex;
 }CommandData_t;
 
 class metaPixelCommand
@@ -106,6 +101,9 @@ public:
           out << "Wait for "<<command->data.commandWaitData.time/1000;
         }
         break;
+      case commandMacro:
+        out << "Macro "<< command->data.macroIndex;
+        break;
     }
     out <<" ]";
     return out;
@@ -123,8 +121,10 @@ public:
   unsigned long     waitTill;
   Parameter16_t     *waitParameter;
   CommandQueue():queueStart(NULL),queueEnd(NULL),queueLength(0){};
-  void addCommand(metaPixelCommand* cmd);
+  void addCommand(metaPixelCommand* cmd, bool atBeginning = false);
+  void addCommands(CommandQueue *otherQueue, bool atBeginning = false);
   metaPixelCommand* popCommand();
+  void clearQueue();
   void processQueue();
   friend Print& operator<<(Print& obj, CommandQueue& comQ)
   {
@@ -136,11 +136,26 @@ public:
       }
     }
     metaPixelCommand *l = comQ.queueStart;
-    while(l){
-      Serial <<clearLineRight<< l << endl;
+    int8_t k = 0;
+    while(l &&(++k < 30)){
+      Serial <<clearLineRight<< l << endl<<clearLineRight;
       l = l->nextCommand;
     }
+    if(l){
+      Serial <<clearLineRight<< " ..." << endl<<clearLineRight;
+    }
+    Serial <<clearLineRight<< endl<<clearLineRight;
     return obj;
   };
 };
+
+
+extern int serialReader(unsigned long now, void* userData);
+extern int getParameterIdxFor(char p);
+extern Parameter16_t * getParameterFor(char p);
+//* processes lines
+extern void commandProcessor(const char* line_buffer, bool executeImediately = false);
+//* line buffer
+extern char serial_buffer[SERIAL_BUFFER_LENGTH];
+
 #endif

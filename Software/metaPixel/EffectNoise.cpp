@@ -34,7 +34,7 @@ void EffectNoise::startEffect()
   noiseZ = random16();
 	BlendParam.initTo(5);
 	Delay.initTo(100);
-	MirrorParam.initTo(0);
+	//MirrorParam.initTo(0);
 
   initValueFor(noiseSpeed,4);
   initValueFor(noiseScale,15);

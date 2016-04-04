@@ -1,5 +1,5 @@
 #define FASTLED_INTERNAL
-#define FASTLED_ALLOW_INTERRUPTS 1
+//#define FASTLED_ALLOW_INTERRUPTS 1
 /* #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -114,7 +114,7 @@ CRGBPalette16 colorPalettes[]={
 uint8_t numberOfPalettes = sizeof(colorPalettes)/sizeof(CRGBPalette16);
 
 const char * SystemParameterName[]={
-	"Program","Delay","Pallete","Bright","Mirror","Fade","Res"
+	"Program","Delay","Palette","Bright","Mirror","Fade","Res"
 };
 /** All of the accessible parameters */
 Parameter16_t parameterArray[] = {
@@ -161,11 +161,11 @@ EffectWhitney whitneyEffect = EffectWhitney(&parameterArray[param_U],&parameterA
 effectProgramN_t effectProgramsN[] = {
 	{&whiteEffect,100,NULL},
 	{&noiseEffect,150,NULL}, //"*rU6C8!R20 80 60"
-	{&plasmaEffect,150,"D150C0B160Q0Z8U12V2I6R10M15"},
+	{&plasmaEffect,150,"D150B160Z8U12V2I6R10M15"},
 	{&simplePlasma,150,"I800R2U30Z6"},
-	{&lineEffect,65,"c0v5z2"},
+	{&lineEffect,65,"v5z2"},
 	{&fireEffect,60,"O70H150U70D60Z12000"},
-	{&whitneyEffect,67,"q0"},
+	{&whitneyEffect,67,NULL},
 };
 
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
@@ -234,7 +234,7 @@ unsigned long testText() {
 void dumpTFTParameters()
 {
 	tft.setTextWrap(false);
-	uint16_t line = 1;
+	//uint16_t line = 1;
 	uint16_t column = 0;
 	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
 	Effect *effect = effectProgramsN[t].program;
