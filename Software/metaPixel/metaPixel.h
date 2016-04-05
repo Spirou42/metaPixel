@@ -23,7 +23,7 @@
 #define USE_EFFECT_SCEDULER 1
 #define USE_SERIAL_COMMANDS 1
 #define USE_DOUBLE_BUFFER 1
-#define USE_ILI9341_DISPLAY 1
+#define USE_ILI9341_DISPLAY 0
 
 /** display configuration **/
 #define MODULES_WIDTH   5												// number of modules in X
@@ -33,6 +33,7 @@
 #define DISPLAY_WIDTH   (MODULES_WIDTH * MODULE_WIDTH)
 #define DISPLAY_HEIGHT  (MODULES_HEIGHT * MODULE_HEIGHT)
 
+#if USE_ILI9341_DISPLAY
 /** TFT Configuration **/
 #define TFT_RST   2
 #define TFT_DC    9
@@ -41,6 +42,7 @@
 #define TFT_MOSI  11
 #define TFT_SCK   13
 #define TFT_LED   6
+#endif
 
 /** Local Libraries **/
 #include "Types.h"
@@ -137,7 +139,7 @@ extern CommandQueue commandQueue;
 extern bool parameterHasChanged;
 
 typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_A,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N,param_StartEffect=param_U } paramID;
-
+#if USE_ILI9341_DISPLAY
 extern ILI9341_t3 tft;
 
 class tftSerial : public Print
@@ -153,4 +155,5 @@ public:
 	}
 };
 extern tftSerial TFTSerial;
+#endif
 #endif

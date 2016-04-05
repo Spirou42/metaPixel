@@ -61,9 +61,11 @@ Queue taskQueue;
 
 #if USE_ILI9341_DISPLAY
 ILI9341_t3 tft = ILI9341_t3(TFT_CS, TFT_DC,TFT_RST,TFT_MOSI,TFT_SCK,TFT_MISO);
-#endif
 
 tftSerial TFTSerial;
+#endif
+
+
 
 /**********************************************************
 **
@@ -175,7 +177,7 @@ uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 ** DEBUG & Helpers
 **
 **********************************************************/
-
+#if USE_ILI9341_DISPLAY
 int16_t TFT_LogoEnd = 0;
 
 void drawLogo()
@@ -200,10 +202,11 @@ void initializeTFT()
 	tft.setTextWrap(true);
 	analogWrite(TFT_LED,100);
 	drawLogo();
-
 }
+
 bool runningTFT;
 unsigned long testText() {
+
 	runningTFT = true;
   tft.fillScreen(ILI9341_BLACK);
   unsigned long start = micros();
@@ -231,8 +234,10 @@ unsigned long testText() {
 	runningTFT = false;
   return micros() - start;
 }
+
 void dumpTFTParameters()
 {
+
 	tft.setTextWrap(false);
 	//uint16_t line = 1;
 	uint16_t column = 0;
@@ -282,7 +287,7 @@ void dumpTFTParameters()
 	}
 
 }
-
+#endif
 void dumpParameters()
 {
 	#if USE_ILI9341_DISPLAY
@@ -360,8 +365,9 @@ void setup()
 	Serial.begin(115200);
 	delay(100);
 
-
+	#if USE_ILI9341_DISPLAY
 	TFTSerial <<"Startup"<<endl;
+	#endif
 	// tweak global parameter max for Programs and pallettes
 	parameterArray[0].maxValue = newMaxPrograms-1;
 	parameterArray[2].maxValue = numberOfPalettes-1;
@@ -369,7 +375,9 @@ void setup()
 	/** Setup DMX **/
 	DMX.setMode(TeensyDmx::Mode::DMX_IN);
 
+	#if USE_ILI9341_DISPLAY
 	TFTSerial << "Init Parameters"<<endl;
+	#endif
 //	tft<<"Init Parameters"<<endl;
 
 	/** initialize Effects **/
@@ -380,7 +388,9 @@ void setup()
 	Palette.initTo(0);
 
 	/** initialize Queued Task */
+	#if USE_ILI9341_DISPLAY
 	TFTSerial << "Starting Tasks"<<endl;
+	#endif
 
 
 	/** Double buffering **/
@@ -400,20 +410,23 @@ void setup()
 
 
 	/** Command line interface **/
+	#if USE_ILI9341_DISPLAY
 	TFTSerial << "Init Commandline Interface"<<endl;
+	#endif
 	#if USE_SERIAL_COMMANDS
 	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
 	#endif
 
 
 	randomSeed(millis());
-
+	#if USE_ILI9341_DISPLAY
 	TFTSerial<<"metaPixel initialized"<<endl;
 	TFTSerial<<"Parameters: "<<parameterArraySize<<endl;
 	TFTSerial<<"Programms: "<<newMaxPrograms<<endl;
 	TFTSerial <<"Current Tasks:"<<taskQueue._itemsInQueue<<endl<<endl;
 	delay(3000);
 	tft.fillRect(0,TFT_LogoEnd,tft.width(),tft.height()-TFT_LogoEnd,ILI9341_BLACK);
+	#endif
 }
 
 void loop()
@@ -543,8 +556,11 @@ void loop()
 **********************************************************/
 int backbufferBlender(unsigned long now, void* userdata)
 {
+	#if USE_ILI9341_DISPLAY
 	if(runningTFT)
 		return 0;
+	#endif
+
 	uint8_t frac = (BlendParam.currentValue()*1000)/Delay.currentValue();
 	static uint8_t lastFrac =0;
 	if(frac != lastFrac){
