@@ -15,13 +15,27 @@
 class Effect
 {
 public:
-	const char *name;
+
+	const char *name;																		///< the name of the effect
 	Effect():name(""){};
 	Effect(const char *p):name(p){};
+	/**
+		called after the effect programm got switch and before the first frame.
+		put your book keeping and initialization in here
+	*/
+	virtual void startEffect(){}; 											///< book keeping on startup
 
-	virtual void startEffect(){}; ///< book keeping on startup initialize max and minvalues
+	/**
+		called for each and every fram
+	*/
 	virtual void frame(unsigned long now){};
+
+	/**
+	called after the last frame. restore your book keeping here and clean up your dynamic objects
+	*/
 	virtual void stopEffect(){};
+
+
 	virtual void printParameter(Print& stream){};
 	const char * getName(){return name;}
 	/**

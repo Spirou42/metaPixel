@@ -5,11 +5,12 @@
 
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
+
 #include "Arduino.h"
 #include "Parameter.h"
 #include "Streaming.h"
 #include "VT100Stream.h"
-
+extern const char* macroNames[];
 #define SERIAL_BUFFER_LENGTH 512
 //** reads lines from Serial
 
@@ -102,7 +103,7 @@ public:
         }
         break;
       case commandMacro:
-        out << "Macro "<< command->data.macroIndex;
+        out << "Macro "<< macroNames[command->data.macroIndex];
         break;
     }
     out <<" ]";

@@ -25,18 +25,6 @@
 /****************************
 Serial Interface
 ****************************/
-const char* demoStringArray[] = {
-	"p0&10",
-	"p1&0Q0R15U5V6M1D100C8Z5&20c0&20@u5,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8&30",
-	"p2&10",
-	"p3&10",
-	"p4&10",
-	"p5&10@O70,8,30@U70,10,30%O&10@o8,77,30h160@u10,70,10%O&15@o77,65,20@u10,66,10%Oh150",
-	"p6&0Q0&0C0Z1U180R400V1&20@r400,200,20@z1,5,60%r@r200,30,60%r@z5,14,60@r30,75,30%z@z14,1,60@r75,400,60%zq5c0@r400,200,30%r@r199,40,90@z1,13,60%r&19c5&30",
-	"#1#2#3#4#5#6",
-	"q0#7#7#8",
-};
-int16_t demoStrings = sizeof(demoStringArray)/sizeof(const char*);
 
 const char *allowedCommands="@~*&%?#";
 char serial_buffer[SERIAL_BUFFER_LENGTH];
@@ -353,8 +341,8 @@ bool metaPixelCommand::processCommand()
 		{
 			int16_t value = data.macroIndex;
 			const char *macroString = NULL;
-			if( (value >=0) && (value<demoStrings) ){
-				macroString = demoStringArray[value];
+			if( (value >=0) && (value<maxMacroStrings) ){
+				macroString = macroStrings[value];
 			}
 			if(macroString){
 				CommandQueue *p = new CommandQueue();

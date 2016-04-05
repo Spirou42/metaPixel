@@ -5,6 +5,15 @@
 #ifndef __METAPIXEL_H__
 #define __METAPIXEL_H__
 #define FASTLED_INTERNAL
+
+/** Feature Switsches **/
+#define USE_EFFECT_SCEDULER 1
+#define USE_SERIAL_COMMANDS 1
+#define USE_DOUBLE_BUFFER 	1
+#define USE_ILI9341_DISPLAY 0
+#define USE_STARTUP_MACRO 	1
+
+
 /*#include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -14,16 +23,13 @@
 #include <Streaming.h>
 #include "VT100Stream.h"
 #include <TeensyDmx.h>
-#include <AudioStream.h>
+//#include <AudioStream.h>
 #include <rdm.h>
+#if USE_ILI9341_DISPLAY
 #include "ILI9341_t3.h"
-#include "SPI.h"
+#endif
 
-/** Feature Switsches **/
-#define USE_EFFECT_SCEDULER 1
-#define USE_SERIAL_COMMANDS 1
-#define USE_DOUBLE_BUFFER 1
-#define USE_ILI9341_DISPLAY 0
+//#include "SPI.h"
 
 /** display configuration **/
 #define MODULES_WIDTH   5												// number of modules in X
@@ -136,9 +142,16 @@ extern int16_t parameterArraySize;
 
 extern void dumpParameters();
 extern CommandQueue commandQueue;
+
 extern bool parameterHasChanged;
 
+extern const char* macroStrings[];
+extern int16_t maxMacroStrings;
+extern const char* macroNames[];
+
 typedef enum{param_P,param_D,param_C,param_B,param_Q, param_Z,param_A,param_U,param_V,param_R,param_I,param_O,param_H,param_M,param_N,param_StartEffect=param_U } paramID;
+
+
 #if USE_ILI9341_DISPLAY
 extern ILI9341_t3 tft;
 

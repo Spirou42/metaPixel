@@ -12,18 +12,12 @@
 #include <TeensyDmx.h>
 #include <rdm.h>
 #include <Arduino.h>
+
 #include "metaPixel.h"
 #include "Palettes.h"
-#include "SPI.h"
+#if USE_ILI9341_DISPLAY
 #include "ILI9341_t3.h"
-
-/* program defined */
-
-#define USE_PLASMA 1
-#define USE_FIRE   1
-#define USE_LINES  0
-#define USE_WHITE  1
-#define USE_NOISE  1
+#endif
 
 #define START_PROG 1
 
@@ -121,7 +115,7 @@ const char * SystemParameterName[]={
 /** All of the accessible parameters */
 Parameter16_t parameterArray[] = {
 	// global scope parameters.
-	// these parameters for Program, framerate etc.
+	// these parameters control  Program, framerate etc.
 	/* 00 */ 	Parameter16_t('P',(int16_t)0,(int16_t)0,		&EffectProgram,String("Program")),
 	/* 01 */	Parameter16_t('D',(int16_t)1,(int16_t)5000,	&Delay,String("Delay")),
 	/* 02 */	Parameter16_t('C',(int16_t)0,(int16_t)0,		&Palette,String("Palette")),
@@ -130,7 +124,7 @@ Parameter16_t parameterArray[] = {
 	/* 05 */	Parameter16_t('Z',(int16_t)1,(int16_t)14,		&BlendParam,String("Blend")),
 	/* 06 */	Parameter16_t('A',(int16_t)0,(int16_t)1,		&ResolutionParam,String("Resolution")),
 
-	// local parameters. These parameters have a different meening for each  Effect program.
+	// local parameters. These parameters have a different meening for each Effect program.
 	/* 07 */	Parameter16_t('U',(int16_t)0,(int16_t)0,		&genericSpeed1,String()),
 	/* 08 */  Parameter16_t('V',(int16_t)0,(int16_t)0,		&genericSpeed2,String()),
 	/* 09 */	Parameter16_t('R',(int16_t)0,(int16_t)0,		&genericScale1,String()),
@@ -139,7 +133,6 @@ Parameter16_t parameterArray[] = {
 	/* 12 */ 	Parameter16_t('H',(int16_t)0,(int16_t)0,		&genericParam2,String()),
 	/* 13 */	Parameter16_t('M',(int16_t)0,(int16_t)255,	&genericEffectMask1,String()),
 	/* 14 */	Parameter16_t('N',(int16_t)0,(int16_t)255,	&genericEffectMask2,String()),
-
 };
 
 
@@ -169,9 +162,30 @@ effectProgramN_t effectProgramsN[] = {
 	{&fireEffect,60,"O70H150U70D60Z12000"},
 	{&whitneyEffect,67,NULL},
 };
-
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 
+/// Predefined effect macros
+const char* macroStrings[] = {
+	"q0#1#2#3#4#5#6q5#1#5#4#0",
+	"p1&0R15U5V6M1D100C8Z5&20c0&20@u5,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8&30",
+	"p2&60",
+	"p3&60",
+	"p4&60",
+	"p5&10@O70,8,30@U70,10,30%O&10@o8,77,30h160@u10,70,10%O&15@o77,65,20@u10,66,10%Oh150",
+	"p6&0C0Z1U180R400V1&5 @r400,120,30@z1,5,60%r@r120,30,50%r@z5,10,61%z&34#7",
+		"q5c0@r400,120,30%r@r120,30,30@z1,13,60%zq4c5&90c0&30",
+};
+int16_t maxMacroStrings = sizeof(macroStrings)/sizeof(const char*);
+const char* macroNames[]={
+	"Default",
+	"Noise Demo",
+	"Plasma Demo",
+	"Colorbands Demo",
+	"Lines Demo",
+	"Fire Demo",
+	"Whitney Demo1",
+	"Whitney Demo2"
+};
 /**********************************************************
 **
 ** DEBUG & Helpers
@@ -243,7 +257,7 @@ void dumpTFTParameters()
 	uint16_t column = 0;
 	uint16_t t = EffectProgram.currentValue()%(newMaxPrograms);
 	Effect *effect = effectProgramsN[t].program;
-//	tft.fillRect(0,TFT_LogoEnd,tft.width(),tft.height()-TFT_LogoEnd,ILI9341_BLACK);
+	//	tft.fillRect(0,TFT_LogoEnd,tft.width(),tft.height()-TFT_LogoEnd,ILI9341_BLACK);
 	tft.setCursor(0,TFT_LogoEnd);
 	tft.setTextSize(2);
 	tft.setTextColor(ILI9341_YELLOW);
@@ -378,7 +392,7 @@ void setup()
 	#if USE_ILI9341_DISPLAY
 	TFTSerial << "Init Parameters"<<endl;
 	#endif
-//	tft<<"Init Parameters"<<endl;
+	//	tft<<"Init Parameters"<<endl;
 
 	/** initialize Effects **/
 	EffectProgram.initTo(START_PROG);
@@ -414,10 +428,11 @@ void setup()
 	TFTSerial << "Init Commandline Interface"<<endl;
 	#endif
 	#if USE_SERIAL_COMMANDS
-	taskQueue.scheduleFunction(serialReader,NULL,"SERI",200,200);
+	taskQueue.scheduleFunction(serialReader,NULL,"SERI",100,100);
 	#endif
-
-
+	#if USE_STARTUP_MACRO
+	commandProcessor(macroStrings[0]);
+	#endif
 	randomSeed(millis());
 	#if USE_ILI9341_DISPLAY
 	TFTSerial<<"metaPixel initialized"<<endl;
@@ -537,7 +552,7 @@ void loop()
 		Serial << clearLineRight;
 		Serial << clearDown;
 		commandQueueTimer = 0;
-//		dumpTFTParameters();
+		//		dumpTFTParameters();
 	}
 	#if DEBUG_LOOP
 	{

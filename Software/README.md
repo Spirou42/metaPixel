@@ -10,11 +10,11 @@ The metaPixel Software uses the Arduino build environment, Teensyduino to add Te
 
 ### Libraries
 1. [AVRQueue](https://github.com/Zuph/AVRQueue)  
-a simple task switching library. 
+a simple task switching library. metaPixel uses this library to implement all concurrent tasks like Backbuffer blending, Effect rendering and command execution.
 2. [Streaming](http://arduiniana.org/libraries/streaming/)  
-C++ Stream operators for the Arduino serial class
-3. [FastLED](http://fastled.io)  actually you have to use my [Version of FastLED](https://github.com/Spirou42/FastLED) 
-LED Driver Library with nice and helpful features. 
+C++ Stream operators for the Arduino serial class. Simply because it is easier to read and type than Arduinos `println`
+3. [FastLED](http://fastled.io)  actually you have to use [my Version of FastLED](https://github.com/Spirou42/FastLED) 
+LED Driver Library. FastLED is a very neat LED handling library with a lot of well designed features. It supports different type of 'intelligent' LEDs and LED controllers, provides a lot of fast fixed point arithmetic and support RGB as well as HSV color space.     
 
 ## Overview
 `metaPixel.h` and `metaPixel.ino` are the main files of the metaPixel controller software. `metaPixel.h` contains all definitions, prototypes, defines and includes.
@@ -30,19 +30,19 @@ Base class for all Effects.
 The Effects itself  
 
 * **metaDisplay**
-The main class for handling the LED display, is responsible for all display related activities like colouring pixels, drawing lines a.s.o. 
+The main class for handling the LED display. This class responsible for all display related activities like colouring pixels, drawing lines a.s.o.. In addition the `metaDisplay` class ist 
 
 * **metaModule**
-A coordinate mapper for a single module used by **metaDisplay** to map `x,y` -> `idx`  
+A coordinate mapper for a single module used by `metaDisplay` to map `(x,y)` coordinates to a frame buffer index.
 
 * **Palettes**
 A couple of Palette definitions extracted with FastLEDs [PaletteKnife](http://fastled.io/tools/paletteknife/) tool from [cpt-city](http://soliton.vm.bytemark.co.uk/pub/cpt-city/) 
 
 * **Parameter**
-A couple of interrupt changeable, animatable `int16_t` values.
+A couple of interrupt changeable, animatable `int16_t` values. This class provides the basic infrastructure for managing and mapping parameters.
 
 * **Types**
-The content of this file will move to different places in the future
+The content of this file will move to different places in the future. Actually it contains bunch of structure and type definitions. 
 
 * **VT100Stream**
 Some extensions for streaming VT100 control chars.
@@ -51,7 +51,7 @@ Some extensions for streaming VT100 control chars.
 
 metaPixel is a simple state machine controlled by a couple of `int16_t` values encapsulated into a `Parameter16_t` class providing simple animation capabilities. 
 
-Fifteen `Parameter16_t` values are actually implemented. 
+Fifteen `Parameter16_t` values are actually implemented and used to control global and effect local functions. 
 
 <table>
 <tr><th>Index</th><th>Parameter Name</th><th>Range</th><th>Description</th></tr>
@@ -88,7 +88,7 @@ The metaPixel display is controlled by a simple serial command line interface. C
 
 	>
 
-From top top bottom you'll see:
+From top to bottom you'll see:
 * the name of the currently running Effect
 * the effect parameters
 * the system parameters
@@ -117,11 +117,11 @@ In addition setting a single value to a effect parameter there is a couple of 'c
 <tr><td>Wait</td><td>&</td><td>&[time]</td></tr>
 <tr><td colspan=2></td><td>Stops command processing for [time] sec.</td></tr>
 <tr><td>Wait for Animation</td><td>%</td><td>%[paraName]</td></tr>
-<tr><td colspan=2></td><td>Stops command processing until animation is finished. If Bounce is enabled on [paraName] this command will wait until the next turning point is reached.</td></tr>
+<tr><td colspan=2></td><td>Stops command processing until animation is finished. If Bounce is enabled on [paraName] this command will wait until the next limit (up or down) is reached.</td></tr>
 <tr><td>Dump</td><td>?</td><td>?</td></tr>
 <tr><td colspan=2></td><td>dumps the current parameter set as a command line.</td></tr>
 <tr><td>Macro</td><td>#</td><td>#[macroNumber]</td></tr>
-<tr><td colspan=2></td><td>call the hard coded macro with the given number.</td></tr>
+<tr><td colspan=2></td><td>call the hard coded macro with the given number. Macros are simple hard coded strings containing a bunch of parameter changes and commands to control a effect sequence. It is allowed to build circular references.</td></tr>
 
 </table>
 

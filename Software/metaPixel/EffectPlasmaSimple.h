@@ -15,7 +15,7 @@ public:
   Parameter16_t * plasmaSpeed;
   Parameter16_t * mirrorMask;
 
-  EffectPlasmaSimple():Effect("PlaSim"),windowScale(NULL),hueScale(NULL),plasmaSpeed(NULL),mirrorMask(NULL){};
+  EffectPlasmaSimple():Effect("Color Bands"),windowScale(NULL),hueScale(NULL),plasmaSpeed(NULL),mirrorMask(NULL){};
   EffectPlasmaSimple(Parameter16_t* wScale, Parameter16_t* hScale, Parameter16_t* pSpeed, Parameter16_t *miMask):Effect("PlaSim"),windowScale(wScale),hueScale(hScale),plasmaSpeed(pSpeed),mirrorMask(miMask){};
   virtual void startEffect();
   virtual void frame(unsigned long now);
@@ -42,7 +42,7 @@ public:
     return result;
   };
   virtual size_t numberOfParameters(){return 4;};
-  
+
   virtual void printParameter(Print& stream);
 
 protected:
