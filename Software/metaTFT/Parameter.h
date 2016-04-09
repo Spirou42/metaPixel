@@ -1,1 +1,0 @@
-../metaPixel/Parameter.h
