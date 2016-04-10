@@ -67,7 +67,7 @@
 #include "EffectPlasmaSimple.h"
 #include "EffectLine.h"
 #include "EffectWhitney.h"
-
+#include "EffectWater.h"
 
 
 /** Configuration  & global defaults**/

@@ -143,13 +143,14 @@ int16_t parameterArraySize = sizeof(parameterArray)/sizeof(Parameter16_t);
 ** Effects
 **
 **********************************************************/
-EffectWhite whiteEffect = EffectWhite(&(parameterArray[param_O]));
+EffectWhite whiteEffect = EffectWhite(&parameterArray[param_H],&parameterArray[param_R],&parameterArray[param_V]);
 EffectFire  fireEffect = EffectFire(&parameterArray[param_O],&parameterArray[param_H],&parameterArray[param_U]);
 EffectNoise noiseEffect = EffectNoise(&parameterArray[param_R],&parameterArray[param_U],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasma plasmaEffect = EffectPlasma(&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V],&parameterArray[param_M]);
 EffectPlasmaSimple simplePlasma = EffectPlasmaSimple(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
 EffectLine lineEffect = EffectLine(&parameterArray[param_V]);
 EffectWhitney whitneyEffect = EffectWhitney(&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V]);
+EffectWater waterEffect = EffectWater();
 
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
@@ -166,8 +167,8 @@ uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 
 /// Predefined effect macros
 const char* macroStrings[] = {
-	"q0#1#2#3#4#5#6q5#1#5#4#0",
-	"p1&0R15U5V6M1D100C8Z5&20c0&20@u5,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8&30",
+	"q0A0#1A1#1#2#3#4#5#6q5#1#5#4#0",
+	"p1&0R15U3V3M1D80C8Z3&20c0&20@u3,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8&30",
 	"p2&60",
 	"p3&60",
 	"p4&60",
@@ -367,6 +368,7 @@ void dumpParameters()
 elapsedMillis commandQueueTimer = 0;
 void setup()
 {
+	random16_add_entropy( random());
 	/** Setup TFT **/
 	#if USE_ILI9341_DISPLAY
 	initializeTFT();
@@ -409,7 +411,7 @@ void setup()
 
 	/** Double buffering **/
 	#if USE_DOUBLE_BUFFER
-	taskQueue.scheduleFunction(backbufferBlender,NULL,"BBB ",0,66);
+	taskQueue.scheduleFunction(backbufferBlender,NULL,"BBB ",0,20);
 	#endif
 
 	/** Debug blinker (legacy) **/
@@ -446,7 +448,7 @@ void setup()
 
 void loop()
 {
-	random16_add_entropy( random());
+
 	//
 	// switch program Slot 0
 	//
@@ -576,7 +578,7 @@ int backbufferBlender(unsigned long now, void* userdata)
 		return 0;
 	#endif
 
-	uint8_t frac = (BlendParam.currentValue()*1000)/Delay.currentValue();
+	uint8_t frac = (BlendParam.currentValue()*600)/Delay.currentValue();
 	static uint8_t lastFrac =0;
 	if(frac != lastFrac){
 		//		Serial << "frac"<<frac<<endl;
@@ -586,13 +588,12 @@ int backbufferBlender(unsigned long now, void* userdata)
 	#if DEBUG_EFFECTS
 	Serial <<".";
 	#endif
-	if(frac < 4){
-		#if DEBUG_EFFECTS
-		Serial << "Frac cliped to 4, was "<<frac<<endl;
-
-		#endif
-		frac = 4;
-	}
+	// if(frac < 4){
+	// 	#if DEBUG_EFFECTS
+	// 	Serial << "Frac cliped to 4, was "<<frac<<endl;
+	// 	#endif
+	// 	frac = 4;
+	// }
 	for(uint16_t i=0;i<NUM_LEDS;i++){
 		leds[i]=nblend(leds[i],led_backbuffer[i],frac);
 	}

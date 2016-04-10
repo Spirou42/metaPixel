@@ -4,16 +4,18 @@
 #include "Effect.h"
 #include "metaPixel.h"
 
-int white(unsigned long now,void* userdata);
-
 class EffectWhite : public Effect
 {
 public:
 	Parameter16_t *colorIndexParam;
+	Parameter16_t *saturationParam;
+	Parameter16_t *valueParameter;
 
 	EffectWhite():Effect("White"),colorIndexParam(NULL){};
 
-	EffectWhite(Parameter16_t* colIdxPar):Effect("White"),colorIndexParam(colIdxPar){};
+	EffectWhite(Parameter16_t* colIdxPar, Parameter16_t* saturation, Parameter16_t *value):Effect("White"),colorIndexParam(colIdxPar),
+	saturationParam(saturation),valueParameter(value){};
+
 	virtual void startEffect();
 	virtual void frame(unsigned long now);
 	virtual void stopEffect();
@@ -22,6 +24,8 @@ public:
 		Parameter16_t* res = NULL;
 		switch(idx){
 			case 0: res = colorIndexParam; break;
+			case 1: res = saturationParam; break;
+			case 2: res = valueParameter; break;
 			default: res = NULL;break;
 		}
 		return res;
@@ -29,12 +33,14 @@ public:
 	virtual const char* parameterNameAt(size_t idx){
 		const char * result = NULL;
 		switch(idx){
-			case 0: result = "ColorIDX"; break;
+			case 0: result = "HueIDX"; break;
+			case 1: result = "Saturation"; break;
+			case 2: result = "Value"; break;
 			default: result = NULL; break;
 		}
 		return result;
 	};
-	virtual size_t numberOfParameters(){return 1;};
+	virtual size_t numberOfParameters(){return 3;};
 };
 
 

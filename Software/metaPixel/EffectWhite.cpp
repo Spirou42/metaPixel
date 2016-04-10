@@ -7,13 +7,21 @@ void EffectWhite::startEffect()
 {
 	Serial <<"White startup"<<endl;
 	setMaxValueFor(colorIndexParam,255);
+	setMaxValueFor(saturationParam,255);
+	setMaxValueFor(valueParameter,255);
 	colorIndexParam->value->initTo(0);
+	saturationParam->value->initTo(0);
+	valueParameter->value->initTo(0);
+
 	colorIndexParam->value->animateTo(255,40000);
 }
 void EffectWhite::frame(unsigned long now)
 {
 	CRGB color = ColorFromPalette(colorPalettes[Palette.currentValue()],colorIndexParam->value->currentValue());
-	display.fill(color);
+	CHSV hcolor = rgb2hsv(color);
+	hcolor.saturation = saturationParam->value->currentValue();
+	hcolor.value = valueParameter->value->currentValue();
+	display.fill(hcolor);
 	display.flush();
 }
 
