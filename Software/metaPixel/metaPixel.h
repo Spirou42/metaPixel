@@ -64,7 +64,7 @@
 #include "EffectFire.h"
 #include "EffectNoise.h"
 #include "EffectPlasma.h"
-#include "EffectPlasmaSimple.h"
+#include "EffectColorBands.h"
 #include "EffectLine.h"
 #include "EffectWhitney.h"
 #include "EffectWater.h"

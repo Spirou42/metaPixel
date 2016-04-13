@@ -3,13 +3,13 @@
 * I800 R2 U30
 */
 
-#include "EffectPlasmaSimple.h"
+#include "EffectColorBands.h"
 #include "Arduino.h"
 #include "Streaming.h"
 #include "VT100Stream.h"
 
 
-void EffectPlasmaSimple::startEffect()
+void EffectColorBands::startEffect()
 {
   Serial << "SimplePlasma Init Effect"<<endl;
   *(windowScale->value) = 1;
@@ -24,7 +24,7 @@ void EffectPlasmaSimple::startEffect()
 	//display.fill(CRGB::Black);
 }
 
-void EffectPlasmaSimple::frame(unsigned long now)
+void EffectColorBands::frame(unsigned long now)
 {
   static uint32_t frame = 0;
 
@@ -49,7 +49,7 @@ void EffectPlasmaSimple::frame(unsigned long now)
 
 }
 
-void EffectPlasmaSimple::DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t xHueDelta8)
+void EffectColorBands::DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t xHueDelta8)
 {
   byte lineStartHue = startHue8;
 	uint8_t h= display.displayHeight()/(mirrorMask->value->currentValue()?2:1);
@@ -75,6 +75,6 @@ void EffectPlasmaSimple::DrawOneFrame( byte startHue8, int8_t yHueDelta8, int8_t
 	FastLED.show();
 }
 
-void EffectPlasmaSimple::printParameter(Print& stream){
+void EffectColorBands::printParameter(Print& stream){
   stream << "wScale: "<<*windowScale<<" \thScale: "<<*hueScale<<" \tpSpeed: "<<*plasmaSpeed<<" \tmMask: "<<*mirrorMask<<endl;
 }

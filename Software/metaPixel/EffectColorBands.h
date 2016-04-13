@@ -2,21 +2,21 @@
 * EffectPlasmaSimple.h
 */
 
-#ifndef __EFECT_PLASMASIMPLE_H__
-#define __EFECT_PLASMASIMPLE_H__
+#ifndef __EFECT_COLORBANDS_H__
+#define __EFECT_COLORBANDS_H__
 #include "Effect.h"
 #include "Parameter.h"
 #include "metaPixel.h"
 
-class EffectPlasmaSimple : public Effect {
+class EffectColorBands : public Effect {
 public:
   Parameter16_t * windowScale;
   Parameter16_t * hueScale;
   Parameter16_t * plasmaSpeed;
   Parameter16_t * mirrorMask;
 
-  EffectPlasmaSimple():Effect("Color Bands"),windowScale(NULL),hueScale(NULL),plasmaSpeed(NULL),mirrorMask(NULL){};
-  EffectPlasmaSimple(Parameter16_t* wScale, Parameter16_t* hScale, Parameter16_t* pSpeed, Parameter16_t *miMask):Effect("PlaSim"),windowScale(wScale),hueScale(hScale),plasmaSpeed(pSpeed),mirrorMask(miMask){};
+  EffectColorBands():Effect("Color Bands"),windowScale(NULL),hueScale(NULL),plasmaSpeed(NULL),mirrorMask(NULL){};
+  EffectColorBands(Parameter16_t* wScale, Parameter16_t* hScale, Parameter16_t* pSpeed, Parameter16_t *miMask):Effect("ColorBands"),windowScale(wScale),hueScale(hScale),plasmaSpeed(pSpeed),mirrorMask(miMask){};
   virtual void startEffect();
   virtual void frame(unsigned long now);
   virtual Parameter16_t* parameterAt(size_t idx){
