@@ -19,7 +19,7 @@
 #include "ILI9341_t3.h"
 #endif
 
-#define START_PROG 1
+#define START_PROG 7
 
 /**********************************************************
 **
@@ -150,7 +150,7 @@ EffectPlasma 			plasmaEffect 	= EffectPlasma(&parameterArray[param_I],&parameter
 EffectColorBands 	colorBands 		= EffectColorBands(&parameterArray[param_R],&parameterArray[param_I],&parameterArray[param_U],&parameterArray[param_M]);
 EffectLine 				lineEffect 		= EffectLine(&parameterArray[param_V]);
 EffectWhitney 		whitneyEffect = EffectWhitney(&parameterArray[param_U],&parameterArray[param_R],&parameterArray[param_V]);
-EffectWater 			waterEffect 	= EffectWater(&parameterArray[param_U]);
+EffectWater 			waterEffect 	= EffectWater(&parameterArray[param_U],&parameterArray[param_O],&parameterArray[param_H],&parameterArray[param_V],&parameterArray[param_M]);
 
 //EffectWhite dummy = EffectWhite();
 //effectProgramN_t h = {dummy,1000,NULL};
@@ -162,13 +162,13 @@ effectProgramN_t effectProgramsN[] = {
 	{&lineEffect,65,"v5z2"},
 	{&fireEffect,60,"O70H150U70D60Z12000"},
 	{&whitneyEffect,67,NULL},
-	{&waterEffect,40,"z5b255"},
+	{&waterEffect,40,NULL},
 };
 uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 
 /// Predefined effect macros
 const char* macroStrings[] = {
-/* 0 */	"q0A0#1A1#1#2#3#4#5#8#6q5#1#5#4#0",
+/* 0 */	"q0A0#1#8A1#9",
 /* 1 */	"p1&0R15U3V3M1D80C8Z3&20c0&20@u3,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8&30",
 /* 2 */	"p2&60",
 /* 3 */	"p3&60",
@@ -176,7 +176,8 @@ const char* macroStrings[] = {
 /* 5 */	"p5&10@O70,8,30@U70,10,30%O&10@o8,77,30h160@u10,70,10%O&15@o77,65,20@u10,66,10%Oh150",
 /* 6 */	"p6&0C0Z1U180R400V1&5 @r400,120,30@z1,5,60%r@r120,30,50%r@z5,10,61%z&34#7",
 /* 7 */		"q5c0@r400,120,30%r@r120,30,30@z1,13,60%zq4c5&90c0&30",
-/* 8 */	"p7&60"
+/* 8 */	"p7&0c8U15O35H0v80M2z14&1@o35,460,30@z14,8,60%zc2v120o800&20z10v120o500m0u18&60",
+/* 9 */ "q0#1#2#3#4#5#8#6#8q5#1#5#4#8#9",
 };
 int16_t maxMacroStrings = sizeof(macroStrings)/sizeof(const char*);
 const char* macroNames[]={
@@ -188,7 +189,8 @@ const char* macroNames[]={
 	"Fire Demo",
 	"Whitney Demo1",
 	"Whitney Demo2",
-	"Water Demo"
+	"Water Demo",
+	"Endless Demo"
 };
 /**********************************************************
 **

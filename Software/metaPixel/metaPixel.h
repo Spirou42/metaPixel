@@ -80,7 +80,7 @@
 #define DMXBase	          17
 #define DMXSpan           7
 
-#define LED_PIN                   4
+#define LED_PIN           4
 
 /** Audio configuration **/
 #define AUDIO_INPUT AUDIO_INPUT_MIC
