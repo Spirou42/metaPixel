@@ -1,5 +1,5 @@
 #include "Effect.h"
-#include "EffectWhite.h"
+#include "EffectWhite.hpp"
 #include <Arduino.h>
 
 

@@ -52,7 +52,6 @@ private:
   int16_t buffer1[DISPLAY_WIDTH*DISPLAY_HEIGHT];
   int16_t buffer2[DISPLAY_WIDTH*DISPLAY_HEIGHT];
   int16_t *b1,*b2;
-  uint8_t currentHue;
   void ProcessWater(int16_t *source, int16_t *dest);
   void dropAdrop(int16_t *data);
   int16_t valueAt(int16_t* source, int16_t x,int16_t y);

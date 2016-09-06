@@ -13,7 +13,7 @@ Q4Z5U180R60V0
 
 */
 
-#include "EffectWhitney.h"
+#include "EffectWhitney.hpp"
 #include "metaPixel.h"
 
 void EffectWhitney::startEffect()

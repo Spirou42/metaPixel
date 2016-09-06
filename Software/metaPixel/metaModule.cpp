@@ -2,7 +2,7 @@
 * metaModule
 */
 
-#include "metaModule.h"
+#include "metaModule.hpp"
 
 uint16_t metaModule::XY( uint8_t x, uint8_t y)
 {

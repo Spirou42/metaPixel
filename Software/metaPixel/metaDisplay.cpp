@@ -1,7 +1,7 @@
 /**
 * metaDisplay.cpp
 */
-#include "metaDisplay.h"
+#include "metaDisplay.hpp"
 #include "Streaming.h"
 #include "Arduino.h"
 metaModule	  moduleBuffer[MODULES_WIDTH*MODULES_HEIGHT];

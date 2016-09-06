@@ -3,7 +3,7 @@
 * D150 C0 B160 Q0 Z8000 U12 V0 I6 R10 M15
 */
 
-#include "EffectPlasma.h"
+#include "EffectPlasma.hpp"
 #include "Arduino.h"
 #include "Streaming.h"
 

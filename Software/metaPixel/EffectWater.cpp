@@ -1,6 +1,6 @@
 
 #include "Effect.h"
-#include "EffectWater.h"
+#include "EffectWater.hpp"
 #include <Arduino.h>
 
 void EffectWater::startEffect(){
@@ -16,7 +16,7 @@ void EffectWater::startEffect(){
   initValueFor(dropTime,1000);
   initValueFor(dropStrength,50);
   initValueFor(modeMask,2);
-  currentHue = 0;
+
   dropTimer = 0;
   for(int x = 0;x<DISPLAY_WIDTH;++x){
     for(int y=0;y<DISPLAY_HEIGHT;++y){
@@ -67,7 +67,8 @@ void EffectWater::ProcessWater(int16_t *source, int16_t *dest)
   }
   //Serial << "Water processed"<<endl;
 }
-void swap(int16_t **t1, int16_t **t2){
+
+void swapBuffer(int16_t **t1, int16_t **t2){
   int16_t *k = *t1;
   *t1 = *t2;
   *t2 = k;
@@ -77,9 +78,6 @@ void EffectWater::dropAdrop(int16_t *data){
 //  if( random8() <= 40) {
   if(dropTimer>getValueFor(dropTime)){
     dropTimer = 0;
-    if(getValueFor(modeMask)&0x02)
-      currentHue +=getValueFor(hueBase);
-
     int x = random8(display.displayWidth()-2)+1;
     int y = random8(display.displayHeight()-2)+1;
     int t = 10*getValueFor(dropStrength);
@@ -112,7 +110,7 @@ void EffectWater::frame(unsigned long now){
       CHSV c = (mode & 0x01)?CHSV(getValueFor(hueBase),255,255):rgb2hsv(CRGB::Blue);
       if( mode & 0x02){
         uint8_t l = k&0xff;
-        c = rgb2hsv(ColorFromPalette(colorPalettes[Palette.currentValue()],l+currentHue));
+        c = rgb2hsv(ColorFromPalette(colorPalettes[Palette.currentValue()],l+getValueFor(hueBase)));
       }else{
         c.value = 127;
         if(k>0){
@@ -139,7 +137,7 @@ void EffectWater::frame(unsigned long now){
     //Serial << endl;
   }
   //Serial << endl;
-  swap(&b1,&b2);
+  swapBuffer(&b1,&b2);
 
   display.flush();
 }

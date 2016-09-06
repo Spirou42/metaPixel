@@ -3,7 +3,7 @@
 * O70 H150 U80 D60 d60 Z12000
 */
 
-#include "EffectFire.h"
+#include "EffectFire.hpp"
 #define COOLING 250
 #define SPARKLES 10
 void EffectFire::startEffect()

@@ -57,17 +57,17 @@
 #include "metaDisplay.h"
 
 #define NUM_LEDS (DISPLAY_WIDTH * DISPLAY_HEIGHT)
-#include "Commands.h"
-#include "Effect.h"
-#include "Parameter.h"
-#include "EffectWhite.h"
-#include "EffectFire.h"
-#include "EffectNoise.h"
-#include "EffectPlasma.h"
-#include "EffectColorBands.h"
-#include "EffectLine.h"
-#include "EffectWhitney.h"
-#include "EffectWater.h"
+#include "Commands.hpp"
+#include "Effect.hpp"
+#include "Parameter.hpp"
+#include "EffectWhite.hpp"
+#include "EffectFire.hpp"
+#include "EffectNoise.hpp"
+#include "EffectPlasma.hpp"
+#include "EffectColorBands.hpp"
+#include "EffectLine.hpp"
+#include "EffectWhitney.hpp"
+#include "EffectWater.hpp"
 
 
 /** Configuration  & global defaults**/

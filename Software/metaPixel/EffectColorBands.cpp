@@ -3,7 +3,7 @@
 * I800 R2 U30
 */
 
-#include "EffectColorBands.h"
+#include "EffectColorBands.hpp"
 #include "Arduino.h"
 #include "Streaming.h"
 #include "VT100Stream.h"

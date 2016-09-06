@@ -16,7 +16,7 @@
 * dump			[?] ?																						- dump current command string
 */
 
-#include "Commands.h"
+#include "Commands.hpp"
 #include <Arduino.h>
 #include "Streaming.h"
 #include "VT100Stream.h"

@@ -2,7 +2,7 @@
 * EffectLine.cpp
 */
 
-#include "EffectLine.h"
+#include "EffectLine.hpp"
 #include "Arduino.h"
 #include "Streaming.h"
 

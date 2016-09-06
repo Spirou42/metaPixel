@@ -11,7 +11,7 @@
 * [R35U5V253M5 D100C0Q0Z3]
 */
 
-#include "EffectNoise.h"
+#include "EffectNoise.hpp"
 #include <Arduino.h>
 #include "Streaming.h"
 void EffectNoise::fillnoise8() {
