@@ -1,5 +1,5 @@
 #Software
-Here, you'll find a basic description on how the metaPixel Software can be build and how the Software works. 
+Here, you'll find a basic description on how the metaPixel Software can be build and how the Software works.
 
 ## Building
 The metaPixel Software uses the Arduino build environment, Teensyduino to add Teensy 3.1 support and a couple of third party libraries.
@@ -9,11 +9,12 @@ The metaPixel Software uses the Arduino build environment, Teensyduino to add Te
 2. [Teensyduino](http://www.pjrc.com/teensy/teensyduino.html)
 
 ### Libraries
-1. [AVRQueue](https://github.com/Zuph/AVRQueue)  
+1. [my version](https://github.com/Spirou42/AVRQueue) of [AVRQueue](https://github.com/Zuph/AVRQueue)  
 a simple task switching library. metaPixel uses this library to implement all concurrent tasks like Backbuffer blending, Effect rendering and command execution.
-2. [Streaming](http://arduiniana.org/libraries/streaming/)  
+2. [my version](https://github.com/Spirou42/ILI9341_t3) of [ILI9341_3](https://github.com/PaulStoffregen/ILI9341_t3) 
+3. [Streaming](http://arduiniana.org/libraries/streaming/)  
 C++ Stream operators for the Arduino serial class. Simply because it is easier to read and type than Arduinos `println`
-3. [FastLED](http://fastled.io)  actually you have to use [my Version of FastLED](https://github.com/Spirou42/FastLED) 
+4. [FastLED](http://fastled.io)  actually you have to use [my Version of FastLED](https://github.com/Spirou42/FastLED)
 LED Driver Library. FastLED is a very neat LED handling library with a lot of well designed features. It supports different type of 'intelligent' LEDs and LED controllers, provides a lot of fast fixed point arithmetic and support RGB as well as HSV color space.     
 
 ## Overview
@@ -21,7 +22,7 @@ LED Driver Library. FastLED is a very neat LED handling library with a lot of we
 
 ###Files
 * **Commands**
-Serial line receiver and parser, commands, command queue and interpreter 
+Serial line receiver and parser, commands, command queue and interpreter
 
 * **Effect**
 Base class for all Effects.  
@@ -30,28 +31,28 @@ Base class for all Effects.
 The Effects itself  
 
 * **metaDisplay**
-The main class for handling the LED display. This class responsible for all display related activities like colouring pixels, drawing lines a.s.o.. In addition the `metaDisplay` class ist 
+The main class for handling the LED display. This class responsible for all display related activities like colouring pixels, drawing lines a.s.o.. In addition the `metaDisplay` class ist
 
 * **metaModule**
 A coordinate mapper for a single module used by `metaDisplay` to map `(x,y)` coordinates to a frame buffer index.
 
 * **Palettes**
-A couple of Palette definitions extracted with FastLEDs [PaletteKnife](http://fastled.io/tools/paletteknife/) tool from [cpt-city](http://soliton.vm.bytemark.co.uk/pub/cpt-city/) 
+A couple of Palette definitions extracted with FastLEDs [PaletteKnife](http://fastled.io/tools/paletteknife/) tool from [cpt-city](http://soliton.vm.bytemark.co.uk/pub/cpt-city/)
 
 * **Parameter**
 A couple of interrupt changeable, animatable `int16_t` values. This class provides the basic infrastructure for managing and mapping parameters.
 
 * **Types**
-The content of this file will move to different places in the future. Actually it contains bunch of structure and type definitions. 
+The content of this file will move to different places in the future. Actually it contains bunch of structure and type definitions.
 
 * **VT100Stream**
 Some extensions for streaming VT100 control chars.
 
 ## Controlling the Display
 
-metaPixel is a simple state machine controlled by a couple of `int16_t` values encapsulated into a `Parameter16_t` class providing simple animation capabilities. 
+metaPixel is a simple state machine controlled by a couple of `int16_t` values encapsulated into a `Parameter16_t` class providing simple animation capabilities.
 
-Fifteen `Parameter16_t` values are actually implemented and used to control global and effect local functions. 
+Fifteen `Parameter16_t` values are actually implemented and used to control global and effect local functions.
 
 <table>
 <tr><th>Index</th><th>Parameter Name</th><th>Range</th><th>Description</th></tr>
@@ -72,16 +73,16 @@ Fifteen `Parameter16_t` values are actually implemented and used to control glob
 <tr><td align="center">12</td><td align="center">H</td><td align="center">-</td><td>Effect Parameter 1</td></tr>
 <tr><td align="center">13</td><td align="center">M</td><td align="center">0 - 255</td><td>Effect Mask 1</td></tr>
 <tr><td align="center">14</td><td align="center">N</td><td align="center">0 - 255</td><td>Effect Mask 2</td></tr>
-</table> 
+</table>
 
 ### Serial Interface
-The metaPixel display is controlled by a simple serial command line interface. Connect your computer to the USB-Serial with a VT100 capable terminal program and press `Return` 
+The metaPixel display is controlled by a simple serial command line interface. Connect your computer to the USB-Serial with a VT100 capable terminal program and press `Return`
 
 	Effect: Noise
 	Parameter:
 	nScale    [R] 35 (255)        nSpeed    [U]*5 (255)         hSpeed    [V] 253 (255)
 	nMask     [M] 1 (7)
-	
+
 	Program   [P] 1 (6)           Delay     [D] 100 (5000)      Palette   [C] 8 (11)
 	Bright    [B] 160 (255)       Mirror    [Q] 0 (5)           Fade      [Z] 3 (14)
 	Res       [A] 1 (1)
@@ -124,7 +125,3 @@ In addition setting a single value to a effect parameter there is a couple of 'c
 <tr><td colspan=2></td><td>call the hard coded macro with the given number. Macros are simple hard coded strings containing a bunch of parameter changes and commands to control a effect sequence. It is allowed to build circular references.</td></tr>
 
 </table>
-
-
-
-
