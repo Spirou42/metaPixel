@@ -1,4 +1,4 @@
-#include "Effect.h"
+#include "Effect.hpp"
 #include "EffectWhite.hpp"
 #include <Arduino.h>
 

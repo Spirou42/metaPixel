@@ -5,9 +5,9 @@
 #ifndef __EFFECT_NOISE_H__
 #define __EFFECT_NOISE_H__
 #include "metaPixel.h"
-#include "Effect.h"
-#include "Parameter.h"
-#include "metaDisplay.h"
+#include "Effect.hpp"
+#include "Parameter.hpp"
+#include "metaDisplay.hpp"
 
 
 #define NOISE_DIMENSION ((DISPLAY_WIDTH>DISPLAY_HEIGHT) ? DISPLAY_WIDTH : DISPLAY_HEIGHT)

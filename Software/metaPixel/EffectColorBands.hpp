@@ -4,8 +4,8 @@
 
 #ifndef __EFECT_COLORBANDS_H__
 #define __EFECT_COLORBANDS_H__
-#include "Effect.h"
-#include "Parameter.h"
+#include "Effect.hpp"
+#include "Parameter.hpp"
 #include "metaPixel.h"
 
 class EffectColorBands : public Effect {

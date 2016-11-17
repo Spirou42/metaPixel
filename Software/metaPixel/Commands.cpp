@@ -19,7 +19,7 @@
 #include "Commands.hpp"
 #include <Arduino.h>
 #include "Streaming.h"
-#include "VT100Stream.h"
+#include "VT100Stream.hpp"
 #include "metaPixel.h"
 
 /****************************

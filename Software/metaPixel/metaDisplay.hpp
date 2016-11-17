@@ -4,7 +4,7 @@
 #ifndef __metaDisplay_H__
 #define __metaDisplay_H__
 
-#include "metaModule.h"
+#include "metaModule.hpp"
 #include "metaPixel.h"
 typedef enum {noMirror=0,horizontalMirror=1,horizontalSwapMirror=2,verticalMirror=3,quadMirror=4,quadSwapMirror=5} displayMirror;
 typedef enum {lowRes,highRes} displayRes;

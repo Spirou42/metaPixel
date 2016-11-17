@@ -7,9 +7,9 @@
 #define __COMMANDS_H__
 
 #include "Arduino.h"
-#include "Parameter.h"
+#include "Parameter.hpp"
 #include "Streaming.h"
-#include "VT100Stream.h"
+#include "VT100Stream.hpp"
 extern const char* macroNames[];
 #define SERIAL_BUFFER_LENGTH 512
 //** reads lines from Serial

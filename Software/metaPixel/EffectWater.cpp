@@ -1,5 +1,5 @@
 
-#include "Effect.h"
+#include "Effect.hpp"
 #include "EffectWater.hpp"
 #include <Arduino.h>
 

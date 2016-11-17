@@ -2,7 +2,7 @@
 Effect.cpp
 **/
 #include "Effect.hpp"
-#include "Parameter.h"
+#include "Parameter.hpp"
 #include "metaPixel.h"
 
 

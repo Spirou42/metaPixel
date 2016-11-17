@@ -21,7 +21,7 @@
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
-#include "VT100Stream.h"
+#include "VT100Stream.hpp"
 #include <TeensyDmx.h>
 //#include <AudioStream.h>
 #include <rdm.h>
@@ -53,8 +53,8 @@
 /** Local Libraries **/
 #include "Types.h"
 
-#include "metaModule.h"
-#include "metaDisplay.h"
+#include "metaModule.hpp"
+#include "metaDisplay.hpp"
 
 #define NUM_LEDS (DISPLAY_WIDTH * DISPLAY_HEIGHT)
 #include "Commands.hpp"

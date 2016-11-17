@@ -1,7 +1,7 @@
 
 #ifndef __EFFECT_WHITE_H__
 #define __EFFECT_WHITE_H__
-#include "Effect.h"
+#include "Effect.hpp"
 #include "metaPixel.h"
 
 class EffectWhite : public Effect

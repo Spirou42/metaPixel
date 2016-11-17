@@ -8,7 +8,7 @@
 #include <Queue.h>
 #include <FastLED.h>
 #include <Streaming.h>
-#include "VT100Stream.h"
+#include "VT100Stream.hpp"
 #include <TeensyDmx.h>
 #include <rdm.h>
 #include <Arduino.h>
@@ -168,16 +168,16 @@ uint8_t newMaxPrograms = sizeof(effectProgramsN) / sizeof(effectProgramN_t);
 
 /// Predefined effect macros
 const char* macroStrings[] = {
-/* 0 */	"q0A0#1#8A1#9",
-/* 1 */	"p1&0R15U3V3M1D80C8Z3&20c0&20@u3,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8&30",
-/* 2 */	"p2&60",
-/* 3 */	"p3&60",
-/* 4 */	"p4&60",
-/* 5 */	"p5&10@O70,8,30@U70,10,30%O&10@o8,77,30h160@u10,70,10%O&15@o77,65,20@u10,66,10%Oh150",
-/* 6 */	"p6&0C0Z1U180R400V1&5 @r400,120,30@z1,5,60%r@r120,30,50%r@z5,10,61%z&34#7",
-/* 7 */		"q5c0@r400,120,30%r@r120,30,30@z1,13,60%zq4c5&90c0&30",
-/* 8 */	"p7&0c8U15O35H0v80M2z14&1@o35,460,30@z14,8,60%zc2v120o800&20z10v120o322m0u18&60",
-/* 9 */ "q0#1#2#3#4#5#8#6#8q5#1#5#4#8#9",
+/* 0 Startup 		*/	"q0A0#1#8A1#9",
+/* 1 Noise D.		*/	"p1&0R15U3V3M1D80C8Z3&20c0&20@u3,8,30@z5,12,30@r15,20,30@v6,1,15%vm5&20v253@u8,5,30@z12,3,30@r20,35,30%z&15m1c8&30",
+/* 2 Plasma  		*/	"p2&60",
+/* 3 Color B 		*/	"p3&60",
+/* 4 Lines   		*/	"p4&60",
+/* 5 Fire    		*/	"p5&10@O70,8,30@U70,10,30%O&10@o8,77,30h160@u10,70,10%O&15@o77,65,20@u10,66,10%Oh150",
+/* 6 Whitney 1 	*/	"p6&0C0Z1U180R400V1&5 @r400,120,30@z1,5,60%r@r120,30,50%r@z5,10,61%z&34#7",
+/* 7 Whitney 2 	*/	"q5c0@r400,120,30%r@r120,30,30@z1,13,60%zq4c5&90c0&30",
+/* 8 Water			*/	"p7&0c8U15O35H0v80M2z14&1@o35,460,30@z14,8,60%zc2v120o800&20z10v120o322m0u18&60",
+/* 9 Endless		*/ 	"q0#1#2#3#4#5#8#6#8q5#1#5#4#8#9",
 };
 int16_t maxMacroStrings = sizeof(macroStrings)/sizeof(const char*);
 const char* macroNames[]={

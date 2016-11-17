@@ -4,9 +4,9 @@ Legacy file, the contents will be moced to other files soon
 */
 #ifndef __PLASMATYPES_H__
 #define __PLASMATYPES_H__
-#include "Effect.h"
+#include "Effect.hpp"
 #include <Queue.h>
-#include "Parameter.h"
+#include "Parameter.hpp"
 
 typedef enum {
 	NoEffect = 0,

@@ -4,8 +4,8 @@
 
 #ifndef __EFFECT_LINE_H__
 #define __EFFECT_LINE_H__
-#include "Effect.h"
-#include "Parameter.h"
+#include "Effect.hpp"
+#include "Parameter.hpp"
 #include "metaPixel.h"
 
 class EffectLine:public Effect

@@ -4,7 +4,7 @@
 
 #ifndef __EFFECT_WHITNEY_H__
 #define __EFFECT_WHITNEY_H__
-#include "Effect.h"
+#include "Effect.hpp"
 #include "Arduino.h"
 class EffectWhitney:public Effect
 {

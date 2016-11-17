@@ -1,6 +1,6 @@
 #ifndef __EFFECT_WATER__
 #define __EFFECT_WATER__
-#include "Effect.h"
+#include "Effect.hpp"
 #include "metaPixel.h"
 
 class EffectWater : public Effect

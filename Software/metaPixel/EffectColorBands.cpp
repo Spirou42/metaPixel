@@ -6,7 +6,7 @@
 #include "EffectColorBands.hpp"
 #include "Arduino.h"
 #include "Streaming.h"
-#include "VT100Stream.h"
+#include "VT100Stream.hpp"
 
 
 void EffectColorBands::startEffect()

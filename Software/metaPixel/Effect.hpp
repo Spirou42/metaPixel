@@ -8,8 +8,8 @@
 #define __EFFECT_H__
 #include <Arduino.h>
 #include <Streaming.h>
-#include "VT100Stream.h"
-#include "Parameter.h"
+#include "VT100Stream.hpp"
+#include "Parameter.hpp"
 
 
 class Effect
