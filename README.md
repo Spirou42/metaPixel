@@ -1,9 +1,9 @@
-#metaPixel
+# metaPixel
 **A colourful open source art project.**
 
 ![Plasma Image][plasmaStripes]
 
-##Description
+## Description
 metaPixel is a 3d-printed, modular, extendable, magnetic pixel display for showing "retro" animations well known from the *good old days*™.
 
 ![metaPixel Design][metaPixelAll]
@@ -26,7 +26,7 @@ The steel plate is mounted to a wood frame with 20 ring magnets.
 The wood frame contains cut outs for a standard power connector as well as for DMX (3 pin XLR) and USB connectors. 
 ![CutOuts][metaPixelFrameCutOuts]
 
-###metaPixel Module
+### metaPixel Module
 Each module contain 20 "intelligent" RGB LEDs in a 4 by 5 grid on a small carrier board.
 ![LED Stripes][ledStripes] 
 
