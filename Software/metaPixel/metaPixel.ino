@@ -176,7 +176,7 @@ const char* macroStrings[] = {
 /* 5 Fire    		*/	"p5&10@O70,8,30@U70,10,30%O&10@o8,77,30h160@u10,70,10%O&15@o77,65,20@u10,66,10%Oh150",
 /* 6 Whitney 1 	*/	"p6&0C0Z1U180R400V1&5 @r400,120,30@z1,5,60%r@r120,30,50%r@z5,10,61%z&34#7",
 /* 7 Whitney 2 	*/	"q5c0@r400,120,30%r@r120,30,30@z1,13,60%zq4c5&90c0&30",
-/* 8 Water			*/	"p7&0c8U15O35H0v80M2z14&1@o35,460,30@z14,8,60%zc2v120o800&20z10v120o322m0u18&60",
+/* 8 Water			*/	"p7&0c8U15O35H0v80M0z14&1@o35,460,30@z14,8,60%zc2m2v120o800&20z10v120o322m0u18&60",
 /* 9 Endless		*/ 	"q0#1#2#3#4#5#8#6#8q5#1#5#4#8#9",
 };
 int16_t maxMacroStrings = sizeof(macroStrings)/sizeof(const char*);

@@ -10,7 +10,7 @@ void EffectWater::startEffect(){
   setMaxValueFor(hueBase,255);
   setMaxValueFor(dropTime,10000);
   setMaxValueFor(dropStrength,1000);
-  setMaxValueFor(modeMask,15);
+  setMaxValueFor(modeMask,2);
   initValueFor(damping,25);
   initValueFor(hueBase,0);
   initValueFor(dropTime,1000);
