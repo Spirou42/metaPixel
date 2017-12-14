@@ -4,11 +4,23 @@
 #include "metaDisplay.hpp"
 #include "Streaming.h"
 #include "Arduino.h"
+#ifndef MODULES_WIDTH
+#warning Default Moudle Width (1)
+#define MODULES_WIDTH 1
+#endif
+
+#ifndef MODULES_HEIGHT
+#warning Default Moudle Height (1)
+#define MODULES_HEIGHT 1
+#endif
+
 metaModule	  moduleBuffer[MODULES_WIDTH*MODULES_HEIGHT];
 metaDisplay::metaDisplay(CRGB* buffer, CRGB* bbuff, uint8_t w,uint8_t h):
 moduleWidth(4),moduleHeight(5),width(w),height(h),ledBuffer(buffer),backbuffer(bbuff),lowResMode(false),mirMode(noMirror)
 {
-	//moduleBuffer = new metaModule(moduleWidth*moduleHeight);
+	Serial << "Start Display Init" <<endl;
+	 //moduleBuffer = new metaModule(moduleWidth*moduleHeight);
+	Serial << "Module Buffer compiled"<<endl;
 	for(int x=0;x<width;x++){
 		for(int y=0;y<height;y++){
 			int i = XYModule(x,y);

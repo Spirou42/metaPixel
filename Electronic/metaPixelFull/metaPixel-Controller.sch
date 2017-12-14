@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="8.3.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
+<setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
@@ -10727,7 +10728,7 @@ Mating wall wart : TOL-00298 (and others)</description>
 <part name="PWR" library="RP025xx" deviceset="RP025-02" device=""/>
 <part name="DMX_1" library="RP025xx" deviceset="RP025-03" device=""/>
 <part name="DMX_2" library="RP025xx" deviceset="RP025-03" device=""/>
-<part name="LED" library="RP025xx" deviceset="RP025-02" device=""/>
+<part name="LED" library="RP025xx" deviceset="RP025-03" device=""/>
 <part name="J1" library="SparkFun-Connectors" deviceset="POWER_JACK" device="SLT" value="PWR"/>
 <part name="SK1" library="jt-con-micromatch" deviceset="MMATCH-20-*" device="PTH" value="Display"/>
 </parts>
@@ -10803,6 +10804,11 @@ Mating wall wart : TOL-00298 (and others)</description>
 <junction x="246.38" y="106.68"/>
 <junction x="246.38" y="104.14"/>
 </segment>
+<segment>
+<pinref part="LED" gate="G$1" pin="P3"/>
+<wire x1="297.18" y1="180.34" x2="281.94" y2="180.34" width="0.1524" layer="91"/>
+<label x="281.94" y="180.34" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="VCC" class="1">
 <segment>
@@ -10838,6 +10844,11 @@ Mating wall wart : TOL-00298 (and others)</description>
 <pinref part="J1" gate="G$1" pin="PWR"/>
 <wire x1="55.88" y1="91.44" x2="71.12" y2="91.44" width="0.1524" layer="91"/>
 <label x="71.12" y="91.44" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="LED" gate="G$1" pin="P2"/>
+<wire x1="297.18" y1="185.42" x2="281.94" y2="185.42" width="0.1524" layer="91"/>
+<label x="281.94" y="185.42" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="LED_OUT" class="1">

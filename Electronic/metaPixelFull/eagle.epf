@@ -1,7 +1,6 @@
 [Eagle]
-Version="07 05 00"
+Version="08 04 03"
 Platform="Mac OS X"
-Serial="732A01D473-LSR-WLM-1SM"
 Globals="Globals"
 Desktop="Desktop"
 
@@ -12,7 +11,7 @@ UsedLibrary="/Users/spirou/Documents/eagle/lbr/Additionals/Other/Sparkfun/SparkF
 
 [Win_1]
 Type="Control Panel"
-Loc="269 119 1197 1030"
+Loc="383 262 1582 901"
 State=2
 Number=0
 
