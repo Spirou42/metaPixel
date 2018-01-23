@@ -4,10 +4,10 @@
 ![Plasma Image][plasmaStripes]
 
 ## Description
-metaPixel is a 3d-printed, modular, extendable, magnetic pixel display for showing "retro" animations well known from the *good old days*™.
+metaPixel is a (mostly) 3D printed, modular, extendable, magnetic pixel display for showing "retro" animations well known from the *good old days*™.
 
 ![metaPixel Design][metaPixelAll]
-The whole design uses a lot of magnets for adding strength to inter module connections, to hold the module cover and diffusors in place or to stick the modules onto its base.
+The whole design uses a lot of magnets for adding strength to inter module connections, to hold the module cover and diffusors in place or to stick the modules onto the steel base.
 
 The metaPixel display consists of 4 main parts:
 
@@ -17,7 +17,7 @@ The metaPixel display consists of 4 main parts:
 4. Frame with connectors 
 
 ### Steel plate
-The central structure of the whole installation is a 700 x 700 x 0.5 mm sheet of steel. Both, the display modules as well as the controller and the power supply are attached with magnets to both sides of the plate.
+The central structure of the whole installation is a 700 x 700 x 0.5 mm sheet of black painted steel. Both, the display modules as well as the controller and the power supply are attached with magnets to both sides of the plate.
 
 ### Frame
 The steel plate is mounted to a wood frame with 20 ring magnets. 
@@ -27,7 +27,7 @@ The wood frame contains cut outs for a standard power connector as well as for D
 ![CutOuts][metaPixelFrameCutOuts]
 
 ### metaPixel Module
-Each module contain 20 "intelligent" RGB LEDs in a 4 by 5 grid on a small carrier board.
+Each module contain 20 "intelligent" RGB LEDs in a 4 by 5 grid on a small printed carrier board.
 ![LED Stripes][ledStripes] 
 
 The modules interconnect via a 3 pin connector. While the power connections goes straight from the input to the output with taps for each LED stripe. The data signal is routed on a zigzag path trough the stripes.

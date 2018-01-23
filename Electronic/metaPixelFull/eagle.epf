@@ -1,5 +1,5 @@
 [Eagle]
-Version="08 04 03"
+Version="08 05 02"
 Platform="Mac OS X"
 Globals="Globals"
 Desktop="Desktop"
@@ -11,8 +11,6 @@ UsedLibrary="/Users/spirou/Documents/eagle/lbr/Additionals/Other/Sparkfun/SparkF
 
 [Win_1]
 Type="Control Panel"
-Loc="383 262 1582 901"
-State=2
 Number=0
 
 [Desktop]
